@@ -1,0 +1,121 @@
+import { EvidenceStatus, Role } from "@prisma/client";
+import { prisma } from "../../config/prisma";
+import { deleteEvidenceFile, evidenceFileUrl } from "../../config/storage";
+import { ApiError } from "../../utils/ApiError";
+
+type AuthUser = { id: string; role: Role };
+
+const evidenceInclude = {
+  uploadedBy: { select: { id: true, name: true } },
+  reviewedBy: { select: { id: true, name: true } },
+} as const;
+
+async function ensureActivityAccess(user: AuthUser, activityId: string) {
+  const activity = await prisma.activity.findUnique({
+    where: { id: activityId },
+    include: { assignments: true },
+  });
+
+  if (!activity) {
+    throw ApiError.notFound("Actividad no encontrada");
+  }
+
+  if (user.role === Role.TRABAJADOR_CAMPO) {
+    const isAssigned = activity.assignments.some((a) => a.userId === user.id);
+    if (!isAssigned) {
+      throw ApiError.forbidden("No tienes esta actividad asignada");
+    }
+  }
+
+  return activity;
+}
+
+export async function listForActivity(user: AuthUser, activityId: string) {
+  await ensureActivityAccess(user, activityId);
+
+  return prisma.evidence.findMany({
+    where: { activityId },
+    include: evidenceInclude,
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+/** Listado global para Jefe/Supervisor: base de la cola de revisión y del dashboard. */
+export async function listEvidences(filters: {
+  status?: EvidenceStatus;
+  projectId?: string;
+  activityId?: string;
+}) {
+  return prisma.evidence.findMany({
+    where: {
+      ...(filters.status ? { status: filters.status } : {}),
+      ...(filters.activityId ? { activityId: filters.activityId } : {}),
+      ...(filters.projectId ? { activity: { projectId: filters.projectId } } : {}),
+    },
+    include: {
+      ...evidenceInclude,
+      activity: {
+        select: { id: true, title: true, projectId: true, project: { select: { id: true, name: true } } },
+      },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+export async function uploadEvidence(
+  user: AuthUser,
+  activityId: string,
+  file: Express.Multer.File,
+  description?: string,
+) {
+  await ensureActivityAccess(user, activityId);
+
+  return prisma.evidence.create({
+    data: {
+      activityId,
+      uploadedById: user.id,
+      imageUrl: evidenceFileUrl(file.filename),
+      description,
+    },
+    include: evidenceInclude,
+  });
+}
+
+export async function reviewEvidence(
+  reviewer: AuthUser,
+  evidenceId: string,
+  status: EvidenceStatus,
+  reviewComment?: string,
+) {
+  const evidence = await prisma.evidence.findUnique({ where: { id: evidenceId } });
+  if (!evidence) {
+    throw ApiError.notFound("Evidencia no encontrada");
+  }
+
+  return prisma.evidence.update({
+    where: { id: evidenceId },
+    data: {
+      status,
+      reviewComment,
+      reviewedById: reviewer.id,
+      reviewedAt: new Date(),
+    },
+    include: evidenceInclude,
+  });
+}
+
+/** El autor puede borrar su evidencia solo mientras siga PENDIENTE; el Jefe puede borrar cualquiera. */
+export async function deleteEvidence(user: AuthUser, evidenceId: string) {
+  const evidence = await prisma.evidence.findUnique({ where: { id: evidenceId } });
+  if (!evidence) {
+    throw ApiError.notFound("Evidencia no encontrada");
+  }
+
+  const isOwnPending = evidence.uploadedById === user.id && evidence.status === EvidenceStatus.PENDIENTE;
+  if (user.role !== Role.JEFE && !isOwnPending) {
+    throw ApiError.forbidden("No puedes eliminar esta evidencia");
+  }
+
+  await prisma.evidence.delete({ where: { id: evidenceId } });
+  deleteEvidenceFile(evidence.imageUrl);
+}

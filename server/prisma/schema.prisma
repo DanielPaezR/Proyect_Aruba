@@ -1,0 +1,184 @@
+// Schema Prisma - Sistema de Gestión Empresarial (Empresa Eléctrica)
+// Fase 1: Usuarios/roles, marcación de horas, proyectos/actividades, evidencias fotográficas
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ---------- Enums ----------
+
+enum Role {
+  JEFE
+  SUPERVISOR
+  TRABAJADOR_CAMPO
+}
+
+enum ProjectStatus {
+  PLANIFICADO
+  EN_PROGRESO
+  PAUSADO
+  COMPLETADO
+  CANCELADO
+}
+
+enum ActivityStatus {
+  PENDIENTE
+  EN_PROGRESO
+  COMPLETADA
+  CANCELADA
+}
+
+enum EvidenceStatus {
+  PENDIENTE
+  APROBADA
+  RECHAZADA
+}
+
+enum PunchType {
+  ENTRADA
+  SALIDA
+}
+
+// ---------- Modelos ----------
+
+model User {
+  id           String  @id @default(cuid())
+  name         String
+  email        String  @unique
+  passwordHash String
+  role         Role
+  phone        String?
+  isActive     Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  createdProjects     Project[]            @relation("ProjectCreatedBy")
+  activityAssignments ActivityAssignment[]
+  timeEntries         TimeEntry[]
+  uploadedEvidences   Evidence[]           @relation("EvidenceUploadedBy")
+  reviewedEvidences   Evidence[]           @relation("EvidenceReviewedBy")
+  refreshTokens       RefreshToken[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model Project {
+  id          String        @id @default(cuid())
+  name        String
+  description String?
+  status      ProjectStatus @default(PLANIFICADO)
+  startDate   DateTime?
+  endDate     DateTime?
+
+  createdById String
+  createdBy   User   @relation("ProjectCreatedBy", fields: [createdById], references: [id])
+
+  activities Activity[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("projects")
+}
+
+model Activity {
+  id            String         @id @default(cuid())
+  title         String
+  description   String?
+  status        ActivityStatus @default(PENDIENTE)
+  scheduledDate DateTime?
+  completedAt   DateTime?
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  assignments ActivityAssignment[]
+  timeEntries TimeEntry[]
+  evidences   Evidence[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId])
+  @@map("activities")
+}
+
+// Relación N:M entre Activity y User (un trabajador puede tener varias
+// actividades asignadas y una actividad puede tener varios trabajadores)
+model ActivityAssignment {
+  id         String   @id @default(cuid())
+  activityId String
+  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  assignedAt DateTime @default(now())
+
+  @@unique([activityId, userId])
+  @@map("activity_assignments")
+}
+
+// Marcación de entrada/salida. Cada marcación es un registro independiente
+// (tipo ENTRADA o SALIDA) con ubicación opcional.
+model TimeEntry {
+  id     String    @id @default(cuid())
+  userId String
+  user   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  activityId String?
+  activity   Activity? @relation(fields: [activityId], references: [id], onDelete: SetNull)
+
+  type      PunchType
+  timestamp DateTime  @default(now())
+  latitude  Float?
+  longitude Float?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, timestamp])
+  @@map("time_entries")
+}
+
+model Evidence {
+  id String @id @default(cuid())
+
+  activityId String
+  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+
+  uploadedById String
+  uploadedBy   User   @relation("EvidenceUploadedBy", fields: [uploadedById], references: [id])
+
+  imageUrl    String
+  description String?
+  status      EvidenceStatus @default(PENDIENTE)
+
+  reviewedById   String?
+  reviewedBy     User?     @relation("EvidenceReviewedBy", fields: [reviewedById], references: [id])
+  reviewedAt     DateTime?
+  reviewComment  String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([activityId])
+  @@index([status])
+  @@map("evidences")
+}
