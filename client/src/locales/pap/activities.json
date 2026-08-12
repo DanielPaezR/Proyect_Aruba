@@ -10,5 +10,21 @@
   "assignedTo": "Asigná na",
   "unassigned": "Sin asigná",
   "evidencesCount_one": "{{count}} evidensia",
-  "evidencesCount_other": "{{count}} evidensianan"
+  "evidencesCount_other": "{{count}} evidensianan",
+  "mine": {
+    "title": "Mi aktividatnan",
+    "empty": "Bo no tin aktividat asigná",
+    "project": "Proyekto",
+    "startButton": "Kuminsá",
+    "completeButton": "Marka komo kompletá",
+    "uploadButton": "Subi evidensia",
+    "uploadFormTitle": "Subi evidensia fotográfiko",
+    "imageLabel": "Imagen",
+    "descriptionLabel": "Deskripshon (opshonal)",
+    "uploadSubmit": "Subi",
+    "uploadSubmitting": "Ta subi...",
+    "viewEvidencesButton": "Wak evidensia ({{count}})",
+    "hideEvidencesButton": "Skonde evidensia",
+    "noEvidences": "Ainda bo no a subi evidensia pa e aktividat aki"
+  }
 }

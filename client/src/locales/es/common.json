@@ -21,13 +21,19 @@
   },
   "nav": {
     "dashboard": "Panel",
-    "projects": "Proyectos"
+    "projects": "Proyectos",
+    "myActivities": "Mis actividades"
   },
   "activityStatus": {
     "PENDIENTE": "Pendiente",
     "EN_PROGRESO": "En progreso",
     "COMPLETADA": "Completada",
     "CANCELADA": "Cancelada"
+  },
+  "evidenceStatus": {
+    "PENDIENTE": "Pendiente de revisión",
+    "APROBADA": "Aprobada",
+    "RECHAZADA": "Rechazada"
   },
   "loading": "Cargando...",
   "errors": {
@@ -42,6 +48,12 @@
       "USER_NOT_FOUND": "Usuario no encontrado",
       "EMAIL_TAKEN": "Ya existe un usuario con ese correo",
       "PROJECT_NOT_FOUND": "Proyecto no encontrado",
+      "ACTIVITY_NOT_FOUND": "Actividad no encontrada",
+      "ACTIVITY_NOT_ASSIGNED": "No tienes esta actividad asignada",
+      "INVALID_STATUS_TRANSITION": "Ese cambio de estado no está permitido",
+      "IMAGE_REQUIRED": "Selecciona una imagen para subir",
+      "UNSUPPORTED_IMAGE_TYPE": "Formato de imagen no soportado (usa JPEG, PNG o WEBP)",
+      "UPLOAD_ERROR": "Ocurrió un error al subir el archivo",
       "VALIDATION_ERROR": "Revisa los datos ingresados",
       "INTERNAL_ERROR": "Error del servidor, intenta más tarde"
     }

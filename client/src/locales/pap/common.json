@@ -21,13 +21,19 @@
   },
   "nav": {
     "dashboard": "Panel",
-    "projects": "Proyektonan"
+    "projects": "Proyektonan",
+    "myActivities": "Mi aktividatnan"
   },
   "activityStatus": {
     "PENDIENTE": "Pendiente",
     "EN_PROGRESO": "Na progreso",
     "COMPLETADA": "Kompletá",
     "CANCELADA": "Kanselá"
+  },
+  "evidenceStatus": {
+    "PENDIENTE": "Pendiente di revishon",
+    "APROBADA": "Aprobá",
+    "RECHAZADA": "Rechasá"
   },
   "loading": "Ta karga...",
   "errors": {
@@ -42,6 +48,12 @@
       "USER_NOT_FOUND": "No a haña e usuario",
       "EMAIL_TAKEN": "Ya tin un usuario ku e email ei",
       "PROJECT_NOT_FOUND": "No a haña e proyekto",
+      "ACTIVITY_NOT_FOUND": "No a haña e aktividat",
+      "ACTIVITY_NOT_ASSIGNED": "E aktividat aki no ta asigná na bo",
+      "INVALID_STATUS_TRANSITION": "E kambio di estado ei no ta permitino",
+      "IMAGE_REQUIRED": "Skohe un imagen pa subi",
+      "UNSUPPORTED_IMAGE_TYPE": "Formato di imagen no ta soportá (usa JPEG, PNG òf WEBP)",
+      "UPLOAD_ERROR": "A sosodé un eror ora di subi e archivo",
       "VALIDATION_ERROR": "Verifiká e datonan ku bo a hisa",
       "INTERNAL_ERROR": "Eror di server, purba mas lat"
     }

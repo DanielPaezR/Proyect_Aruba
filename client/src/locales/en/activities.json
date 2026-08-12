@@ -10,5 +10,21 @@
   "assignedTo": "Assigned to",
   "unassigned": "Unassigned",
   "evidencesCount_one": "{{count}} evidence item",
-  "evidencesCount_other": "{{count}} evidence items"
+  "evidencesCount_other": "{{count}} evidence items",
+  "mine": {
+    "title": "My activities",
+    "empty": "You have no activities assigned",
+    "project": "Project",
+    "startButton": "Start",
+    "completeButton": "Mark as completed",
+    "uploadButton": "Upload evidence",
+    "uploadFormTitle": "Upload photo evidence",
+    "imageLabel": "Image",
+    "descriptionLabel": "Description (optional)",
+    "uploadSubmit": "Upload",
+    "uploadSubmitting": "Uploading...",
+    "viewEvidencesButton": "View evidence ({{count}})",
+    "hideEvidencesButton": "Hide evidence",
+    "noEvidences": "You haven't uploaded evidence for this activity yet"
+  }
 }

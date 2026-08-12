@@ -10,5 +10,21 @@
   "assignedTo": "Asignado a",
   "unassigned": "Sin asignar",
   "evidencesCount_one": "{{count}} evidencia",
-  "evidencesCount_other": "{{count}} evidencias"
+  "evidencesCount_other": "{{count}} evidencias",
+  "mine": {
+    "title": "Mis actividades",
+    "empty": "No tienes actividades asignadas",
+    "project": "Proyecto",
+    "startButton": "Iniciar",
+    "completeButton": "Marcar como completada",
+    "uploadButton": "Subir evidencia",
+    "uploadFormTitle": "Subir evidencia fotográfica",
+    "imageLabel": "Imagen",
+    "descriptionLabel": "Descripción (opcional)",
+    "uploadSubmit": "Subir",
+    "uploadSubmitting": "Subiendo...",
+    "viewEvidencesButton": "Ver evidencias ({{count}})",
+    "hideEvidencesButton": "Ocultar evidencias",
+    "noEvidences": "Todavía no subiste evidencia para esta actividad"
+  }
 }

@@ -23,6 +23,11 @@ export function Layout() {
                 {t("nav.dashboard", { ns: "common" })}
               </NavLink>
             )}
+            {user.role === "TRABAJADOR_CAMPO" && (
+              <NavLink to="/my-activities" className={navLinkClassName}>
+                {t("nav.myActivities", { ns: "common" })}
+              </NavLink>
+            )}
             <NavLink to="/projects" className={navLinkClassName}>
               {t("nav.projects", { ns: "common" })}
             </NavLink>

@@ -21,13 +21,19 @@
   },
   "nav": {
     "dashboard": "Dashboard",
-    "projects": "Projects"
+    "projects": "Projects",
+    "myActivities": "My activities"
   },
   "activityStatus": {
     "PENDIENTE": "Pending",
     "EN_PROGRESO": "In progress",
     "COMPLETADA": "Completed",
     "CANCELADA": "Cancelled"
+  },
+  "evidenceStatus": {
+    "PENDIENTE": "Pending review",
+    "APROBADA": "Approved",
+    "RECHAZADA": "Rejected"
   },
   "loading": "Loading...",
   "errors": {
@@ -42,6 +48,12 @@
       "USER_NOT_FOUND": "User not found",
       "EMAIL_TAKEN": "A user with that email already exists",
       "PROJECT_NOT_FOUND": "Project not found",
+      "ACTIVITY_NOT_FOUND": "Activity not found",
+      "ACTIVITY_NOT_ASSIGNED": "You don't have this activity assigned",
+      "INVALID_STATUS_TRANSITION": "That status change isn't allowed",
+      "IMAGE_REQUIRED": "Select an image to upload",
+      "UNSUPPORTED_IMAGE_TYPE": "Unsupported image format (use JPEG, PNG or WEBP)",
+      "UPLOAD_ERROR": "Something went wrong uploading the file",
       "VALIDATION_ERROR": "Please check the submitted data",
       "INTERNAL_ERROR": "Server error, please try again later"
     }
