@@ -19,6 +19,10 @@
     "SUPERVISOR": "Supervisor",
     "TRABAJADOR_CAMPO": "Trabajador de campo"
   },
+  "nav": {
+    "dashboard": "Panel",
+    "projects": "Proyectos"
+  },
   "loading": "Cargando...",
   "errors": {
     "generic": "Ocurrió un error inesperado. Intenta de nuevo.",

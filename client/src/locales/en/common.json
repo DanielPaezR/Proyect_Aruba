@@ -19,6 +19,10 @@
     "SUPERVISOR": "Supervisor",
     "TRABAJADOR_CAMPO": "Field worker"
   },
+  "nav": {
+    "dashboard": "Dashboard",
+    "projects": "Projects"
+  },
   "loading": "Loading...",
   "errors": {
     "generic": "Something went wrong. Please try again.",

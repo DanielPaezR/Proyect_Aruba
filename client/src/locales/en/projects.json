@@ -1,0 +1,21 @@
+{
+  "title": "Projects",
+  "create": {
+    "button": "New project",
+    "formTitle": "New project",
+    "name": "Name",
+    "description": "Description",
+    "submit": "Create",
+    "submitting": "Creating..."
+  },
+  "empty": "No projects yet",
+  "activitiesCount_one": "{{count}} activity",
+  "activitiesCount_other": "{{count}} activities",
+  "status": {
+    "PLANIFICADO": "Planned",
+    "EN_PROGRESO": "In progress",
+    "PAUSADO": "Paused",
+    "COMPLETADO": "Completed",
+    "CANCELADO": "Cancelled"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "title": "Proyektonan",
+  "create": {
+    "button": "Krea proyekto",
+    "formTitle": "Proyekto nobo",
+    "name": "Nòmber",
+    "description": "Deskripshon",
+    "submit": "Krea",
+    "submitting": "Ta krea..."
+  },
+  "empty": "Ainda no tin proyekto",
+  "activitiesCount_one": "{{count}} aktividat",
+  "activitiesCount_other": "{{count}} aktividatnan",
+  "status": {
+    "PLANIFICADO": "Planiá",
+    "EN_PROGRESO": "Na progreso",
+    "PAUSADO": "Para",
+    "COMPLETADO": "Kompletá",
+    "CANCELADO": "Kanselá"
+  }
+}

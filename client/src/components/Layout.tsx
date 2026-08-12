@@ -1,7 +1,12 @@
-import { Outlet } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
+import { isManagerRole } from "../types/auth";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+
+function navLinkClassName({ isActive }: { isActive: boolean }) {
+  return isActive ? "active" : undefined;
+}
 
 export function Layout() {
   const { t } = useTranslation();
@@ -11,6 +16,18 @@ export function Layout() {
     <div className="app-shell">
       <header className="topbar">
         <span className="app-name">{t("app.name", { ns: "common" })}</span>
+        {user && (
+          <nav className="main-nav">
+            {isManagerRole(user.role) && (
+              <NavLink to="/dashboard" className={navLinkClassName}>
+                {t("nav.dashboard", { ns: "common" })}
+              </NavLink>
+            )}
+            <NavLink to="/projects" className={navLinkClassName}>
+              {t("nav.projects", { ns: "common" })}
+            </NavLink>
+          </nav>
+        )}
         <div className="topbar-actions">
           <LanguageSwitcher />
           {user && (

@@ -3,6 +3,7 @@ import { Layout } from "./components/Layout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
 import { LoginPage } from "./pages/LoginPage";
+import { ProjectsListPage } from "./pages/ProjectsListPage";
 import { SupervisorDashboardPage } from "./pages/SupervisorDashboardPage";
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
             <Route element={<ProtectedRoute />}>
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard" element={<SupervisorDashboardPage />} />
+              <Route path="/projects" element={<ProjectsListPage />} />
             </Route>
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

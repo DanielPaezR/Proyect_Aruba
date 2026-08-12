@@ -1,0 +1,21 @@
+{
+  "title": "Proyectos",
+  "create": {
+    "button": "Crear proyecto",
+    "formTitle": "Nuevo proyecto",
+    "name": "Nombre",
+    "description": "Descripción",
+    "submit": "Crear",
+    "submitting": "Creando..."
+  },
+  "empty": "Todavía no hay proyectos",
+  "activitiesCount_one": "{{count}} actividad",
+  "activitiesCount_other": "{{count}} actividades",
+  "status": {
+    "PLANIFICADO": "Planificado",
+    "EN_PROGRESO": "En progreso",
+    "PAUSADO": "Pausado",
+    "COMPLETADO": "Completado",
+    "CANCELADO": "Cancelado"
+  }
+}

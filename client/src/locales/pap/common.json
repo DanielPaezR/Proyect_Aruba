@@ -19,6 +19,10 @@
     "SUPERVISOR": "Supervisor",
     "TRABAJADOR_CAMPO": "Trahadó di kampo"
   },
+  "nav": {
+    "dashboard": "Panel",
+    "projects": "Proyektonan"
+  },
   "loading": "Ta karga...",
   "errors": {
     "generic": "A sosodé un eror inesperá. Purba di nobo.",
