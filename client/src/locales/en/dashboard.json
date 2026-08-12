@@ -1,0 +1,16 @@
+{
+  "supervisor": {
+    "title": "Supervisor dashboard",
+    "todayActivities": "Today's activities",
+    "pendingEvidences": "Evidence pending review",
+    "unassignedActivities": "Unassigned activities",
+    "empty": "No activities scheduled for today",
+    "noUnassigned": "Every activity has at least one worker assigned",
+    "status": {
+      "PENDIENTE": "Pending",
+      "EN_PROGRESO": "In progress",
+      "COMPLETADA": "Completed",
+      "CANCELADA": "Cancelled"
+    }
+  }
+}

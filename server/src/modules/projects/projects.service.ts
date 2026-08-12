@@ -1,6 +1,7 @@
 import { Role, type ProjectStatus } from "@prisma/client";
 import { prisma } from "../../config/prisma";
 import { ApiError } from "../../utils/ApiError";
+import { ErrorCode } from "../../utils/errorCodes";
 import type { CreateProjectInput, UpdateProjectInput } from "./projects.validators";
 
 type AuthUser = { id: string; role: Role };
@@ -40,7 +41,7 @@ export async function getProject(user: AuthUser, projectId: string) {
   });
 
   if (!project) {
-    throw ApiError.notFound("Proyecto no encontrado");
+    throw ApiError.notFound(ErrorCode.PROJECT_NOT_FOUND, "Proyecto no encontrado");
   }
 
   return project;
@@ -64,11 +65,12 @@ export async function deleteProject(projectId: string) {
   });
 
   if (!project) {
-    throw ApiError.notFound("Proyecto no encontrado");
+    throw ApiError.notFound(ErrorCode.PROJECT_NOT_FOUND, "Proyecto no encontrado");
   }
 
   if (project._count.activities > 0) {
     throw ApiError.conflict(
+      ErrorCode.PROJECT_HAS_ACTIVITIES,
       "No se puede eliminar un proyecto con actividades. Cambia su estado a CANCELADO en su lugar.",
     );
   }
@@ -79,6 +81,6 @@ export async function deleteProject(projectId: string) {
 async function ensureProjectExists(projectId: string) {
   const exists = await prisma.project.findUnique({ where: { id: projectId }, select: { id: true } });
   if (!exists) {
-    throw ApiError.notFound("Proyecto no encontrado");
+    throw ApiError.notFound(ErrorCode.PROJECT_NOT_FOUND, "Proyecto no encontrado");
   }
 }

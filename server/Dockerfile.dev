@@ -1,0 +1,20 @@
+FROM node:20
+
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+# "npm install" dispara "postinstall" -> "prisma generate", que necesita el
+# schema; se copia antes para que la instalacion no falle por no encontrarlo.
+COPY prisma ./prisma
+RUN npm install
+
+COPY . .
+
+EXPOSE 4000
+
+# docker-compose monta ./server como volumen para hot reload (ver
+# docker-compose.yml); node_modules queda excluido de ese montaje para no
+# pisar los binarios de Prisma compilados aqui (Linux) con los del host
+# (Windows). "prisma generate" se repite al arrancar por si el schema
+# cambio desde que se construyo la imagen.
+CMD ["sh", "-c", "npx prisma generate && npm run dev"]

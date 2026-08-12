@@ -1,0 +1,38 @@
+{
+  "app": {
+    "name": "Gestión Eléctrica"
+  },
+  "actions": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "retry": "Reintentar",
+    "logout": "Cerrar sesión"
+  },
+  "language": {
+    "label": "Idioma",
+    "es": "Español",
+    "en": "Inglés",
+    "pap": "Papiamento"
+  },
+  "roles": {
+    "JEFE": "Jefe",
+    "SUPERVISOR": "Supervisor",
+    "TRABAJADOR_CAMPO": "Trabajador de campo"
+  },
+  "loading": "Cargando...",
+  "errors": {
+    "generic": "Ocurrió un error inesperado. Intenta de nuevo.",
+    "api": {
+      "INVALID_CREDENTIALS": "Correo o contraseña incorrectos",
+      "MISSING_TOKEN": "Debes iniciar sesión para continuar",
+      "INVALID_TOKEN": "Tu sesión expiró, vuelve a iniciar sesión",
+      "UNAUTHENTICATED": "Debes iniciar sesión para continuar",
+      "INVALID_SESSION": "Tu sesión ya no es válida, vuelve a iniciar sesión",
+      "FORBIDDEN_ROLE": "No tienes permisos para ver esta sección",
+      "USER_NOT_FOUND": "Usuario no encontrado",
+      "EMAIL_TAKEN": "Ya existe un usuario con ese correo",
+      "VALIDATION_ERROR": "Revisa los datos ingresados",
+      "INTERNAL_ERROR": "Error del servidor, intenta más tarde"
+    }
+  }
+}

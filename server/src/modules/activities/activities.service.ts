@@ -1,6 +1,7 @@
 import { ActivityStatus, Role } from "@prisma/client";
 import { prisma } from "../../config/prisma";
 import { ApiError } from "../../utils/ApiError";
+import { ErrorCode } from "../../utils/errorCodes";
 import type { CreateActivityInput, UpdateActivityInput } from "./activities.validators";
 
 type AuthUser = { id: string; role: Role };
@@ -59,7 +60,7 @@ export async function getActivity(user: AuthUser, activityId: string) {
   });
 
   if (!activity) {
-    throw ApiError.notFound("Actividad no encontrada");
+    throw ApiError.notFound(ErrorCode.ACTIVITY_NOT_FOUND, "Actividad no encontrada");
   }
 
   return activity;
@@ -105,16 +106,19 @@ export async function updateActivityStatus(user: AuthUser, activityId: string, s
   });
 
   if (!activity) {
-    throw ApiError.notFound("Actividad no encontrada");
+    throw ApiError.notFound(ErrorCode.ACTIVITY_NOT_FOUND, "Actividad no encontrada");
   }
 
   if (user.role === Role.TRABAJADOR_CAMPO) {
     const isAssigned = activity.assignments.some((a) => a.userId === user.id);
     if (!isAssigned) {
-      throw ApiError.forbidden("No tienes esta actividad asignada");
+      throw ApiError.forbidden(ErrorCode.ACTIVITY_NOT_ASSIGNED, "No tienes esta actividad asignada");
     }
     if (!WORKER_ALLOWED_TRANSITIONS.includes(status)) {
-      throw ApiError.forbidden("Un trabajador de campo solo puede marcar En Progreso o Completada");
+      throw ApiError.forbidden(
+        ErrorCode.INVALID_STATUS_TRANSITION,
+        "Un trabajador de campo solo puede marcar En Progreso o Completada",
+      );
     }
   }
 
@@ -136,7 +140,7 @@ export async function assignWorker(activityId: string, userId: string) {
     where: { activityId_userId: { activityId, userId } },
   });
   if (existing) {
-    throw ApiError.conflict("El trabajador ya está asignado a esta actividad");
+    throw ApiError.conflict(ErrorCode.ALREADY_ASSIGNED, "El trabajador ya está asignado a esta actividad");
   }
 
   return prisma.activityAssignment.create({
@@ -150,7 +154,7 @@ export async function unassignWorker(activityId: string, userId: string) {
     where: { activityId_userId: { activityId, userId } },
   });
   if (!existing) {
-    throw ApiError.notFound("El trabajador no está asignado a esta actividad");
+    throw ApiError.notFound(ErrorCode.ASSIGNMENT_NOT_FOUND, "El trabajador no está asignado a esta actividad");
   }
   await prisma.activityAssignment.delete({ where: { id: existing.id } });
 }
@@ -158,24 +162,27 @@ export async function unassignWorker(activityId: string, userId: string) {
 async function ensureProjectExists(projectId: string) {
   const project = await prisma.project.findUnique({ where: { id: projectId }, select: { id: true } });
   if (!project) {
-    throw ApiError.notFound("Proyecto no encontrado");
+    throw ApiError.notFound(ErrorCode.PROJECT_NOT_FOUND, "Proyecto no encontrado");
   }
 }
 
 async function ensureActivityExists(activityId: string) {
   const activity = await prisma.activity.findUnique({ where: { id: activityId }, select: { id: true } });
   if (!activity) {
-    throw ApiError.notFound("Actividad no encontrada");
+    throw ApiError.notFound(ErrorCode.ACTIVITY_NOT_FOUND, "Actividad no encontrada");
   }
 }
 
 async function ensureUsersAreFieldWorkers(userIds: string[]) {
   const users = await prisma.user.findMany({ where: { id: { in: userIds } } });
   if (users.length !== userIds.length) {
-    throw ApiError.badRequest("Alguno de los usuarios a asignar no existe");
+    throw ApiError.badRequest(ErrorCode.USER_NOT_FOUND, "Alguno de los usuarios a asignar no existe");
   }
   const invalid = users.find((u) => u.role !== Role.TRABAJADOR_CAMPO);
   if (invalid) {
-    throw ApiError.badRequest(`El usuario ${invalid.name} no es un Trabajador de Campo`);
+    throw ApiError.badRequest(
+      ErrorCode.USER_NOT_FIELD_WORKER,
+      `El usuario ${invalid.name} no es un Trabajador de Campo`,
+    );
   }
 }

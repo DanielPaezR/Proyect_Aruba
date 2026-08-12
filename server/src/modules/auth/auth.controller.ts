@@ -1,8 +1,9 @@
 import type { Request, Response } from "express";
 import { ApiError } from "../../utils/ApiError";
+import { ErrorCode } from "../../utils/errorCodes";
 import { asyncHandler } from "../../utils/asyncHandler";
 import * as authService from "./auth.service";
-import { createUserSchema, loginSchema } from "./auth.validators";
+import { createUserSchema, loginSchema, updateLocaleSchema } from "./auth.validators";
 
 const REFRESH_COOKIE = "refreshToken";
 const REFRESH_COOKIE_OPTIONS = {
@@ -23,7 +24,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
 export const refresh = asyncHandler(async (req: Request, res: Response) => {
   const token = req.cookies?.[REFRESH_COOKIE];
   if (!token) {
-    throw ApiError.unauthorized("Falta el refresh token");
+    throw ApiError.unauthorized(ErrorCode.MISSING_TOKEN, "Falta el refresh token");
   }
 
   const { accessToken, refreshToken } = await authService.refresh(token);
@@ -49,4 +50,10 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
   const input = createUserSchema.parse(req.body);
   const user = await authService.createUser(input);
   res.status(201).json({ user });
+});
+
+export const updateLocale = asyncHandler(async (req: Request, res: Response) => {
+  const { locale } = updateLocaleSchema.parse(req.body);
+  const user = await authService.updateLocale(req.user!.id, locale);
+  res.json({ user });
 });

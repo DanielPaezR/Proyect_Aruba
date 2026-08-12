@@ -1,7 +1,9 @@
 import bcrypt from "bcryptjs";
+import type { Locale } from "@prisma/client";
 import { prisma } from "../../config/prisma";
 import { env } from "../../config/env";
 import { ApiError } from "../../utils/ApiError";
+import { ErrorCode } from "../../utils/errorCodes";
 import { generateRefreshToken, hashRefreshToken, signAccessToken } from "../../utils/jwt";
 import type { CreateUserInput, LoginInput } from "./auth.validators";
 
@@ -12,6 +14,7 @@ const PUBLIC_USER_FIELDS = {
   role: true,
   phone: true,
   isActive: true,
+  locale: true,
   createdAt: true,
 } as const;
 
@@ -40,12 +43,12 @@ export async function login(input: LoginInput) {
   const user = await prisma.user.findUnique({ where: { email: input.email } });
 
   if (!user || !user.isActive) {
-    throw ApiError.unauthorized("Credenciales inválidas");
+    throw ApiError.unauthorized(ErrorCode.INVALID_CREDENTIALS, "Credenciales inválidas");
   }
 
   const passwordMatches = await bcrypt.compare(input.password, user.passwordHash);
   if (!passwordMatches) {
-    throw ApiError.unauthorized("Credenciales inválidas");
+    throw ApiError.unauthorized(ErrorCode.INVALID_CREDENTIALS, "Credenciales inválidas");
   }
 
   const tokens = await issueTokenPair(user);
@@ -58,6 +61,7 @@ export async function login(input: LoginInput) {
       role: user.role,
       phone: user.phone,
       isActive: user.isActive,
+      locale: user.locale,
       createdAt: user.createdAt,
     },
     ...tokens,
@@ -72,7 +76,7 @@ export async function refresh(refreshTokenRaw: string) {
   });
 
   if (!stored || stored.revokedAt || stored.expiresAt < new Date() || !stored.user.isActive) {
-    throw ApiError.unauthorized("Sesión inválida, vuelva a iniciar sesión");
+    throw ApiError.unauthorized(ErrorCode.INVALID_SESSION, "Sesión inválida, vuelva a iniciar sesión");
   }
 
   // Rotación: se revoca el token usado y se emite un par nuevo.
@@ -99,7 +103,7 @@ export async function getCurrentUser(userId: string) {
   });
 
   if (!user) {
-    throw ApiError.notFound("Usuario no encontrado");
+    throw ApiError.notFound(ErrorCode.USER_NOT_FOUND, "Usuario no encontrado");
   }
 
   return user;
@@ -109,7 +113,7 @@ export async function getCurrentUser(userId: string) {
 export async function createUser(input: CreateUserInput) {
   const existing = await prisma.user.findUnique({ where: { email: input.email } });
   if (existing) {
-    throw ApiError.conflict("Ya existe un usuario con ese correo");
+    throw ApiError.conflict(ErrorCode.EMAIL_TAKEN, "Ya existe un usuario con ese correo");
   }
 
   const passwordHash = await bcrypt.hash(input.password, 12);
@@ -126,4 +130,12 @@ export async function createUser(input: CreateUserInput) {
   });
 
   return user;
+}
+
+export async function updateLocale(userId: string, locale: Locale) {
+  return prisma.user.update({
+    where: { id: userId },
+    data: { locale },
+    select: PUBLIC_USER_FIELDS,
+  });
 }

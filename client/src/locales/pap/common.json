@@ -1,0 +1,38 @@
+{
+  "app": {
+    "name": "Gerensia Elektriko"
+  },
+  "actions": {
+    "save": "Warda",
+    "cancel": "Kanselá",
+    "retry": "Purba di nobo",
+    "logout": "Sali"
+  },
+  "language": {
+    "label": "Idioma",
+    "es": "Spañó",
+    "en": "Ingles",
+    "pap": "Papiamento"
+  },
+  "roles": {
+    "JEFE": "Hefe",
+    "SUPERVISOR": "Supervisor",
+    "TRABAJADOR_CAMPO": "Trahadó di kampo"
+  },
+  "loading": "Ta karga...",
+  "errors": {
+    "generic": "A sosodé un eror inesperá. Purba di nobo.",
+    "api": {
+      "INVALID_CREDENTIALS": "Email òf password inkorekto",
+      "MISSING_TOKEN": "Mester drenta sesion pa sigui",
+      "INVALID_TOKEN": "Bo sesion a kaduka, drenta bèk",
+      "UNAUTHENTICATED": "Mester drenta sesion pa sigui",
+      "INVALID_SESSION": "Bo sesion no ta válido mas, drenta bèk",
+      "FORBIDDEN_ROLE": "Bo no tin permiso pa mira e sekshon aki",
+      "USER_NOT_FOUND": "No a haña e usuario",
+      "EMAIL_TAKEN": "Ya tin un usuario ku e email ei",
+      "VALIDATION_ERROR": "Verifiká e datonan ku bo a hisa",
+      "INTERNAL_ERROR": "Eror di server, purba mas lat"
+    }
+  }
+}

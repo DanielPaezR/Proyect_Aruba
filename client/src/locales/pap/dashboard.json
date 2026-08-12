@@ -1,0 +1,16 @@
+{
+  "supervisor": {
+    "title": "Panel di supervisor",
+    "todayActivities": "Aktividatnan di awe",
+    "pendingEvidences": "Evidensianan pendiente pa revizá",
+    "unassignedActivities": "Aktividatnan sin asigná",
+    "empty": "No tin aktividat programá pa awe",
+    "noUnassigned": "Tur aktividat tin por lo menos un trahadó asigná",
+    "status": {
+      "PENDIENTE": "Pendiente",
+      "EN_PROGRESO": "Na progreso",
+      "COMPLETADA": "Kompletá",
+      "CANCELADA": "Kanselá"
+    }
+  }
+}

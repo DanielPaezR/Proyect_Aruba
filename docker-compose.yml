@@ -1,0 +1,41 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: proyecto_daniel_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app_password
+      POSTGRES_DB: app_dev
+    ports:
+      # Host 5433 -> contenedor 5432. En 5432 esta maquina ya tiene Postgres
+      # nativos (v17/v18) corriendo como servicio de Windows; para no chocar
+      # con ellos el contenedor se expone en 5433.
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d app_dev"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile.dev
+    container_name: proyecto_daniel_server
+    restart: unless-stopped
+    env_file:
+      - ./server/.env.docker
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

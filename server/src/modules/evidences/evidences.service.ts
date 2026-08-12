@@ -2,6 +2,7 @@ import { EvidenceStatus, Role } from "@prisma/client";
 import { prisma } from "../../config/prisma";
 import { deleteEvidenceFile, evidenceFileUrl } from "../../config/storage";
 import { ApiError } from "../../utils/ApiError";
+import { ErrorCode } from "../../utils/errorCodes";
 
 type AuthUser = { id: string; role: Role };
 
@@ -17,13 +18,13 @@ async function ensureActivityAccess(user: AuthUser, activityId: string) {
   });
 
   if (!activity) {
-    throw ApiError.notFound("Actividad no encontrada");
+    throw ApiError.notFound(ErrorCode.ACTIVITY_NOT_FOUND, "Actividad no encontrada");
   }
 
   if (user.role === Role.TRABAJADOR_CAMPO) {
     const isAssigned = activity.assignments.some((a) => a.userId === user.id);
     if (!isAssigned) {
-      throw ApiError.forbidden("No tienes esta actividad asignada");
+      throw ApiError.forbidden(ErrorCode.ACTIVITY_NOT_ASSIGNED, "No tienes esta actividad asignada");
     }
   }
 
@@ -89,7 +90,7 @@ export async function reviewEvidence(
 ) {
   const evidence = await prisma.evidence.findUnique({ where: { id: evidenceId } });
   if (!evidence) {
-    throw ApiError.notFound("Evidencia no encontrada");
+    throw ApiError.notFound(ErrorCode.EVIDENCE_NOT_FOUND, "Evidencia no encontrada");
   }
 
   return prisma.evidence.update({
@@ -108,12 +109,12 @@ export async function reviewEvidence(
 export async function deleteEvidence(user: AuthUser, evidenceId: string) {
   const evidence = await prisma.evidence.findUnique({ where: { id: evidenceId } });
   if (!evidence) {
-    throw ApiError.notFound("Evidencia no encontrada");
+    throw ApiError.notFound(ErrorCode.EVIDENCE_NOT_FOUND, "Evidencia no encontrada");
   }
 
   const isOwnPending = evidence.uploadedById === user.id && evidence.status === EvidenceStatus.PENDIENTE;
   if (user.role !== Role.JEFE && !isOwnPending) {
-    throw ApiError.forbidden("No puedes eliminar esta evidencia");
+    throw ApiError.forbidden(ErrorCode.EVIDENCE_DELETE_FORBIDDEN, "No puedes eliminar esta evidencia");
   }
 
   await prisma.evidence.delete({ where: { id: evidenceId } });

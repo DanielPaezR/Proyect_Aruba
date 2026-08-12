@@ -4,29 +4,57 @@ import { PrismaClient, Role } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-async function main() {
-  const email = process.env.SEED_JEFE_EMAIL ?? "jefe@empresa.com";
-  const password = process.env.SEED_JEFE_PASSWORD ?? "CambiarEsta123!";
+interface SeedUser {
+  name: string;
+  role: Role;
+  email: string;
+  password: string;
+}
 
-  const existing = await prisma.user.findUnique({ where: { email } });
-  if (existing) {
-    console.log(`El usuario Jefe ya existe (${email}), no se crea de nuevo.`);
-    return;
+const SEED_USERS: SeedUser[] = [
+  {
+    name: "Administrador",
+    role: Role.JEFE,
+    email: process.env.SEED_JEFE_EMAIL ?? "jefe@empresa.com",
+    password: process.env.SEED_JEFE_PASSWORD ?? "CambiarEsta123!",
+  },
+  {
+    name: "Supervisor de Prueba",
+    role: Role.SUPERVISOR,
+    email: process.env.SEED_SUPERVISOR_EMAIL ?? "supervisor@empresa.com",
+    password: process.env.SEED_SUPERVISOR_PASSWORD ?? "CambiarEsta123!",
+  },
+  {
+    name: "Trabajador de Prueba",
+    role: Role.TRABAJADOR_CAMPO,
+    email: process.env.SEED_WORKER_EMAIL ?? "trabajador@empresa.com",
+    password: process.env.SEED_WORKER_PASSWORD ?? "CambiarEsta123!",
+  },
+];
+
+async function main() {
+  for (const user of SEED_USERS) {
+    const existing = await prisma.user.findUnique({ where: { email: user.email } });
+    if (existing) {
+      console.log(`El usuario ${user.role} ya existe (${user.email}), no se crea de nuevo.`);
+      continue;
+    }
+
+    const passwordHash = await bcrypt.hash(user.password, 12);
+
+    await prisma.user.create({
+      data: {
+        name: user.name,
+        email: user.email,
+        passwordHash,
+        role: user.role,
+      },
+    });
+
+    console.log(`Usuario ${user.role} creado: ${user.email} / ${user.password}`);
   }
 
-  const passwordHash = await bcrypt.hash(password, 12);
-
-  await prisma.user.create({
-    data: {
-      name: "Administrador",
-      email,
-      passwordHash,
-      role: Role.JEFE,
-    },
-  });
-
-  console.log(`Usuario Jefe creado: ${email} / ${password}`);
-  console.log("Cambia esta contraseña después del primer inicio de sesión.");
+  console.log("Cambia estas contraseñas después del primer inicio de sesión.");
 }
 
 main()

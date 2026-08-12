@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import { ApiError } from "../../utils/ApiError";
+import { ErrorCode } from "../../utils/errorCodes";
 import { asyncHandler } from "../../utils/asyncHandler";
 import * as evidencesService from "./evidences.service";
 import { listEvidencesQuerySchema, reviewEvidenceSchema, uploadEvidenceSchema } from "./evidences.validators";
@@ -17,7 +18,7 @@ export const list = asyncHandler(async (req: Request, res: Response) => {
 
 export const upload = asyncHandler(async (req: Request, res: Response) => {
   if (!req.file) {
-    throw ApiError.badRequest("Falta la imagen (campo 'image')");
+    throw ApiError.badRequest(ErrorCode.IMAGE_REQUIRED, "Falta la imagen (campo 'image')");
   }
 
   const { description } = uploadEvidenceSchema.parse(req.body);

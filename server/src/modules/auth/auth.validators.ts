@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Role } from "@prisma/client";
+import { Locale, Role } from "@prisma/client";
 
 export const loginSchema = z.object({
   email: z.string().email(),
@@ -14,5 +14,10 @@ export const createUserSchema = z.object({
   phone: z.string().optional(),
 });
 
+export const updateLocaleSchema = z.object({
+  locale: z.nativeEnum(Locale),
+});
+
 export type LoginInput = z.infer<typeof loginSchema>;
 export type CreateUserInput = z.infer<typeof createUserSchema>;
+export type UpdateLocaleInput = z.infer<typeof updateLocaleSchema>;

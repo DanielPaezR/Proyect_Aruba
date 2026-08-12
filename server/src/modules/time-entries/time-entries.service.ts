@@ -1,6 +1,7 @@
 import { PunchType, Role } from "@prisma/client";
 import { prisma } from "../../config/prisma";
 import { ApiError } from "../../utils/ApiError";
+import { ErrorCode } from "../../utils/errorCodes";
 import type { CreateTimeEntryInput } from "./time-entries.validators";
 
 type AuthUser = { id: string; role: Role };
@@ -29,13 +30,13 @@ async function ensureActivityAccessible(user: AuthUser, activityId: string) {
   });
 
   if (!activity) {
-    throw ApiError.notFound("Actividad no encontrada");
+    throw ApiError.notFound(ErrorCode.ACTIVITY_NOT_FOUND, "Actividad no encontrada");
   }
 
   if (user.role === Role.TRABAJADOR_CAMPO) {
     const isAssigned = activity.assignments.some((a) => a.userId === user.id);
     if (!isAssigned) {
-      throw ApiError.forbidden("No tienes esta actividad asignada");
+      throw ApiError.forbidden(ErrorCode.ACTIVITY_NOT_ASSIGNED, "No tienes esta actividad asignada");
     }
   }
 }
@@ -51,11 +52,11 @@ export async function createTimeEntry(user: AuthUser, input: CreateTimeEntryInpu
   });
 
   if (input.type === PunchType.ENTRADA && lastEntry?.type === PunchType.ENTRADA) {
-    throw ApiError.conflict("Ya tienes una entrada registrada sin una salida previa");
+    throw ApiError.conflict(ErrorCode.OPEN_ENTRY_EXISTS, "Ya tienes una entrada registrada sin una salida previa");
   }
 
   if (input.type === PunchType.SALIDA && (!lastEntry || lastEntry.type === PunchType.SALIDA)) {
-    throw ApiError.conflict("No tienes una entrada abierta para registrar una salida");
+    throw ApiError.conflict(ErrorCode.NO_OPEN_ENTRY, "No tienes una entrada abierta para registrar una salida");
   }
 
   return prisma.timeEntry.create({

@@ -44,6 +44,12 @@ enum PunchType {
   SALIDA
 }
 
+enum Locale {
+  ES
+  EN
+  PAP
+}
+
 // ---------- Modelos ----------
 
 model User {
@@ -54,6 +60,7 @@ model User {
   role         Role
   phone        String?
   isActive     Boolean @default(true)
+  locale       Locale  @default(ES)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

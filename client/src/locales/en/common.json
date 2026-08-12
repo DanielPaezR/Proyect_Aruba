@@ -1,0 +1,38 @@
+{
+  "app": {
+    "name": "Electric Management"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "retry": "Retry",
+    "logout": "Log out"
+  },
+  "language": {
+    "label": "Language",
+    "es": "Spanish",
+    "en": "English",
+    "pap": "Papiamento"
+  },
+  "roles": {
+    "JEFE": "Manager",
+    "SUPERVISOR": "Supervisor",
+    "TRABAJADOR_CAMPO": "Field worker"
+  },
+  "loading": "Loading...",
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "api": {
+      "INVALID_CREDENTIALS": "Incorrect email or password",
+      "MISSING_TOKEN": "Please log in to continue",
+      "INVALID_TOKEN": "Your session expired, please log in again",
+      "UNAUTHENTICATED": "Please log in to continue",
+      "INVALID_SESSION": "Your session is no longer valid, please log in again",
+      "FORBIDDEN_ROLE": "You don't have permission to view this section",
+      "USER_NOT_FOUND": "User not found",
+      "EMAIL_TAKEN": "A user with that email already exists",
+      "VALIDATION_ERROR": "Please check the submitted data",
+      "INTERNAL_ERROR": "Server error, please try again later"
+    }
+  }
+}

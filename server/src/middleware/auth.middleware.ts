@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import type { Role } from "@prisma/client";
 import { ApiError } from "../utils/ApiError";
+import { ErrorCode } from "../utils/errorCodes";
 import { verifyAccessToken } from "../utils/jwt";
 
 declare global {
@@ -20,7 +21,7 @@ export function authenticate(req: Request, _res: Response, next: NextFunction) {
   const header = req.headers.authorization;
 
   if (!header?.startsWith("Bearer ")) {
-    throw ApiError.unauthorized("Falta el token de autenticación");
+    throw ApiError.unauthorized(ErrorCode.MISSING_TOKEN, "Falta el token de autenticación");
   }
 
   const token = header.slice("Bearer ".length);
@@ -30,7 +31,7 @@ export function authenticate(req: Request, _res: Response, next: NextFunction) {
     req.user = { id: payload.sub, role: payload.role };
     next();
   } catch {
-    throw ApiError.unauthorized("Token inválido o expirado");
+    throw ApiError.unauthorized(ErrorCode.INVALID_TOKEN, "Token inválido o expirado");
   }
 }
 
