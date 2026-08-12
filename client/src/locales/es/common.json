@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "Gestión Eléctrica"
+    "name": "Decs"
   },
   "actions": {
     "save": "Guardar",
@@ -23,6 +23,12 @@
     "dashboard": "Panel",
     "projects": "Proyectos"
   },
+  "activityStatus": {
+    "PENDIENTE": "Pendiente",
+    "EN_PROGRESO": "En progreso",
+    "COMPLETADA": "Completada",
+    "CANCELADA": "Cancelada"
+  },
   "loading": "Cargando...",
   "errors": {
     "generic": "Ocurrió un error inesperado. Intenta de nuevo.",
@@ -35,6 +41,7 @@
       "FORBIDDEN_ROLE": "No tienes permisos para ver esta sección",
       "USER_NOT_FOUND": "Usuario no encontrado",
       "EMAIL_TAKEN": "Ya existe un usuario con ese correo",
+      "PROJECT_NOT_FOUND": "Proyecto no encontrado",
       "VALIDATION_ERROR": "Revisa los datos ingresados",
       "INTERNAL_ERROR": "Error del servidor, intenta más tarde"
     }

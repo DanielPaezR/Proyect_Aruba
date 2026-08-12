@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "Electric Management"
+    "name": "Decs"
   },
   "actions": {
     "save": "Save",
@@ -23,6 +23,12 @@
     "dashboard": "Dashboard",
     "projects": "Projects"
   },
+  "activityStatus": {
+    "PENDIENTE": "Pending",
+    "EN_PROGRESO": "In progress",
+    "COMPLETADA": "Completed",
+    "CANCELADA": "Cancelled"
+  },
   "loading": "Loading...",
   "errors": {
     "generic": "Something went wrong. Please try again.",
@@ -35,6 +41,7 @@
       "FORBIDDEN_ROLE": "You don't have permission to view this section",
       "USER_NOT_FOUND": "User not found",
       "EMAIL_TAKEN": "A user with that email already exists",
+      "PROJECT_NOT_FOUND": "Project not found",
       "VALIDATION_ERROR": "Please check the submitted data",
       "INTERNAL_ERROR": "Server error, please try again later"
     }

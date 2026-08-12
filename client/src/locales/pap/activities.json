@@ -1,0 +1,14 @@
+{
+  "listTitle": "Aktividatnan",
+  "createButton": "Aktividat nobo",
+  "createFormTitle": "Aktividat nobo",
+  "titleLabel": "Título",
+  "descriptionLabel": "Deskripshon",
+  "submit": "Krea",
+  "submitting": "Ta krea...",
+  "empty": "Ainda no tin aktividat den e proyekto aki",
+  "assignedTo": "Asigná na",
+  "unassigned": "Sin asigná",
+  "evidencesCount_one": "{{count}} evidensia",
+  "evidencesCount_other": "{{count}} evidensianan"
+}

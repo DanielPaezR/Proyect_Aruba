@@ -1,0 +1,14 @@
+{
+  "listTitle": "Activities",
+  "createButton": "New activity",
+  "createFormTitle": "New activity",
+  "titleLabel": "Title",
+  "descriptionLabel": "Description",
+  "submit": "Create",
+  "submitting": "Creating...",
+  "empty": "No activities in this project yet",
+  "assignedTo": "Assigned to",
+  "unassigned": "Unassigned",
+  "evidencesCount_one": "{{count}} evidence item",
+  "evidencesCount_other": "{{count}} evidence items"
+}

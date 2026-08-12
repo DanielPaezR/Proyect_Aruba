@@ -5,12 +5,6 @@
     "pendingEvidences": "Evidencias pendientes de revisión",
     "unassignedActivities": "Actividades sin asignar",
     "empty": "No hay actividades programadas para hoy",
-    "noUnassigned": "Todas las actividades tienen al menos un trabajador asignado",
-    "status": {
-      "PENDIENTE": "Pendiente",
-      "EN_PROGRESO": "En progreso",
-      "COMPLETADA": "Completada",
-      "CANCELADA": "Cancelada"
-    }
+    "noUnassigned": "Todas las actividades tienen al menos un trabajador asignado"
   }
 }

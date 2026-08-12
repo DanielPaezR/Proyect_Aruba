@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { useAuth } from "../context/AuthContext";
+import { translateStatus } from "../i18n/statusLabel";
 import { isManagerRole } from "../types/auth";
 import type { Project } from "../types/project";
 
@@ -114,17 +116,19 @@ export function ProjectsListPage() {
         (projects.length === 0 ? (
           <p>{t("empty", { ns: "projects" })}</p>
         ) : (
-          <ul className="projects-list">
+          <ul className="card-list">
             {projects.map((project) => (
-              <li key={project.id} className="project-card">
-                <div className="project-card-main">
-                  <span className="project-name">{project.name}</span>
-                  <span className="status-badge">{t(`status.${project.status}`, { ns: "projects" })}</span>
-                </div>
-                {project.description && <p className="project-description">{project.description}</p>}
-                <span className="project-meta">
-                  {t("activitiesCount", { ns: "projects", count: project._count?.activities ?? 0 })}
-                </span>
+              <li key={project.id} className="card">
+                <Link to={`/projects/${project.id}`} className="card-link">
+                  <div className="card-header">
+                    <span className="card-title">{project.name}</span>
+                    <span className="status-badge">{translateStatus(t, "projects", "status", project.status)}</span>
+                  </div>
+                  {project.description && <p className="card-description">{project.description}</p>}
+                  <span className="card-meta">
+                    {t("activitiesCount", { ns: "projects", count: project._count?.activities ?? 0 })}
+                  </span>
+                </Link>
               </li>
             ))}
           </ul>

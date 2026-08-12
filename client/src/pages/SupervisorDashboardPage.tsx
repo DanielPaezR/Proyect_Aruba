@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
+import { translateStatus } from "../i18n/statusLabel";
 
 interface ActivitySummary {
   id: string;
@@ -85,7 +86,7 @@ export function SupervisorDashboardPage() {
           <div className="status-columns">
             {STATUS_ORDER.map((status) => (
               <div key={status} className="status-column">
-                <h3>{t(`supervisor.status.${status}`, { ns: "dashboard" })}</h3>
+                <h3>{translateStatus(t, "common", "activityStatus", status)}</h3>
                 <ul>
                   {(data.activitiesToday.byStatus[status] ?? []).map((activity) => (
                     <li key={activity.id}>
