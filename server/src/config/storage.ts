@@ -5,10 +5,11 @@ import { ApiError } from "../utils/ApiError";
 import { ErrorCode } from "../utils/errorCodes";
 
 /**
- * Evidencias fotograficas: se suben a Cloudinary, nunca a disco local. Mismo
- * flujo en desarrollo y produccion — sin branch "si es local, disco; si es
- * prod, Cloudinary" — para que ambos entornos se comporten igual. Ver README
- * → "Evidencias fotograficas" para el detalle de por que (filesystem efimero
+ * Imagenes (evidencias fotograficas, imagenes de referencia de actividades,
+ * etc.): se suben a Cloudinary, nunca a disco local. Mismo flujo en
+ * desarrollo y produccion — sin branch "si es local, disco; si es prod,
+ * Cloudinary" — para que ambos entornos se comporten igual. Ver README →
+ * "Evidencias fotograficas" para el detalle de por que (filesystem efimero
  * en Railway).
  */
 cloudinary.config({
@@ -17,11 +18,15 @@ cloudinary.config({
   api_secret: env.cloudinaryApiSecret,
 });
 
-const EVIDENCES_FOLDER = "decs/evidences";
+export const EVIDENCES_FOLDER = "decs/evidences";
+export const ACTIVITY_REFERENCE_IMAGES_FOLDER = "decs/activities";
 
 const ALLOWED_MIME_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
-export const evidenceUpload = multer({
+/** Generico: cualquier campo de imagen (evidencias, imagen de referencia de
+ * actividad, etc.) pasa por el mismo multer — memoryStorage, mismo limite y
+ * mismos tipos permitidos. */
+export const imageUpload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 8 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
@@ -39,23 +44,25 @@ export const evidenceUpload = multer({
   },
 });
 
-export interface UploadedEvidenceImage {
+export interface UploadedImage {
   url: string;
   publicId: string;
 }
 
 /**
- * Sube un buffer (nunca toca disco) a Cloudinary. "publicId" fijo es solo
- * para el seed (idempotente: volver a correrlo pisa el mismo asset en vez de
- * duplicarlo); las subidas reales de usuarios usan un public_id autogenerado.
+ * Sube un buffer (nunca toca disco) a Cloudinary. "folder" separa evidencias
+ * de imagenes de referencia de actividades (u otro tipo que se agregue mas
+ * adelante) dentro de la misma cuenta. "publicId" fijo es solo para el seed
+ * (idempotente: volver a correrlo pisa el mismo asset en vez de duplicarlo);
+ * las subidas reales de usuarios usan un public_id autogenerado.
  */
-export function uploadEvidenceImage(buffer: Buffer, options?: { publicId?: string }): Promise<UploadedEvidenceImage> {
+export function uploadImage(buffer: Buffer, options: { folder: string; publicId?: string }): Promise<UploadedImage> {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       {
-        folder: EVIDENCES_FOLDER,
+        folder: options.folder,
         resource_type: "image",
-        ...(options?.publicId ? { public_id: options.publicId, overwrite: true } : {}),
+        ...(options.publicId ? { public_id: options.publicId, overwrite: true } : {}),
       },
       (error?: UploadApiErrorResponse, result?: UploadApiResponse) => {
         if (error || !result) {
@@ -69,7 +76,7 @@ export function uploadEvidenceImage(buffer: Buffer, options?: { publicId?: strin
   });
 }
 
-export async function deleteEvidenceImage(publicId: string): Promise<void> {
+export async function deleteImage(publicId: string): Promise<void> {
   // invalidate: true - sin esto, destroy() borra el asset de Cloudinary pero
   // el cache del CDN puede seguir sirviendo la imagen vieja por un rato.
   await cloudinary.uploader.destroy(publicId, { invalidate: true });

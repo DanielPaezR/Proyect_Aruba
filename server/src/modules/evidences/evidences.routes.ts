@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { Role } from "@prisma/client";
 import { authenticate, authorize } from "../../middleware/auth.middleware";
-import { evidenceUpload } from "../../config/storage";
+import { imageUpload } from "../../config/storage";
 import * as evidencesController from "./evidences.controller";
 
 const MANAGERS = [Role.JEFE, Role.SUPERVISOR];
@@ -11,7 +11,7 @@ export const activityEvidencesRouter = Router({ mergeParams: true });
 
 activityEvidencesRouter.use(authenticate);
 activityEvidencesRouter.get("/", evidencesController.listForActivity);
-activityEvidencesRouter.post("/", evidenceUpload.single("image"), evidencesController.upload);
+activityEvidencesRouter.post("/", imageUpload.single("image"), evidencesController.upload);
 
 /** Se monta en /api/evidences */
 export const evidencesRouter = Router();

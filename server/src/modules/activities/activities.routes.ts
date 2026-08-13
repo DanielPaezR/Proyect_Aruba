@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { Role } from "@prisma/client";
 import { authenticate, authorize } from "../../middleware/auth.middleware";
+import { imageUpload } from "../../config/storage";
 import { activityEvidencesRouter } from "../evidences/evidences.routes";
 import * as activitiesController from "./activities.controller";
 
@@ -11,7 +12,12 @@ export const projectActivitiesRouter = Router({ mergeParams: true });
 
 projectActivitiesRouter.use(authenticate);
 projectActivitiesRouter.get("/", activitiesController.listForProject);
-projectActivitiesRouter.post("/", authorize(...MANAGERS), activitiesController.create);
+projectActivitiesRouter.post(
+  "/",
+  authorize(...MANAGERS),
+  imageUpload.single("referenceImage"),
+  activitiesController.create,
+);
 
 /** Se monta en /api/activities */
 export const activitiesRouter = Router();
@@ -19,7 +25,12 @@ export const activitiesRouter = Router();
 activitiesRouter.use(authenticate);
 activitiesRouter.get("/mine", activitiesController.listMine);
 activitiesRouter.get("/:activityId", activitiesController.getOne);
-activitiesRouter.patch("/:activityId", authorize(...MANAGERS), activitiesController.update);
+activitiesRouter.patch(
+  "/:activityId",
+  authorize(...MANAGERS),
+  imageUpload.single("referenceImage"),
+  activitiesController.update,
+);
 activitiesRouter.delete("/:activityId", authorize(...MANAGERS), activitiesController.remove);
 
 // Cambio de estado: permitido a Jefe/Supervisor siempre, y al trabajador

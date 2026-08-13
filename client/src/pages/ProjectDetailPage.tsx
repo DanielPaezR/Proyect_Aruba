@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { FormEvent } from "react";
+import type { ChangeEvent, FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
@@ -21,6 +21,7 @@ export function ProjectDetailPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [referenceImage, setReferenceImage] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -50,6 +51,10 @@ export function ProjectDetailPage() {
 
   const canManage = isManagerRole(user.role);
 
+  function handleReferenceImageChange(event: ChangeEvent<HTMLInputElement>) {
+    setReferenceImage(event.target.files?.[0] ?? null);
+  }
+
   async function handleCreateActivity(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!projectId) {
@@ -58,12 +63,18 @@ export function ProjectDetailPage() {
     setFormError(null);
     setIsSubmitting(true);
     try {
-      await apiClient.post(`/projects/${projectId}/activities`, {
-        title,
-        description: description || undefined,
-      });
+      const formData = new FormData();
+      formData.append("title", title);
+      if (description) {
+        formData.append("description", description);
+      }
+      if (referenceImage) {
+        formData.append("referenceImage", referenceImage);
+      }
+      await apiClient.post(`/projects/${projectId}/activities`, formData);
       setTitle("");
       setDescription("");
+      setReferenceImage(null);
       setIsFormOpen(false);
       await loadProject(projectId);
     } catch (error) {
@@ -199,6 +210,10 @@ export function ProjectDetailPage() {
                 {t("descriptionLabel", { ns: "activities" })}
                 <textarea value={description} onChange={(event) => setDescription(event.target.value)} />
               </label>
+              <label>
+                {t("referenceImageLabel", { ns: "activities" })}
+                <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleReferenceImageChange} />
+              </label>
               {formError && (
                 <p className="form-error" role="alert">
                   {formError}
@@ -230,6 +245,15 @@ export function ProjectDetailPage() {
                     </span>
                   </div>
                   {activity.description && <p className="card-description">{activity.description}</p>}
+                  {activity.referenceImageUrl && (
+                    <a href={activity.referenceImageUrl} target="_blank" rel="noreferrer">
+                      <img
+                        src={activity.referenceImageUrl}
+                        alt={t("referenceImageAlt", { ns: "activities" })}
+                        className="evidence-thumb"
+                      />
+                    </a>
+                  )}
                   <span className="card-meta">
                     {activity.assignments.length === 0
                       ? t("unassigned", { ns: "activities" })

@@ -1,5 +1,6 @@
 import { ActivityStatus, Role } from "@prisma/client";
 import { prisma } from "../../config/prisma";
+import { ACTIVITY_REFERENCE_IMAGES_FOLDER, deleteImage, uploadImage } from "../../config/storage";
 import { ApiError } from "../../utils/ApiError";
 import { ErrorCode } from "../../utils/errorCodes";
 import type { CreateActivityInput, UpdateActivityInput } from "./activities.validators";
@@ -66,11 +67,23 @@ export async function getActivity(user: AuthUser, activityId: string) {
   return activity;
 }
 
-export async function createActivity(projectId: string, input: CreateActivityInput) {
+export async function createActivity(
+  projectId: string,
+  input: CreateActivityInput,
+  referenceImage?: Express.Multer.File,
+) {
   await ensureProjectExists(projectId);
 
   if (input.assignedUserIds?.length) {
     await ensureUsersAreFieldWorkers(input.assignedUserIds);
+  }
+
+  let referenceImageUrl: string | undefined;
+  let referenceImagePublicId: string | undefined;
+  if (referenceImage) {
+    const uploaded = await uploadImage(referenceImage.buffer, { folder: ACTIVITY_REFERENCE_IMAGES_FOLDER });
+    referenceImageUrl = uploaded.url;
+    referenceImagePublicId = uploaded.publicId;
   }
 
   return prisma.activity.create({
@@ -79,6 +92,8 @@ export async function createActivity(projectId: string, input: CreateActivityInp
       title: input.title,
       description: input.description,
       scheduledDate: input.scheduledDate,
+      referenceImageUrl,
+      referenceImagePublicId,
       assignments: input.assignedUserIds?.length
         ? { create: input.assignedUserIds.map((userId) => ({ userId })) }
         : undefined,
@@ -87,9 +102,41 @@ export async function createActivity(projectId: string, input: CreateActivityInp
   });
 }
 
-export async function updateActivity(activityId: string, input: UpdateActivityInput) {
-  await ensureActivityExists(activityId);
-  return prisma.activity.update({ where: { id: activityId }, data: input, include: activityInclude });
+export async function updateActivity(
+  activityId: string,
+  input: UpdateActivityInput,
+  referenceImage?: Express.Multer.File,
+) {
+  const existing = await prisma.activity.findUnique({ where: { id: activityId } });
+  if (!existing) {
+    throw ApiError.notFound(ErrorCode.ACTIVITY_NOT_FOUND, "Actividad no encontrada");
+  }
+
+  let imageFields: { referenceImageUrl?: string; referenceImagePublicId?: string } = {};
+  if (referenceImage) {
+    const uploaded = await uploadImage(referenceImage.buffer, { folder: ACTIVITY_REFERENCE_IMAGES_FOLDER });
+    imageFields = { referenceImageUrl: uploaded.url, referenceImagePublicId: uploaded.publicId };
+
+    if (existing.referenceImagePublicId) {
+      // Best-effort, mismo patron que evidences.service.ts: la fila ya se va
+      // a actualizar igual, un fallo limpiando la imagen vieja de Cloudinary
+      // no debe tumbar la respuesta.
+      try {
+        await deleteImage(existing.referenceImagePublicId);
+      } catch (error) {
+        console.error(
+          `No se pudo borrar la imagen de referencia anterior (public_id ${existing.referenceImagePublicId}):`,
+          error,
+        );
+      }
+    }
+  }
+
+  return prisma.activity.update({
+    where: { id: activityId },
+    data: { ...input, ...imageFields },
+    include: activityInclude,
+  });
 }
 
 export async function deleteActivity(activityId: string) {

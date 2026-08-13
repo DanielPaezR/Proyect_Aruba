@@ -13,7 +13,7 @@ import {
   ProjectWorkType,
   ProjectPriority,
 } from "@prisma/client";
-import { uploadEvidenceImage } from "../src/config/storage";
+import { EVIDENCES_FOLDER, uploadImage } from "../src/config/storage";
 
 const prisma = new PrismaClient();
 
@@ -174,7 +174,7 @@ async function seedDemoProject(usersByEmail: Record<string, { id: string }>) {
     const buffer = fs.readFileSync(sourceImage);
     // public_id fijo (con overwrite) para que volver a correr el seed despues
     // de borrar la fila no acumule assets duplicados en Cloudinary.
-    const uploaded = await uploadEvidenceImage(buffer, { publicId: SEED_EVIDENCE_PUBLIC_ID });
+    const uploaded = await uploadImage(buffer, { folder: EVIDENCES_FOLDER, publicId: SEED_EVIDENCE_PUBLIC_ID });
 
     await prisma.evidence.create({
       data: {

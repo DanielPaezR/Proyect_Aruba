@@ -186,6 +186,13 @@ model Activity {
   scheduledDate DateTime?
   completedAt   DateTime?
 
+  // Imagen de referencia opcional que sube JEFE/SUPERVISOR al crear/editar la
+  // actividad (que hay que hacer) — distinta de las evidencias fotograficas
+  // que sube el trabajador (que se hizo). Nullable: la mayoria de actividades
+  // no la van a tener.
+  referenceImageUrl      String?
+  referenceImagePublicId String?
+
   projectId String
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 

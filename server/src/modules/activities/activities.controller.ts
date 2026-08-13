@@ -28,13 +28,13 @@ export const getOne = asyncHandler(async (req: Request, res: Response) => {
 
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const input = createActivitySchema.parse(req.body);
-  const activity = await activitiesService.createActivity(req.params.projectId, input);
+  const activity = await activitiesService.createActivity(req.params.projectId, input, req.file);
   res.status(201).json({ activity });
 });
 
 export const update = asyncHandler(async (req: Request, res: Response) => {
   const input = updateActivitySchema.parse(req.body);
-  const activity = await activitiesService.updateActivity(req.params.activityId, input);
+  const activity = await activitiesService.updateActivity(req.params.activityId, input, req.file);
   res.json({ activity });
 });
 
