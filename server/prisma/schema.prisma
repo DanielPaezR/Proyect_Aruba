@@ -50,6 +50,37 @@ enum Locale {
   PAP
 }
 
+enum ProjectSector {
+  ORANJESTAD
+  SAN_NICOLAS
+  NOORD
+  SANTA_CRUZ
+  PARADERA
+  SAVANETA
+  OTRO
+}
+
+enum ProjectPropertyType {
+  RESIDENCIAL
+  COMERCIAL
+  INDUSTRIAL
+}
+
+enum ProjectWorkType {
+  INSTALACION_NUEVA
+  REMODELACION
+  MANTENIMIENTO
+  REPARACION_EMERGENCIA
+  INSPECCION
+}
+
+enum ProjectPriority {
+  BAJA
+  MEDIA
+  ALTA
+  URGENTE
+}
+
 // ---------- Modelos ----------
 
 model User {
@@ -95,6 +126,21 @@ model Project {
   status      ProjectStatus @default(PLANIFICADO)
   startDate   DateTime?
   endDate     DateTime?
+
+  // Información operativa del sitio de trabajo. Todo nullable a nivel de DB
+  // (hay proyectos existentes sin estos datos); el formulario de creación
+  // exige un subconjunto de estos campos a nivel de aplicación (ver
+  // projects.validators.ts), no a nivel de schema.
+  ownerName          String?
+  ownerPhone         String?
+  ownerEmail         String?
+  address            String?
+  sector             ProjectSector?
+  accessNotes        String?
+  propertyType       ProjectPropertyType?
+  workType           ProjectWorkType?
+  priority           ProjectPriority?     @default(MEDIA)
+  electricalPlansUrl String?
 
   createdById String
   createdBy   User   @relation("ProjectCreatedBy", fields: [createdById], references: [id])
