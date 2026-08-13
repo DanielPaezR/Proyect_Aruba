@@ -73,3 +73,14 @@ export function arubaToday(at: Date = new Date()): Date {
 export function arubaStartOfTodayUtc(at: Date = new Date()): Date {
   return new Date(arubaToday(at).getTime() + 4 * 60 * 60 * 1000);
 }
+
+/**
+ * Rango [start, end) en UTC para un dia calendario de Aruba dado como
+ * "YYYY-MM-DD" (mismo criterio de +4h que arubaStartOfTodayUtc). "end" es el
+ * inicio del dia siguiente, exclusivo.
+ */
+export function arubaDayRangeUtc(dateStr: string): { start: Date; end: Date } {
+  const start = new Date(`${dateStr}T04:00:00.000Z`);
+  const end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
+  return { start, end };
+}

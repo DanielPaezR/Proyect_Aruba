@@ -42,6 +42,7 @@ export const ErrorCode = {
   // Marcación de horas
   OPEN_ENTRY_EXISTS: "OPEN_ENTRY_EXISTS",
   NO_OPEN_ENTRY: "NO_OPEN_ENTRY",
+  TIME_ENTRY_NOT_FOUND: "TIME_ENTRY_NOT_FOUND",
 } as const;
 
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];

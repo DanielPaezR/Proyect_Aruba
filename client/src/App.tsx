@@ -10,6 +10,7 @@ import { ProjectDetailPage } from "./pages/ProjectDetailPage";
 import { ProjectsListPage } from "./pages/ProjectsListPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { SupervisorDashboardPage } from "./pages/SupervisorDashboardPage";
+import { TeamMapPage } from "./pages/TeamMapPage";
 import { UsersManagementPage } from "./pages/UsersManagementPage";
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
               <Route path="/evidences" element={<EvidencesReviewPage />} />
               <Route path="/users" element={<UsersManagementPage />} />
               <Route path="/settings" element={<SettingsPage />} />
+              <Route path="/team-map" element={<TeamMapPage />} />
             </Route>
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

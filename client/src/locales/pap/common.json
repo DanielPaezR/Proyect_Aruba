@@ -28,7 +28,8 @@
     "myActivities": "Mi aktividatnan",
     "evidences": "Evidensianan",
     "users": "Usuarionan",
-    "settings": "Konfigurashon"
+    "settings": "Konfigurashon",
+    "teamMap": "Mapa di ekipo"
   },
   "activityStatus": {
     "PENDIENTE": "Pendiente",
@@ -61,7 +62,8 @@
       "UNSUPPORTED_IMAGE_TYPE": "Formato di imagen no ta soportá (usa JPEG, PNG òf WEBP)",
       "UPLOAD_ERROR": "A sosodé un eror ora di subi e archivo",
       "VALIDATION_ERROR": "Verifiká e datonan ku bo a hisa",
-      "INTERNAL_ERROR": "Eror di server, purba mas lat"
+      "INTERNAL_ERROR": "Eror di server, purba mas lat",
+      "TIME_ENTRY_NOT_FOUND": "No a haña e markashon"
     }
   }
 }

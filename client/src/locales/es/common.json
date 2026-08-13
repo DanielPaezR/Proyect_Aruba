@@ -28,7 +28,8 @@
     "myActivities": "Mis actividades",
     "evidences": "Evidencias",
     "users": "Usuarios",
-    "settings": "Configuración"
+    "settings": "Configuración",
+    "teamMap": "Mapa del equipo"
   },
   "activityStatus": {
     "PENDIENTE": "Pendiente",
@@ -61,7 +62,8 @@
       "UNSUPPORTED_IMAGE_TYPE": "Formato de imagen no soportado (usa JPEG, PNG o WEBP)",
       "UPLOAD_ERROR": "Ocurrió un error al subir el archivo",
       "VALIDATION_ERROR": "Revisa los datos ingresados",
-      "INTERNAL_ERROR": "Error del servidor, intenta más tarde"
+      "INTERNAL_ERROR": "Error del servidor, intenta más tarde",
+      "TIME_ENTRY_NOT_FOUND": "Marcación no encontrada"
     }
   }
 }

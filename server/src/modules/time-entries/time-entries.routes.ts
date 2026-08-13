@@ -11,4 +11,6 @@ timeEntriesRouter.use(authenticate);
 timeEntriesRouter.post("/", timeEntriesController.create);
 timeEntriesRouter.post("/auto-check", timeEntriesController.autoCheck);
 timeEntriesRouter.get("/mine", timeEntriesController.listMine);
+timeEntriesRouter.get("/summary", authorize(...MANAGERS), timeEntriesController.summary);
 timeEntriesRouter.get("/", authorize(...MANAGERS), timeEntriesController.list);
+timeEntriesRouter.patch("/:timeEntryId", authorize(...MANAGERS), timeEntriesController.update);

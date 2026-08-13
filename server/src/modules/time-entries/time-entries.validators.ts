@@ -24,5 +24,21 @@ export const listTimeEntriesQuerySchema = z.object({
   to: z.coerce.date().optional(),
 });
 
+export const summaryQuerySchema = z.object({
+  userId: z.string().optional(),
+  // Dia unico ("horas de hoy por trabajador"). Si no se manda ni "date" ni
+  // "from"/"to", el servicio usa el dia de hoy en Aruba por default.
+  date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Formato de fecha invalido, usa YYYY-MM-DD").optional(),
+  from: z.coerce.date().optional(),
+  to: z.coerce.date().optional(),
+});
+
+export const updateTimeEntrySchema = z.object({
+  timestamp: z.coerce.date(),
+  editReason: z.string().min(1).optional(),
+});
+
 export type CreateTimeEntryInput = z.infer<typeof createTimeEntrySchema>;
 export type AutoCheckInput = z.infer<typeof autoCheckSchema>;
+export type SummaryQuery = z.infer<typeof summaryQuerySchema>;
+export type UpdateTimeEntryInput = z.infer<typeof updateTimeEntrySchema>;

@@ -1,0 +1,29 @@
+{
+  "title": "Team map",
+  "disclaimer": "Shows each worker's last known location, reported the last time they opened the app. This is not live tracking.",
+  "map": {
+    "empty": "No workers with a reported location yet",
+    "updatedLabel": "Updated",
+    "justNow": "just now",
+    "minutesAgo_one": "{{count}} minute ago",
+    "minutesAgo_other": "{{count}} minutes ago",
+    "hoursAgo_one": "{{count}} hour ago",
+    "hoursAgo_other": "{{count}} hours ago",
+    "daysAgo_one": "{{count}} day ago",
+    "daysAgo_other": "{{count}} days ago"
+  },
+  "hours": {
+    "title": "Today's hours",
+    "empty": "No one clocked in today",
+    "totalLabel": "Total",
+    "openLabel": "In progress",
+    "editButton": "Edit",
+    "editFormTitle": "Edit time entry",
+    "newTimestamp": "New time",
+    "reasonLabel": "Reason (optional)",
+    "save": "Save",
+    "saving": "Saving...",
+    "editedBadge": "Edited by {{name}}, reason: {{reason}}",
+    "editedBadgeNoReason": "Edited by {{name}}"
+  }
+}

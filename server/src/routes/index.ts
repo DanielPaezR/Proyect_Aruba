@@ -7,6 +7,7 @@ import { projectsRouter } from "../modules/projects/projects.routes";
 import { pushRouter } from "../modules/push/push.routes";
 import { settingsRouter } from "../modules/settings/settings.routes";
 import { timeEntriesRouter } from "../modules/time-entries/time-entries.routes";
+import { usersRouter } from "../modules/users/users.routes";
 
 export const apiRouter = Router();
 
@@ -18,3 +19,4 @@ apiRouter.use("/time-entries", timeEntriesRouter);
 apiRouter.use("/dashboard", dashboardRouter);
 apiRouter.use("/settings", settingsRouter);
 apiRouter.use("/push", pushRouter);
+apiRouter.use("/users", usersRouter);

@@ -1,0 +1,29 @@
+{
+  "title": "Mapa di ekipo",
+  "disclaimer": "Ta mustra e ultimo ubikashon konosí di kada trahadó, reportá e ultimo biaha ku nan a habri e app. No ta rastreo na tempo real.",
+  "map": {
+    "empty": "Ainda no tin trahadó ku ubikashon reportá",
+    "updatedLabel": "Actualisá",
+    "justNow": "awor mes",
+    "minutesAgo_one": "{{count}} minüt pasá",
+    "minutesAgo_other": "{{count}} minüt pasá",
+    "hoursAgo_one": "{{count}} ora pasá",
+    "hoursAgo_other": "{{count}} ora pasá",
+    "daysAgo_one": "{{count}} dia pasá",
+    "daysAgo_other": "{{count}} dia pasá"
+  },
+  "hours": {
+    "title": "Oranan di awe",
+    "empty": "Ningun hende no a marka drenta awe",
+    "totalLabel": "Total",
+    "openLabel": "Na kurso",
+    "editButton": "Edita",
+    "editFormTitle": "Edita markashon",
+    "newTimestamp": "Ora nobo",
+    "reasonLabel": "Motibu (opshonal)",
+    "save": "Warda",
+    "saving": "Ta warda...",
+    "editedBadge": "Editá pa {{name}}, motibu: {{reason}}",
+    "editedBadgeNoReason": "Editá pa {{name}}"
+  }
+}

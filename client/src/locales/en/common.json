@@ -28,7 +28,8 @@
     "myActivities": "My activities",
     "evidences": "Evidence",
     "users": "Users",
-    "settings": "Settings"
+    "settings": "Settings",
+    "teamMap": "Team map"
   },
   "activityStatus": {
     "PENDIENTE": "Pending",
@@ -61,7 +62,8 @@
       "UNSUPPORTED_IMAGE_TYPE": "Unsupported image format (use JPEG, PNG or WEBP)",
       "UPLOAD_ERROR": "Something went wrong uploading the file",
       "VALIDATION_ERROR": "Please check the submitted data",
-      "INTERNAL_ERROR": "Server error, please try again later"
+      "INTERNAL_ERROR": "Server error, please try again later",
+      "TIME_ENTRY_NOT_FOUND": "Time entry not found"
     }
   }
 }

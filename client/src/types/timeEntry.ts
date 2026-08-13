@@ -15,9 +15,17 @@ export interface TimeEntry {
   source: TimeEntrySource;
   originalTimestamp: string | null;
   editedById: string | null;
+  editedBy: { id: string; name: string } | null;
   editedAt: string | null;
   editReason: string | null;
   createdAt: string;
   user: { id: string; name: string };
   activity: { id: string; title: string; projectId: string } | null;
+}
+
+export interface UserDaySummary {
+  user: { id: string; name: string };
+  entries: TimeEntry[];
+  totalMinutes: number;
+  hasOpenEntry: boolean;
 }

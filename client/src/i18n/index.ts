@@ -10,6 +10,7 @@ import esActivities from "../locales/es/activities.json";
 import esEvidences from "../locales/es/evidences.json";
 import esUsers from "../locales/es/users.json";
 import esSettings from "../locales/es/settings.json";
+import esTeamMap from "../locales/es/teamMap.json";
 import enCommon from "../locales/en/common.json";
 import enAuth from "../locales/en/auth.json";
 import enDashboard from "../locales/en/dashboard.json";
@@ -18,6 +19,7 @@ import enActivities from "../locales/en/activities.json";
 import enEvidences from "../locales/en/evidences.json";
 import enUsers from "../locales/en/users.json";
 import enSettings from "../locales/en/settings.json";
+import enTeamMap from "../locales/en/teamMap.json";
 import papCommon from "../locales/pap/common.json";
 import papAuth from "../locales/pap/auth.json";
 import papDashboard from "../locales/pap/dashboard.json";
@@ -26,6 +28,7 @@ import papActivities from "../locales/pap/activities.json";
 import papEvidences from "../locales/pap/evidences.json";
 import papUsers from "../locales/pap/users.json";
 import papSettings from "../locales/pap/settings.json";
+import papTeamMap from "../locales/pap/teamMap.json";
 
 export const SUPPORTED_LANGUAGES = ["es", "en", "pap"] as const;
 export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
@@ -47,6 +50,7 @@ void i18n
         evidences: esEvidences,
         users: esUsers,
         settings: esSettings,
+        teamMap: esTeamMap,
       },
       en: {
         common: enCommon,
@@ -57,6 +61,7 @@ void i18n
         evidences: enEvidences,
         users: enUsers,
         settings: enSettings,
+        teamMap: enTeamMap,
       },
       pap: {
         common: papCommon,
@@ -67,11 +72,12 @@ void i18n
         evidences: papEvidences,
         users: papUsers,
         settings: papSettings,
+        teamMap: papTeamMap,
       },
     },
     fallbackLng: "es",
     supportedLngs: SUPPORTED_LANGUAGES,
-    ns: ["common", "auth", "dashboard", "projects", "activities", "evidences", "users", "settings"],
+    ns: ["common", "auth", "dashboard", "projects", "activities", "evidences", "users", "settings", "teamMap"],
     defaultNS: "common",
     interpolation: { escapeValue: false },
     detection: {

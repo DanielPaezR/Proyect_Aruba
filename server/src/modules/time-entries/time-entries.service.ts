@@ -1,10 +1,10 @@
-import { PunchType, Role, TimeEntrySource } from "@prisma/client";
+import { Prisma, PunchType, Role, TimeEntrySource } from "@prisma/client";
 import { prisma } from "../../config/prisma";
 import * as settingsService from "../settings/settings.service";
 import { ApiError } from "../../utils/ApiError";
 import { ErrorCode } from "../../utils/errorCodes";
-import { currentArubaMinutes, haversineDistanceMeters, isWithinWindow } from "../../utils/geo";
-import type { AutoCheckInput, CreateTimeEntryInput } from "./time-entries.validators";
+import { arubaDayRangeUtc, arubaStartOfTodayUtc, currentArubaMinutes, haversineDistanceMeters, isWithinWindow } from "../../utils/geo";
+import type { AutoCheckInput, CreateTimeEntryInput, SummaryQuery, UpdateTimeEntryInput } from "./time-entries.validators";
 
 type AuthUser = { id: string; role: Role };
 type LastEntry = { type: PunchType } | null;
@@ -12,7 +12,10 @@ type LastEntry = { type: PunchType } | null;
 const timeEntryInclude = {
   user: { select: { id: true, name: true } },
   activity: { select: { id: true, title: true, projectId: true } },
+  editedBy: { select: { id: true, name: true } },
 } as const;
+
+type TimeEntryWithRelations = Prisma.TimeEntryGetPayload<{ include: typeof timeEntryInclude }>;
 
 function dateRangeWhere(filters: { from?: Date; to?: Date }) {
   if (!filters.from && !filters.to) {
@@ -178,5 +181,88 @@ export async function listForManagers(filters: { userId?: string; from?: Date; t
     },
     include: timeEntryInclude,
     orderBy: { timestamp: "desc" },
+  });
+}
+
+export interface UserDaySummary {
+  user: { id: string; name: string };
+  entries: TimeEntryWithRelations[];
+  totalMinutes: number;
+  hasOpenEntry: boolean;
+}
+
+/**
+ * Horas trabajadas por usuario en un rango: empareja cada ENTRADA con la
+ * SALIDA que le sigue. Una ENTRADA sin SALIDA todavia (hasOpenEntry) no suma
+ * a totalMinutes — se muestra aparte para que quien revisa sepa que sigue
+ * abierta, en vez de inflar el total silenciosamente en cada consulta.
+ */
+export async function getSummary(filters: SummaryQuery): Promise<UserDaySummary[]> {
+  let start: Date;
+  let end: Date | undefined;
+
+  if (filters.date) {
+    ({ start, end } = arubaDayRangeUtc(filters.date));
+  } else if (filters.from || filters.to) {
+    start = filters.from ?? new Date(0);
+    end = filters.to;
+  } else {
+    start = arubaStartOfTodayUtc();
+    end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
+  }
+
+  const entries = await prisma.timeEntry.findMany({
+    where: {
+      ...(filters.userId ? { userId: filters.userId } : { user: { role: Role.TRABAJADOR_CAMPO } }),
+      timestamp: { gte: start, ...(end ? { lt: end } : {}) },
+    },
+    include: timeEntryInclude,
+    orderBy: [{ userId: "asc" }, { timestamp: "asc" }],
+  });
+
+  const byUser = new Map<string, UserDaySummary>();
+  for (const entry of entries) {
+    let bucket = byUser.get(entry.userId);
+    if (!bucket) {
+      bucket = { user: entry.user, entries: [], totalMinutes: 0, hasOpenEntry: false };
+      byUser.set(entry.userId, bucket);
+    }
+    bucket.entries.push(entry);
+  }
+
+  for (const bucket of byUser.values()) {
+    let openEntradaAt: Date | null = null;
+    for (const entry of bucket.entries) {
+      if (entry.type === PunchType.ENTRADA) {
+        openEntradaAt = entry.timestamp;
+      } else if (entry.type === PunchType.SALIDA && openEntradaAt) {
+        bucket.totalMinutes += (entry.timestamp.getTime() - openEntradaAt.getTime()) / 60000;
+        openEntradaAt = null;
+      }
+    }
+    bucket.hasOpenEntry = openEntradaAt !== null;
+  }
+
+  return Array.from(byUser.values());
+}
+
+export async function updateTimeEntry(editor: AuthUser, timeEntryId: string, input: UpdateTimeEntryInput) {
+  const existing = await prisma.timeEntry.findUnique({ where: { id: timeEntryId } });
+  if (!existing) {
+    throw ApiError.notFound(ErrorCode.TIME_ENTRY_NOT_FOUND, "Marcación no encontrada");
+  }
+
+  return prisma.timeEntry.update({
+    where: { id: timeEntryId },
+    data: {
+      timestamp: input.timestamp,
+      // Solo se guarda la primera vez que se edita — asi originalTimestamp
+      // siempre refleja lo que el trabajador marco de verdad, no la ultima edicion.
+      originalTimestamp: existing.originalTimestamp ?? existing.timestamp,
+      editedById: editor.id,
+      editedAt: new Date(),
+      editReason: input.editReason,
+    },
+    include: timeEntryInclude,
   });
 }
