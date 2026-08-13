@@ -12,6 +12,7 @@ export const createUserSchema = z.object({
   password: z.string().min(8, "La contraseña debe tener al menos 8 caracteres"),
   role: z.nativeEnum(Role),
   phone: z.string().optional(),
+  hourlyRate: z.number().positive().optional(),
 });
 
 export const updateLocaleSchema = z.object({

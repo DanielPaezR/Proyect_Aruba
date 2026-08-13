@@ -13,6 +13,7 @@ const PUBLIC_USER_FIELDS = {
   email: true,
   role: true,
   phone: true,
+  hourlyRate: true,
   isActive: true,
   locale: true,
   createdAt: true,
@@ -60,6 +61,7 @@ export async function login(input: LoginInput) {
       email: user.email,
       role: user.role,
       phone: user.phone,
+      hourlyRate: user.hourlyRate,
       isActive: user.isActive,
       locale: user.locale,
       createdAt: user.createdAt,
@@ -125,11 +127,19 @@ export async function createUser(input: CreateUserInput) {
       passwordHash,
       role: input.role,
       phone: input.phone,
+      hourlyRate: input.hourlyRate,
     },
     select: PUBLIC_USER_FIELDS,
   });
 
   return user;
+}
+
+export async function listUsers() {
+  return prisma.user.findMany({
+    select: PUBLIC_USER_FIELDS,
+    orderBy: { name: "asc" },
+  });
 }
 
 export async function updateLocale(userId: string, locale: Locale) {

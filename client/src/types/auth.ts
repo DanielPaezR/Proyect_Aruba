@@ -15,6 +15,8 @@ export interface User {
   email: string;
   role: UserRole;
   phone: string | null;
+  // Serializado por Prisma/Express como string decimal (ej. "18.5"), no number.
+  hourlyRate: string | null;
   isActive: boolean;
   locale: UserLocale;
   createdAt: string;

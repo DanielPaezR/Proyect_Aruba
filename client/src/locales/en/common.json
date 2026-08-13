@@ -26,7 +26,8 @@
     "dashboard": "Dashboard",
     "projects": "Projects",
     "myActivities": "My activities",
-    "evidences": "Evidence"
+    "evidences": "Evidence",
+    "users": "Users"
   },
   "activityStatus": {
     "PENDIENTE": "Pending",

@@ -11,5 +11,6 @@ authRouter.post("/logout", authController.logout);
 authRouter.get("/me", authenticate, authController.me);
 authRouter.patch("/me/locale", authenticate, authController.updateLocale);
 
-// Alta de usuarios: solo el Jefe puede crear cuentas (no hay auto-registro).
+// Alta y listado de usuarios: solo el Jefe (no hay auto-registro ni gestión por Supervisor).
 authRouter.post("/users", authenticate, authorize(Role.JEFE), authController.createUser);
+authRouter.get("/users", authenticate, authorize(Role.JEFE), authController.listUsers);

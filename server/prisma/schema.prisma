@@ -93,6 +93,11 @@ model User {
   isActive     Boolean @default(true)
   locale       Locale  @default(ES)
 
+  // Precio por hora del trabajador. Nullable: no todos los usuarios (ej. JEFE)
+  // tienen uno, y todavía no existe el modulo de nomina que lo consuma (Fase 2) —
+  // por ahora solo se captura el dato.
+  hourlyRate Decimal? @db.Decimal(10, 2)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

@@ -1,0 +1,22 @@
+{
+  "title": "Users",
+  "create": {
+    "button": "Create user",
+    "formTitle": "New user",
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "role": "Role",
+    "phone": "Phone",
+    "hourlyRate": "Hourly rate (AWG)",
+    "hourlyRatePlaceholder": "Optional",
+    "submit": "Create",
+    "submitting": "Creating..."
+  },
+  "list": {
+    "active": "Active",
+    "inactive": "Inactive",
+    "hourlyRateNotSpecified": "Hourly rate not specified"
+  },
+  "empty": "No users yet"
+}

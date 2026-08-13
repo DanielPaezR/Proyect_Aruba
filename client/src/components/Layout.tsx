@@ -41,6 +41,11 @@ export function Layout() {
                 {t("nav.evidences", { ns: "common" })}
               </NavLink>
             )}
+            {user.role === "JEFE" && (
+              <NavLink to="/users" className={navLinkClassName}>
+                {t("nav.users", { ns: "common" })}
+              </NavLink>
+            )}
           </nav>
         )}
         <div className="topbar-actions">

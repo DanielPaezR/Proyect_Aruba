@@ -1,0 +1,22 @@
+{
+  "title": "Usuarionan",
+  "create": {
+    "button": "Krea usuario",
+    "formTitle": "Usuario nobo",
+    "name": "Nòmber",
+    "email": "Email",
+    "password": "Password",
+    "role": "Rol",
+    "phone": "Telefòn",
+    "hourlyRate": "Preis pa ora (AWG)",
+    "hourlyRatePlaceholder": "Opshonal",
+    "submit": "Krea",
+    "submitting": "Ta krea..."
+  },
+  "list": {
+    "active": "Aktivo",
+    "inactive": "Inaktivo",
+    "hourlyRateNotSpecified": "Preis pa ora no spesifiká"
+  },
+  "empty": "Ainda no tin usuario"
+}

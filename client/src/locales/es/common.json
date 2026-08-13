@@ -26,7 +26,8 @@
     "dashboard": "Panel",
     "projects": "Proyectos",
     "myActivities": "Mis actividades",
-    "evidences": "Evidencias"
+    "evidences": "Evidencias",
+    "users": "Usuarios"
   },
   "activityStatus": {
     "PENDIENTE": "Pendiente",

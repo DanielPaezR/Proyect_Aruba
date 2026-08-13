@@ -26,7 +26,8 @@
     "dashboard": "Panel",
     "projects": "Proyektonan",
     "myActivities": "Mi aktividatnan",
-    "evidences": "Evidensianan"
+    "evidences": "Evidensianan",
+    "users": "Usuarionan"
   },
   "activityStatus": {
     "PENDIENTE": "Pendiente",

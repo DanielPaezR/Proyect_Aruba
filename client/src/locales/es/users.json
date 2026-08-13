@@ -1,0 +1,22 @@
+{
+  "title": "Usuarios",
+  "create": {
+    "button": "Crear usuario",
+    "formTitle": "Nuevo usuario",
+    "name": "Nombre",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "role": "Rol",
+    "phone": "Teléfono",
+    "hourlyRate": "Precio por hora (AWG)",
+    "hourlyRatePlaceholder": "Opcional",
+    "submit": "Crear",
+    "submitting": "Creando..."
+  },
+  "list": {
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "hourlyRateNotSpecified": "Precio por hora no especificado"
+  },
+  "empty": "Todavía no hay usuarios"
+}
