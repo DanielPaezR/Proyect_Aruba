@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { translateApiError } from "../api/apiError";
-import { API_BASE_URL, apiClient } from "../api/client";
+import { apiClient } from "../api/client";
 import { translateStatus } from "../i18n/statusLabel";
 import type { EvidenceWithActivity } from "../types/evidence";
 
@@ -69,12 +69,8 @@ export function EvidenceReviewCard({ evidence, onReviewed }: EvidenceReviewCardP
       {evidence.description && <p className="card-description">{evidence.description}</p>}
 
       <div className="evidence-list">
-        <a href={`${API_BASE_URL}${evidence.imageUrl}`} target="_blank" rel="noreferrer">
-          <img
-            src={`${API_BASE_URL}${evidence.imageUrl}`}
-            alt={evidence.description ?? ""}
-            className="evidence-thumb"
-          />
+        <a href={evidence.imageUrl} target="_blank" rel="noreferrer">
+          <img src={evidence.imageUrl} alt={evidence.description ?? ""} className="evidence-thumb" />
         </a>
       </div>
 

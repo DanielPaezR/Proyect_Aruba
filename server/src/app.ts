@@ -1,4 +1,3 @@
-import path from "node:path";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
@@ -21,9 +20,6 @@ if (env.nodeEnv !== "test") {
 app.get("/health", (_req, res) => {
   res.json({ status: "ok" });
 });
-
-// Fotos de evidencias servidas como archivos estáticos (nombres aleatorios, sin listado de directorio).
-app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 app.use("/api", apiRouter);
 

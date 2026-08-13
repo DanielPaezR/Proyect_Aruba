@@ -13,7 +13,7 @@ import {
   ProjectWorkType,
   ProjectPriority,
 } from "@prisma/client";
-import { UPLOADS_DIR, evidenceFileUrl } from "../src/config/storage";
+import { uploadEvidenceImage } from "../src/config/storage";
 
 const prisma = new PrismaClient();
 
@@ -63,7 +63,7 @@ const SEED_PROJECT_ID = "seed-project-paradera-demo";
 const SEED_ACTIVITY_TABLERO_ID = "seed-activity-tablero-demo";
 const SEED_ACTIVITY_TOMACORRIENTES_ID = "seed-activity-tomacorrientes-demo";
 const SEED_EVIDENCE_ID = "seed-evidence-tablero-demo";
-const SEED_EVIDENCE_FILENAME = "seed-placeholder-evidence.png";
+const SEED_EVIDENCE_PUBLIC_ID = "seed-placeholder-evidence";
 
 async function seedUsers(): Promise<Record<string, { id: string }>> {
   const usersByEmail: Record<string, { id: string }> = {};
@@ -166,22 +166,29 @@ async function seedDemoProject(usersByEmail: Record<string, { id: string }>) {
 
   console.log("Actividades de prueba y sus asignaciones listas.");
 
-  const sourceImage = path.join(__dirname, "seed-assets", "placeholder-evidence.png");
-  fs.copyFileSync(sourceImage, path.join(UPLOADS_DIR, SEED_EVIDENCE_FILENAME));
+  const existingEvidence = await prisma.evidence.findUnique({ where: { id: SEED_EVIDENCE_ID } });
+  if (existingEvidence) {
+    console.log("La evidencia de prueba ya existe, no se vuelve a subir a Cloudinary.");
+  } else {
+    const sourceImage = path.join(__dirname, "seed-assets", "placeholder-evidence.png");
+    const buffer = fs.readFileSync(sourceImage);
+    // public_id fijo (con overwrite) para que volver a correr el seed despues
+    // de borrar la fila no acumule assets duplicados en Cloudinary.
+    const uploaded = await uploadEvidenceImage(buffer, { publicId: SEED_EVIDENCE_PUBLIC_ID });
 
-  await prisma.evidence.upsert({
-    where: { id: SEED_EVIDENCE_ID },
-    update: {},
-    create: {
-      id: SEED_EVIDENCE_ID,
-      activityId: activityTablero.id,
-      uploadedById: worker1.id,
-      imageUrl: evidenceFileUrl(SEED_EVIDENCE_FILENAME),
-      description: "Avance de cableado del tablero principal.",
-      status: EvidenceStatus.PENDIENTE,
-    },
-  });
-  console.log("Evidencia de prueba lista (pendiente de revisión).");
+    await prisma.evidence.create({
+      data: {
+        id: SEED_EVIDENCE_ID,
+        activityId: activityTablero.id,
+        uploadedById: worker1.id,
+        imageUrl: uploaded.url,
+        imagePublicId: uploaded.publicId,
+        description: "Avance de cableado del tablero principal.",
+        status: EvidenceStatus.PENDIENTE,
+      },
+    });
+    console.log(`Evidencia de prueba subida a Cloudinary y lista (pendiente de revisión): ${uploaded.url}`);
+  }
 }
 
 async function main() {

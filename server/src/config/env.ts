@@ -20,4 +20,7 @@ export const env = {
   vapidPublicKey: required("VAPID_PUBLIC_KEY"),
   vapidPrivateKey: required("VAPID_PRIVATE_KEY"),
   vapidSubject: required("VAPID_SUBJECT"),
+  cloudinaryCloudName: required("CLOUDINARY_CLOUD_NAME"),
+  cloudinaryApiKey: required("CLOUDINARY_API_KEY"),
+  cloudinaryApiSecret: required("CLOUDINARY_API_SECRET"),
 };

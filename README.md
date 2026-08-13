@@ -123,28 +123,27 @@ que lee el servidor:
 | `NODE_ENV` | No | Poner `production`. |
 | `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` | Sí | Push notifications. Generar con `npx web-push generate-vapid-keys` (dentro de `server/`). La clave pública también va en `client/.env`/`.env.production` como `VITE_VAPID_PUBLIC_KEY` — **debe ser exactamente el mismo par**. |
 | `VAPID_SUBJECT` | Sí | `mailto:` o `https:` de contacto, requerido por el estándar VAPID (no es secreto). |
+| `CLOUDINARY_CLOUD_NAME` / `CLOUDINARY_API_KEY` / `CLOUDINARY_API_SECRET` | Sí | Almacenamiento de evidencias fotográficas. Sacar del dashboard de Cloudinary (Settings → API Keys). |
 
 `SEED_JEFE_EMAIL` / `SEED_JEFE_PASSWORD` solo se usan al correr manualmente
 `npm run prisma:seed` (por ejemplo desde la shell de Railway la primera vez).
 
-### ⚠️ Evidencias fotográficas y filesystem efímero
+### Evidencias fotográficas (Cloudinary)
 
-Las evidencias se guardan hoy en disco local (`server/uploads/evidences`,
-ver [server/src/config/storage.ts](server/src/config/storage.ts)). Railway
-usa un filesystem efímero: **sin un Volume montado, cualquier evidencia subida
-se pierde en el próximo deploy o reinicio.**
+Las evidencias se suben directo a Cloudinary (`server/src/config/storage.ts`)
+— **nunca tocan el disco del contenedor**, ni en desarrollo ni en producción.
+Es el mismo flujo en ambos entornos a propósito (sin un branch "si es local,
+disco; si es prod, Cloudinary"), para que no se comporten distinto.
 
-Antes de manejar evidencias reales en producción:
+`multer` sigue en el medio para parsear el `multipart/form-data`, pero con
+`memoryStorage` — el archivo llega como buffer y se sube tal cual con
+`cloudinary.uploader.upload_stream` a la carpeta `decs/evidences`. La URL
+segura (`secure_url`) que devuelve Cloudinary se guarda en `Evidence.imageUrl`,
+y el `public_id` en `Evidence.imagePublicId` (hace falta para poder borrar el
+archivo después con `cloudinary.uploader.destroy`).
 
-1. Monta un **Railway Volume** en `/app/uploads` desde el dashboard del
-   servicio (Settings → Volumes), o
-2. Migra el módulo de evidencias a almacenamiento externo (S3, Cloudflare R2,
-   etc.) — no implementado todavía; el resto de la app no debería verse
-   afectado porque `Evidence.imageUrl` ya es solo un string.
-
-Un Volume resuelve la persistencia entre deploys, pero **no** entre réplicas
-si en algún momento escalas el servicio horizontalmente — para eso sí hace
-falta almacenamiento externo.
+Esto reemplaza el enfoque anterior de disco local + Railway Volume — no hace
+falta montar ningún Volume para evidencias.
 
 ## PWA (app instalable)
 

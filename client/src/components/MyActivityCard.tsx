@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { translateApiError } from "../api/apiError";
-import { API_BASE_URL, apiClient } from "../api/client";
+import { apiClient } from "../api/client";
 import { translateStatus } from "../i18n/statusLabel";
 import type { Activity, ActivityStatus } from "../types/activity";
 import type { Evidence } from "../types/evidence";
@@ -205,12 +205,8 @@ export function MyActivityCard({ activity, onActivityUpdated }: MyActivityCardPr
             ) : (
               evidences.map((evidence) => (
                 <div key={evidence.id} className="evidence-row">
-                  <a href={`${API_BASE_URL}${evidence.imageUrl}`} target="_blank" rel="noreferrer">
-                    <img
-                      src={`${API_BASE_URL}${evidence.imageUrl}`}
-                      alt={evidence.description ?? ""}
-                      className="evidence-thumb"
-                    />
+                  <a href={evidence.imageUrl} target="_blank" rel="noreferrer">
+                    <img src={evidence.imageUrl} alt={evidence.description ?? ""} className="evidence-thumb" />
                   </a>
                   <span className="status-badge">{translateStatus(t, "common", "evidenceStatus", evidence.status)}</span>
                 </div>

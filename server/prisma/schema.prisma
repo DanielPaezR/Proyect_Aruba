@@ -255,8 +255,12 @@ model Evidence {
   uploadedBy   User   @relation("EvidenceUploadedBy", fields: [uploadedById], references: [id])
 
   imageUrl    String
-  description String?
-  status      EvidenceStatus @default(PENDIENTE)
+  // public_id de Cloudinary — hace falta para poder borrar el archivo despues
+  // (cloudinary.uploader.destroy). Nullable: evidencias sembradas antes de la
+  // migracion a Cloudinary no lo tienen.
+  imagePublicId String?
+  description   String?
+  status        EvidenceStatus @default(PENDIENTE)
 
   reviewedById   String?
   reviewedBy     User?     @relation("EvidenceReviewedBy", fields: [reviewedById], references: [id])

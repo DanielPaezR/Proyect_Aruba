@@ -1,6 +1,6 @@
 import { EvidenceStatus, Role } from "@prisma/client";
 import { prisma } from "../../config/prisma";
-import { deleteEvidenceFile, evidenceFileUrl } from "../../config/storage";
+import { deleteEvidenceImage, uploadEvidenceImage } from "../../config/storage";
 import { ApiError } from "../../utils/ApiError";
 import { ErrorCode } from "../../utils/errorCodes";
 
@@ -71,11 +71,14 @@ export async function uploadEvidence(
 ) {
   await ensureActivityAccess(user, activityId);
 
+  const uploaded = await uploadEvidenceImage(file.buffer);
+
   return prisma.evidence.create({
     data: {
       activityId,
       uploadedById: user.id,
-      imageUrl: evidenceFileUrl(file.filename),
+      imageUrl: uploaded.url,
+      imagePublicId: uploaded.publicId,
       description,
     },
     include: evidenceInclude,
@@ -118,5 +121,15 @@ export async function deleteEvidence(user: AuthUser, evidenceId: string) {
   }
 
   await prisma.evidence.delete({ where: { id: evidenceId } });
-  deleteEvidenceFile(evidence.imageUrl);
+
+  if (evidence.imagePublicId) {
+    // Best-effort: la fila ya se borro (fuente de verdad), asi que un fallo
+    // limpiando Cloudinary no debe tumbar la respuesta. Evidencias sembradas
+    // antes de esta migracion no tienen imagePublicId, no hay nada que borrar ahi.
+    try {
+      await deleteEvidenceImage(evidence.imagePublicId);
+    } catch (error) {
+      console.error(`No se pudo borrar la imagen de Cloudinary (public_id ${evidence.imagePublicId}):`, error);
+    }
+  }
 }

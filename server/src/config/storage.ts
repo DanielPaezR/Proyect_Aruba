@@ -1,51 +1,31 @@
-import crypto from "node:crypto";
-import fs from "node:fs";
-import path from "node:path";
+import { v2 as cloudinary, type UploadApiErrorResponse, type UploadApiResponse } from "cloudinary";
 import multer from "multer";
+import { env } from "./env";
 import { ApiError } from "../utils/ApiError";
 import { ErrorCode } from "../utils/errorCodes";
 
 /**
- * ADVERTENCIA — almacenamiento en disco local, NO apto para producción en Railway tal cual:
- *
- * Railway (y la mayoría de PaaS sin servidor persistente) usan un filesystem
- * efímero: cada despliegue, reinicio o escalado horizontal parte de una imagen
- * limpia y borra cualquier archivo escrito en runtime. Si subes evidencias
- * reales sin más configuración, se van a perder en el próximo deploy.
- *
- * Antes de usar esto en producción, hay dos opciones:
- *   1. Montar un Railway Volume en /app/uploads (persiste entre deploys, pero
- *      no entre réplicas si escalas horizontalmente). Ver README → "Despliegue
- *      en Railway".
- *   2. Migrar este módulo a almacenamiento externo tipo S3/Cloudflare R2
- *      (recomendado a mediano plazo; el resto de la app no se ve afectado
- *      porque Evidence.imageUrl ya es solo un string).
- *
- * No implementado todavía — esto es solo la advertencia documentada.
+ * Evidencias fotograficas: se suben a Cloudinary, nunca a disco local. Mismo
+ * flujo en desarrollo y produccion — sin branch "si es local, disco; si es
+ * prod, Cloudinary" — para que ambos entornos se comporten igual. Ver README
+ * → "Evidencias fotograficas" para el detalle de por que (filesystem efimero
+ * en Railway).
  */
-export const UPLOADS_DIR = path.join(process.cwd(), "uploads", "evidences");
-
-fs.mkdirSync(UPLOADS_DIR, { recursive: true });
-
-const ALLOWED_MIME_TYPES: Record<string, string> = {
-  "image/jpeg": ".jpg",
-  "image/png": ".png",
-  "image/webp": ".webp",
-};
-
-const diskStorage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, UPLOADS_DIR),
-  filename: (_req, file, cb) => {
-    const ext = ALLOWED_MIME_TYPES[file.mimetype] ?? path.extname(file.originalname);
-    cb(null, `${Date.now()}-${crypto.randomBytes(8).toString("hex")}${ext}`);
-  },
+cloudinary.config({
+  cloud_name: env.cloudinaryCloudName,
+  api_key: env.cloudinaryApiKey,
+  api_secret: env.cloudinaryApiSecret,
 });
 
+const EVIDENCES_FOLDER = "decs/evidences";
+
+const ALLOWED_MIME_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
+
 export const evidenceUpload = multer({
-  storage: diskStorage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: 8 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
-    if (!ALLOWED_MIME_TYPES[file.mimetype]) {
+    if (!ALLOWED_MIME_TYPES.has(file.mimetype)) {
       cb(
         new ApiError(
           400,
@@ -59,11 +39,38 @@ export const evidenceUpload = multer({
   },
 });
 
-export function evidenceFileUrl(filename: string): string {
-  return `/uploads/evidences/${filename}`;
+export interface UploadedEvidenceImage {
+  url: string;
+  publicId: string;
 }
 
-export function deleteEvidenceFile(imageUrl: string) {
-  const filePath = path.join(UPLOADS_DIR, path.basename(imageUrl));
-  fs.rm(filePath, { force: true }, () => undefined);
+/**
+ * Sube un buffer (nunca toca disco) a Cloudinary. "publicId" fijo es solo
+ * para el seed (idempotente: volver a correrlo pisa el mismo asset en vez de
+ * duplicarlo); las subidas reales de usuarios usan un public_id autogenerado.
+ */
+export function uploadEvidenceImage(buffer: Buffer, options?: { publicId?: string }): Promise<UploadedEvidenceImage> {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: EVIDENCES_FOLDER,
+        resource_type: "image",
+        ...(options?.publicId ? { public_id: options.publicId, overwrite: true } : {}),
+      },
+      (error?: UploadApiErrorResponse, result?: UploadApiResponse) => {
+        if (error || !result) {
+          reject(error ?? new Error("Cloudinary no devolvió resultado al subir la imagen"));
+          return;
+        }
+        resolve({ url: result.secure_url, publicId: result.public_id });
+      },
+    );
+    uploadStream.end(buffer);
+  });
+}
+
+export async function deleteEvidenceImage(publicId: string): Promise<void> {
+  // invalidate: true - sin esto, destroy() borra el asset de Cloudinary pero
+  // el cache del CDN puede seguir sirviendo la imagen vieja por un rato.
+  await cloudinary.uploader.destroy(publicId, { invalidate: true });
 }
