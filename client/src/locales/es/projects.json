@@ -6,7 +6,26 @@
     "name": "Nombre",
     "description": "Descripción",
     "submit": "Crear",
-    "submitting": "Creando..."
+    "submitting": "Creando...",
+    "sections": {
+      "owner": "Propietario",
+      "location": "Ubicación",
+      "work": "Detalles del trabajo"
+    },
+    "ownerName": "Nombre del propietario",
+    "ownerPhone": "Teléfono",
+    "ownerEmail": "Correo electrónico",
+    "address": "Dirección",
+    "sector": "Sector",
+    "sectorPlaceholder": "Selecciona un sector",
+    "accessNotes": "Notas de acceso",
+    "accessNotesPlaceholder": "Ej. código del portón, cuidado con el perro...",
+    "propertyType": "Tipo de propiedad",
+    "propertyTypePlaceholder": "Selecciona el tipo de propiedad",
+    "workType": "Tipo de trabajo",
+    "workTypePlaceholder": "Selecciona el tipo de trabajo",
+    "priority": "Prioridad",
+    "electricalPlansUrl": "Link a planos eléctricos"
   },
   "empty": "Todavía no hay proyectos",
   "activitiesCount_one": "{{count}} actividad",
@@ -17,5 +36,39 @@
     "PAUSADO": "Pausado",
     "COMPLETADO": "Completado",
     "CANCELADO": "Cancelado"
+  },
+  "sector": {
+    "ORANJESTAD": "Oranjestad",
+    "SAN_NICOLAS": "San Nicolas",
+    "NOORD": "Noord",
+    "SANTA_CRUZ": "Santa Cruz",
+    "PARADERA": "Paradera",
+    "SAVANETA": "Savaneta",
+    "OTRO": "Otro"
+  },
+  "propertyType": {
+    "RESIDENCIAL": "Residencial",
+    "COMERCIAL": "Comercial",
+    "INDUSTRIAL": "Industrial"
+  },
+  "workType": {
+    "INSTALACION_NUEVA": "Instalación nueva",
+    "REMODELACION": "Remodelación",
+    "MANTENIMIENTO": "Mantenimiento",
+    "REPARACION_EMERGENCIA": "Reparación de emergencia",
+    "INSPECCION": "Inspección"
+  },
+  "priority": {
+    "BAJA": "Baja",
+    "MEDIA": "Media",
+    "ALTA": "Alta",
+    "URGENTE": "Urgente"
+  },
+  "detail": {
+    "ownerSection": "Propietario y contacto",
+    "locationSection": "Ubicación",
+    "workSection": "Detalles del trabajo",
+    "notSpecified": "No especificado",
+    "viewPlansButton": "Ver planos eléctricos"
   }
 }

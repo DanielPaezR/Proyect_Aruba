@@ -103,6 +103,83 @@ export function ProjectDetailPage() {
 
           {project.description && <p className="card-description">{project.description}</p>}
 
+          <section>
+            <h2>{t("detail.ownerSection", { ns: "projects" })}</h2>
+            <dl className="info-grid">
+              <div>
+                <dt>{t("create.ownerName", { ns: "projects" })}</dt>
+                <dd>{project.ownerName ?? t("detail.notSpecified", { ns: "projects" })}</dd>
+              </div>
+              <div>
+                <dt>{t("create.ownerPhone", { ns: "projects" })}</dt>
+                <dd>{project.ownerPhone ?? t("detail.notSpecified", { ns: "projects" })}</dd>
+              </div>
+              <div>
+                <dt>{t("create.ownerEmail", { ns: "projects" })}</dt>
+                <dd>{project.ownerEmail ?? t("detail.notSpecified", { ns: "projects" })}</dd>
+              </div>
+            </dl>
+          </section>
+
+          <section>
+            <h2>{t("detail.locationSection", { ns: "projects" })}</h2>
+            <dl className="info-grid">
+              <div>
+                <dt>{t("create.address", { ns: "projects" })}</dt>
+                <dd>{project.address ?? t("detail.notSpecified", { ns: "projects" })}</dd>
+              </div>
+              <div>
+                <dt>{t("create.sector", { ns: "projects" })}</dt>
+                <dd>
+                  {project.sector
+                    ? translateStatus(t, "projects", "sector", project.sector)
+                    : t("detail.notSpecified", { ns: "projects" })}
+                </dd>
+              </div>
+              <div>
+                <dt>{t("create.accessNotes", { ns: "projects" })}</dt>
+                <dd>{project.accessNotes ?? t("detail.notSpecified", { ns: "projects" })}</dd>
+              </div>
+            </dl>
+          </section>
+
+          <section>
+            <h2>{t("detail.workSection", { ns: "projects" })}</h2>
+            <dl className="info-grid">
+              <div>
+                <dt>{t("create.propertyType", { ns: "projects" })}</dt>
+                <dd>
+                  {project.propertyType
+                    ? translateStatus(t, "projects", "propertyType", project.propertyType)
+                    : t("detail.notSpecified", { ns: "projects" })}
+                </dd>
+              </div>
+              <div>
+                <dt>{t("create.workType", { ns: "projects" })}</dt>
+                <dd>
+                  {project.workType
+                    ? translateStatus(t, "projects", "workType", project.workType)
+                    : t("detail.notSpecified", { ns: "projects" })}
+                </dd>
+              </div>
+              <div>
+                <dt>{t("create.priority", { ns: "projects" })}</dt>
+                <dd>
+                  {project.priority ? (
+                    <span className="status-badge">{translateStatus(t, "projects", "priority", project.priority)}</span>
+                  ) : (
+                    t("detail.notSpecified", { ns: "projects" })
+                  )}
+                </dd>
+              </div>
+            </dl>
+            {project.electricalPlansUrl && (
+              <a href={project.electricalPlansUrl} target="_blank" rel="noreferrer" className="button-link">
+                {t("detail.viewPlansButton", { ns: "projects" })}
+              </a>
+            )}
+          </section>
+
           {canManage && isFormOpen && (
             <form className="inline-form" onSubmit={(event) => void handleCreateActivity(event)}>
               <h2>{t("createFormTitle", { ns: "activities" })}</h2>

@@ -6,7 +6,26 @@
     "name": "Nòmber",
     "description": "Deskripshon",
     "submit": "Krea",
-    "submitting": "Ta krea..."
+    "submitting": "Ta krea...",
+    "sections": {
+      "owner": "Doño",
+      "location": "Ubikashon",
+      "work": "Detaye di trabou"
+    },
+    "ownerName": "Nòmber di doño",
+    "ownerPhone": "Telefon",
+    "ownerEmail": "Email",
+    "address": "Adrès",
+    "sector": "Sektor",
+    "sectorPlaceholder": "Skohe un sektor",
+    "accessNotes": "Nota di akseso",
+    "accessNotesPlaceholder": "Pe. kodigo di porton, tene kuidou ku e kachó...",
+    "propertyType": "Tipo di propiedat",
+    "propertyTypePlaceholder": "Skohe e tipo di propiedat",
+    "workType": "Tipo di trabou",
+    "workTypePlaceholder": "Skohe e tipo di trabou",
+    "priority": "Prioridat",
+    "electricalPlansUrl": "Link pa plano elektriko"
   },
   "empty": "Ainda no tin proyekto",
   "activitiesCount_one": "{{count}} aktividat",
@@ -17,5 +36,39 @@
     "PAUSADO": "Para",
     "COMPLETADO": "Kompletá",
     "CANCELADO": "Kanselá"
+  },
+  "sector": {
+    "ORANJESTAD": "Oranjestad",
+    "SAN_NICOLAS": "San Nicolas",
+    "NOORD": "Noord",
+    "SANTA_CRUZ": "Santa Cruz",
+    "PARADERA": "Paradera",
+    "SAVANETA": "Savaneta",
+    "OTRO": "Otro"
+  },
+  "propertyType": {
+    "RESIDENCIAL": "Residensial",
+    "COMERCIAL": "Komersial",
+    "INDUSTRIAL": "Industrial"
+  },
+  "workType": {
+    "INSTALACION_NUEVA": "Instalashon nobo",
+    "REMODELACION": "Remodelashon",
+    "MANTENIMIENTO": "Mantenshon",
+    "REPARACION_EMERGENCIA": "Reparashon di emergensia",
+    "INSPECCION": "Inspekshon"
+  },
+  "priority": {
+    "BAJA": "Abou",
+    "MEDIA": "Mediano",
+    "ALTA": "Haltu",
+    "URGENTE": "Urgente"
+  },
+  "detail": {
+    "ownerSection": "Doño i kontakto",
+    "locationSection": "Ubikashon",
+    "workSection": "Detaye di trabou",
+    "notSpecified": "No spesifiká",
+    "viewPlansButton": "Wak plano elektriko"
   }
 }

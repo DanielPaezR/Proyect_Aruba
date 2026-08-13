@@ -6,7 +6,26 @@
     "name": "Name",
     "description": "Description",
     "submit": "Create",
-    "submitting": "Creating..."
+    "submitting": "Creating...",
+    "sections": {
+      "owner": "Owner",
+      "location": "Location",
+      "work": "Job details"
+    },
+    "ownerName": "Owner name",
+    "ownerPhone": "Phone",
+    "ownerEmail": "Email",
+    "address": "Address",
+    "sector": "Sector",
+    "sectorPlaceholder": "Select a sector",
+    "accessNotes": "Access notes",
+    "accessNotesPlaceholder": "E.g. gate code, watch out for the dog...",
+    "propertyType": "Property type",
+    "propertyTypePlaceholder": "Select the property type",
+    "workType": "Work type",
+    "workTypePlaceholder": "Select the work type",
+    "priority": "Priority",
+    "electricalPlansUrl": "Electrical plans link"
   },
   "empty": "No projects yet",
   "activitiesCount_one": "{{count}} activity",
@@ -17,5 +36,39 @@
     "PAUSADO": "Paused",
     "COMPLETADO": "Completed",
     "CANCELADO": "Cancelled"
+  },
+  "sector": {
+    "ORANJESTAD": "Oranjestad",
+    "SAN_NICOLAS": "San Nicolas",
+    "NOORD": "Noord",
+    "SANTA_CRUZ": "Santa Cruz",
+    "PARADERA": "Paradera",
+    "SAVANETA": "Savaneta",
+    "OTRO": "Other"
+  },
+  "propertyType": {
+    "RESIDENCIAL": "Residential",
+    "COMERCIAL": "Commercial",
+    "INDUSTRIAL": "Industrial"
+  },
+  "workType": {
+    "INSTALACION_NUEVA": "New installation",
+    "REMODELACION": "Remodel",
+    "MANTENIMIENTO": "Maintenance",
+    "REPARACION_EMERGENCIA": "Emergency repair",
+    "INSPECCION": "Inspection"
+  },
+  "priority": {
+    "BAJA": "Low",
+    "MEDIA": "Medium",
+    "ALTA": "High",
+    "URGENTE": "Urgent"
+  },
+  "detail": {
+    "ownerSection": "Owner & contact",
+    "locationSection": "Location",
+    "workSection": "Job details",
+    "notSpecified": "Not specified",
+    "viewPlansButton": "View electrical plans"
   }
 }
