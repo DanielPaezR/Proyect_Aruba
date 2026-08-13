@@ -15,7 +15,12 @@ export function Layout() {
   return (
     <div className="app-shell">
       <header className="topbar">
-        <span className="app-name">{t("app.name", { ns: "common" })}</span>
+        <div className="brand">
+          <span className="brand-logo">
+            <img src="/logo_cropped.png" alt="" />
+          </span>
+          <span className="app-name">{t("app.name", { ns: "common" })}</span>
+        </div>
         {user && (
           <nav className="main-nav">
             {isManagerRole(user.role) && (
@@ -54,6 +59,10 @@ export function Layout() {
       </header>
       <main className="app-content">
         <Outlet />
+        <footer className="app-footer">
+          <span className="app-footer-name">{t("app.name", { ns: "common" })}</span>
+          <span>{t("footer.address", { ns: "common" })}</span>
+        </footer>
       </main>
     </div>
   );

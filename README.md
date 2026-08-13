@@ -1,4 +1,4 @@
-# Sistema de Gestión Empresarial — Empresa Eléctrica (Aruba)
+# DECS — Sistema de Gestión Empresarial (Aruba)
 
 PWA de gestión empresarial: usuarios/roles, marcación de horas, proyectos y
 actividades, evidencias fotográficas y dashboard de supervisor. Interfaz en
@@ -10,6 +10,19 @@ español, inglés y papiamento.
 Monorepo con dos paquetes independientes (`/client` y `/server`), cada uno
 con su propio `package.json`. El backend se despliega solo (ver más abajo);
 el despliegue del cliente todavía no está configurado.
+
+## Cliente
+
+| | |
+|---|---|
+| Razón social | Danijofy Electrical & Construction Services N.V. |
+| Nombre comercial | DECS |
+| Dirección | Paradera 34 O, Oranjestad, Aruba |
+| Teléfono | +2975934177 |
+| Correo | danijofy@hotmail.com |
+
+Paleta de marca y logo en `client/src/index.css` (`:root`) y
+`client/public/logo_cropped.png` / `pwa-*.png` / `apple-touch-icon.png`.
 
 ## Desarrollo local
 
@@ -152,17 +165,16 @@ notificación — probablemente Fase 4 (emergencias). El `registerType:
 'autoUpdate'` y la estructura del manifest ya están listos para agregarlo
 después sin tener que rehacer esta parte.
 
-### ⚠️ Ícono placeholder
+### Ícono
 
 `client/public/pwa-192x192.png`, `pwa-512x512.png` y `apple-touch-icon.png`
-son un placeholder generado a mano (fondo navy `#1B2A4A`, la letra "D" en
-gold `#C9A24B`) — **hay que reemplazarlos por el logo real de Decs** cuando
-lo tengan. Mismo nombre de archivo, mismos tamaños (192×192, 512×512, y
-180×180 para `apple-touch-icon.png`), y listo — no hace falta tocar
-`vite.config.ts`. El placeholder tampoco es un ícono "maskable" de verdad
-(le falta el margen de zona segura que Android necesita para recortarlo en
-círculo); si el logo real se agrega como maskable, hay que sumar esa
-variante al array `icons` del manifest en `vite.config.ts`.
+son el logo real de DECS (ya no el placeholder de la "D" sobre navy de las
+primeras versiones). Es un wordmark horizontal recortado a cuadrado con las
+letras llegando casi hasta el borde, así que **no** está declarado como
+ícono "maskable" en el manifest — Android lo recortaría en círculo y se
+comería partes de la "D" y la "S". Si en algún momento se genera una versión
+del logo con margen de zona segura, ahí sí vale la pena agregar esa variante
+al array `icons` en `vite.config.ts`.
 
 ### Probar la instalación
 

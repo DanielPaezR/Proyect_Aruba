@@ -1,11 +1,30 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --bg-subtle: #f7f6f9;
-  --border: #e5e4e7;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
+  /* Paleta de marca DECS — primitivos fijos, no cambian entre claro/oscuro. */
+  --navy-900: #111b29;
+  --navy-700: #1e3049;
+  --slate-600: #4b5b6b;
+  --slate-200: #e7ebee;
+  --lime-500: #8dc63f;
+  --gold-500: #d4b84a;
+  --brand-bg-page: #f7f8fa;
+
+  /* Semanticos (modo claro). navy-700/lime-500/gold-500 son colores claros
+     o de luminancia media: NO se usan como texto directo sobre blanco ni
+     como fondo solido con texto blanco encima sin revisar contraste antes
+     (lime-500 y gold-500 dan ~2:1 en esas combinaciones, muy por debajo del
+     minimo de accesibilidad). Por eso --accent usa navy-700 (texto/enlaces,
+     ~13:1 sobre blanco) y lime-500 solo entra como fondo suave detras de
+     ese texto oscuro. */
+  --text: var(--slate-600);
+  --text-h: var(--navy-900);
+  --bg: #ffffff;
+  --bg-page: var(--brand-bg-page);
+  --bg-subtle: var(--slate-200);
+  --border: var(--slate-600);
+  --accent: var(--navy-700);
+  --accent-bg: rgba(141, 198, 63, 0.18);
+  --btn-bg: var(--navy-700);
+  --btn-text: #ffffff;
   --danger: #c0392b;
   --danger-bg: rgba(192, 57, 43, 0.08);
   --shadow:
@@ -16,7 +35,7 @@
   font: 16px/145% var(--sans);
   color-scheme: light dark;
   color: var(--text);
-  background: var(--bg);
+  background: var(--bg-page);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -25,13 +44,19 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --bg-subtle: #1c1d24;
-    --border: #2e303a;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
+    /* En fondo oscuro la relacion de contraste se invierte: navy-700 se
+       pierde contra un fondo ya oscuro (~1.3:1), pero lime-500 SI funciona
+       bien como texto/boton sobre navy-900 (~8.5:1). */
+    --text: #a9b4bf;
+    --text-h: #f2f4f6;
+    --bg: #1c2b3f;
+    --bg-page: #0d1420;
+    --bg-subtle: #17263c;
+    --border: #34455c;
+    --accent: var(--lime-500);
+    --accent-bg: rgba(141, 198, 63, 0.22);
+    --btn-bg: var(--lime-500);
+    --btn-text: var(--navy-900);
     --danger: #f87171;
     --danger-bg: rgba(248, 113, 113, 0.12);
     --shadow:
@@ -97,13 +122,39 @@ button {
   justify-content: space-between;
   gap: 12px;
   padding: 10px 16px;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg-subtle);
+  background: var(--navy-900);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.brand-logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 3px 6px;
+  border-radius: 6px;
+  /* El logo tiene fondo blanco horneado en el PNG (texto negro) — sin este
+     contenedor claro se perderia contra el navy-900 del header. */
+  background: #ffffff;
+}
+
+.brand-logo img {
+  display: block;
+  height: 22px;
+  width: auto;
 }
 
 .app-name {
   font-weight: 600;
-  color: var(--text-h);
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Mobile-first: la nav vive como barra fija abajo (patron movil comun — el
@@ -119,8 +170,10 @@ button {
   z-index: 20;
   display: flex;
   gap: 2px;
-  background: var(--bg-subtle);
-  border-top: 1px solid var(--border);
+  /* Navy-900 tambien aca: en movil la nav es una barra separada (fixed),
+     no hereda el fondo del topbar por herencia normal de CSS. */
+  background: var(--navy-900);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   padding: 4px calc(4px + env(safe-area-inset-right)) calc(4px + env(safe-area-inset-bottom))
     calc(4px + env(safe-area-inset-left));
 }
@@ -133,19 +186,21 @@ button {
   min-height: 48px;
   padding: 4px 6px;
   border-radius: 8px;
-  color: var(--text);
+  /* Texto claro semi-transparente por defecto: sobre navy-900, --text
+     (slate-600) da ~2.5:1, muy por debajo de lo legible. */
+  color: rgba(255, 255, 255, 0.75);
   text-decoration: none;
   font-size: 12px;
   text-align: center;
 }
 
 .main-nav a:hover {
-  color: var(--text-h);
+  color: #ffffff;
 }
 
 .main-nav a.active {
-  background: var(--accent-bg);
-  color: var(--accent);
+  background: rgba(141, 198, 63, 0.25);
+  color: var(--lime-500);
   font-weight: 600;
 }
 
@@ -195,10 +250,12 @@ button {
 }
 
 .user-name {
-  /* Oculto en movil para dejar espacio; el usuario ya sabe quien es. */
+  /* Oculto en movil para dejar espacio; el usuario ya sabe quien es. Cuando
+     se muestra (desktop), es texto plano sobre el topbar navy-900, por eso
+     un blanco semi-transparente en vez de --text (slate-600 da ~2.5:1 ahi). */
   display: none;
   font-size: 14px;
-  color: var(--text);
+  color: rgba(255, 255, 255, 0.75);
 }
 
 .user-menu button {
@@ -232,8 +289,23 @@ button {
 
 .login-page {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   padding: 24px 16px;
+}
+
+.login-brand {
+  margin-bottom: 20px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: var(--shadow);
+}
+
+.login-logo {
+  display: block;
+  height: 40px;
+  width: auto;
 }
 
 .login-form {
@@ -278,8 +350,8 @@ button {
   padding: 12px;
   border-radius: 6px;
   border: none;
-  background: var(--accent);
-  color: #fff;
+  background: var(--btn-bg);
+  color: var(--btn-text);
   font-weight: 600;
   min-height: 44px;
 }
@@ -350,8 +422,8 @@ button {
   padding: 10px 16px;
   border-radius: 6px;
   border: none;
-  background: var(--accent);
-  color: #fff;
+  background: var(--btn-bg);
+  color: var(--btn-text);
   font-weight: 600;
   white-space: nowrap;
   min-height: 44px;
@@ -426,8 +498,8 @@ button {
   padding: 10px 16px;
   border-radius: 6px;
   border: none;
-  background: var(--accent);
-  color: #fff;
+  background: var(--btn-bg);
+  color: var(--btn-text);
   font-weight: 600;
   min-height: 44px;
 }
@@ -495,6 +567,13 @@ button {
   white-space: nowrap;
 }
 
+/* Prioridad ALTA/URGENTE: gold-500 solido + texto navy-900 (~8.9:1, mucho
+   mas legible que gold-500 como texto sobre fondo claro, que da ~2:1). */
+.status-badge--priority-high {
+  background: var(--gold-500);
+  color: var(--navy-900);
+}
+
 .card-description {
   margin: 8px 0 0;
   font-size: 14px;
@@ -547,8 +626,8 @@ button {
   margin-top: 12px;
   padding: 10px 16px;
   border-radius: 6px;
-  background: var(--accent);
-  color: #fff;
+  background: var(--btn-bg);
+  color: var(--btn-text);
   font-weight: 600;
   font-size: 14px;
   text-decoration: none;
@@ -575,6 +654,23 @@ button {
   object-fit: cover;
   border-radius: 8px;
   border: 1px solid var(--border);
+}
+
+.app-footer {
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.app-footer-name {
+  font-weight: 600;
+  color: var(--text-h);
 }
 
 /* ---------- Desktop (>=640px): la nav vuelve a ser una barra horizontal

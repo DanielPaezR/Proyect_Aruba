@@ -38,6 +38,9 @@ export function LoginPage() {
 
   return (
     <div className="login-page">
+      <div className="login-brand">
+        <img src="/logo_cropped.png" alt="DECS" className="login-logo" />
+      </div>
       <form className="login-form" onSubmit={(event) => void handleSubmit(event)}>
         <h1>{t("login.title", { ns: "auth" })}</h1>
         <p className="login-subtitle">{t("login.subtitle", { ns: "auth" })}</p>

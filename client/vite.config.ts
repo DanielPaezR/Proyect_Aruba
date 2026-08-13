@@ -10,17 +10,19 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
       manifest: {
-        name: 'Decs - Gestión',
-        short_name: 'Decs',
+        name: 'DECS - Gestión',
+        short_name: 'DECS',
         description: 'Gestión de proyectos, actividades y evidencias para trabajos eléctricos.',
-        theme_color: '#1B2A4A',
-        background_color: '#1B2A4A',
+        theme_color: '#111B29',
+        background_color: '#111B29',
         display: 'standalone',
         start_url: '/',
-        // Solo "any": el icono placeholder no tiene el margen de zona segura
-        // que necesita un icono "maskable" de verdad (Android lo recortaria
-        // mal). Cuando llegue el logo real de Decs, vale la pena agregar una
-        // variante maskable con ese margen.
+        // Solo "any": el logo real (pwa-192x192.png/pwa-512x512.png) es un
+        // wordmark horizontal recortado a cuadrado, con las letras llegando
+        // casi hasta el borde — sin el margen de zona segura que necesita un
+        // icono "maskable" (Android lo recortaria en circulo y se comeria
+        // partes de la "D" y la "S"). Si en algun momento hacen una version
+        // del logo con ese margen, ahi si vale la pena agregar la variante.
         icons: [
           { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
           { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png' },

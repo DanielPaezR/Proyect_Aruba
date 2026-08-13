@@ -1,6 +1,9 @@
 {
   "app": {
-    "name": "Decs"
+    "name": "DECS"
+  },
+  "footer": {
+    "address": "Paradera 34 O, Oranjestad, Aruba"
   },
   "actions": {
     "save": "Save",

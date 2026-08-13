@@ -166,7 +166,15 @@ export function ProjectDetailPage() {
                 <dt>{t("create.priority", { ns: "projects" })}</dt>
                 <dd>
                   {project.priority ? (
-                    <span className="status-badge">{translateStatus(t, "projects", "priority", project.priority)}</span>
+                    <span
+                      className={
+                        project.priority === "ALTA" || project.priority === "URGENTE"
+                          ? "status-badge status-badge--priority-high"
+                          : "status-badge"
+                      }
+                    >
+                      {translateStatus(t, "projects", "priority", project.priority)}
+                    </span>
                   ) : (
                     t("detail.notSpecified", { ns: "projects" })
                   )}
