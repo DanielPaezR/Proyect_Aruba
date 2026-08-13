@@ -31,6 +31,11 @@ export function Layout() {
             <NavLink to="/projects" className={navLinkClassName}>
               {t("nav.projects", { ns: "common" })}
             </NavLink>
+            {isManagerRole(user.role) && (
+              <NavLink to="/evidences" className={navLinkClassName}>
+                {t("nav.evidences", { ns: "common" })}
+              </NavLink>
+            )}
           </nav>
         )}
         <div className="topbar-actions">

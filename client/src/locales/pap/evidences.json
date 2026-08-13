@@ -1,0 +1,13 @@
+{
+  "title": "Evidensianan",
+  "empty": "No tin evidensia pa e filter aki",
+  "statusFilterLabel": "Estado",
+  "statusFilterAll": "Tur",
+  "uploadedBy": "Subí pa",
+  "approveButton": "Aprobá",
+  "rejectButton": "Rechasá",
+  "rejectFormTitle": "Rechasá evidensia",
+  "rejectCommentLabel": "Motibu (opshonal)",
+  "confirmReject": "Konfirmá rechaso",
+  "reviewedBy": "Revisá pa"
+}

@@ -1,0 +1,13 @@
+{
+  "title": "Evidencias",
+  "empty": "No hay evidencias para este filtro",
+  "statusFilterLabel": "Estado",
+  "statusFilterAll": "Todas",
+  "uploadedBy": "Subida por",
+  "approveButton": "Aprobar",
+  "rejectButton": "Rechazar",
+  "rejectFormTitle": "Rechazar evidencia",
+  "rejectCommentLabel": "Motivo (opcional)",
+  "confirmReject": "Confirmar rechazo",
+  "reviewedBy": "Revisado por"
+}

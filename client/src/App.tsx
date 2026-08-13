@@ -3,6 +3,7 @@ import { HomeRedirect } from "./components/HomeRedirect";
 import { Layout } from "./components/Layout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
+import { EvidencesReviewPage } from "./pages/EvidencesReviewPage";
 import { LoginPage } from "./pages/LoginPage";
 import { MyActivitiesPage } from "./pages/MyActivitiesPage";
 import { ProjectDetailPage } from "./pages/ProjectDetailPage";
@@ -22,6 +23,7 @@ function App() {
               <Route path="/my-activities" element={<MyActivitiesPage />} />
               <Route path="/projects" element={<ProjectsListPage />} />
               <Route path="/projects/:projectId" element={<ProjectDetailPage />} />
+              <Route path="/evidences" element={<EvidencesReviewPage />} />
             </Route>
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

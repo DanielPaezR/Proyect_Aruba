@@ -16,3 +16,13 @@ export interface Evidence {
   createdAt: string;
   updatedAt: string;
 }
+
+/** Forma de GET /api/evidences (Jefe/Supervisor) — incluye la actividad y su proyecto. */
+export interface EvidenceWithActivity extends Evidence {
+  activity: {
+    id: string;
+    title: string;
+    projectId: string;
+    project: { id: string; name: string };
+  };
+}

@@ -1,0 +1,13 @@
+{
+  "title": "Evidence",
+  "empty": "No evidence for this filter",
+  "statusFilterLabel": "Status",
+  "statusFilterAll": "All",
+  "uploadedBy": "Uploaded by",
+  "approveButton": "Approve",
+  "rejectButton": "Reject",
+  "rejectFormTitle": "Reject evidence",
+  "rejectCommentLabel": "Reason (optional)",
+  "confirmReject": "Confirm rejection",
+  "reviewedBy": "Reviewed by"
+}

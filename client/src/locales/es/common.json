@@ -22,7 +22,8 @@
   "nav": {
     "dashboard": "Panel",
     "projects": "Proyectos",
-    "myActivities": "Mis actividades"
+    "myActivities": "Mis actividades",
+    "evidences": "Evidencias"
   },
   "activityStatus": {
     "PENDIENTE": "Pendiente",
