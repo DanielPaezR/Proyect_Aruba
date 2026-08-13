@@ -44,6 +44,11 @@ enum PunchType {
   SALIDA
 }
 
+enum TimeEntrySource {
+  MANUAL
+  AUTO_GEOFENCE
+}
+
 enum Locale {
   ES
   EN
@@ -98,12 +103,20 @@ model User {
   // por ahora solo se captura el dato.
   hourlyRate Decimal? @db.Decimal(10, 2)
 
+  // Ultima ubicacion conocida, capturada por el cliente durante una sesion
+  // (no es rastreo continuo en segundo plano). La usa el marcado automatico
+  // por geocerca para saber si el trabajador esta cerca de la oficina.
+  lastKnownLatitude  Float?
+  lastKnownLongitude Float?
+  lastLocationAt     DateTime?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   createdProjects     Project[]            @relation("ProjectCreatedBy")
   activityAssignments ActivityAssignment[]
   timeEntries         TimeEntry[]
+  editedTimeEntries   TimeEntry[]          @relation("TimeEntryEditedBy")
   uploadedEvidences   Evidence[]           @relation("EvidenceUploadedBy")
   reviewedEvidences   Evidence[]           @relation("EvidenceReviewedBy")
   refreshTokens       RefreshToken[]
@@ -208,6 +221,16 @@ model TimeEntry {
   timestamp DateTime  @default(now())
   latitude  Float?
   longitude Float?
+  source    TimeEntrySource @default(MANUAL)
+
+  // Edicion auditada: originalTimestamp queda null mientras nadie la haya
+  // tocado (evita duplicar el valor de "timestamp" en cada fila sin editar).
+  // Al editar se copia el timestamp original aca antes de sobreescribirlo.
+  originalTimestamp DateTime?
+  editedById        String?
+  editedBy          User?     @relation("TimeEntryEditedBy", fields: [editedById], references: [id])
+  editedAt          DateTime?
+  editReason        String?
 
   createdAt DateTime @default(now())
 
@@ -239,4 +262,27 @@ model Evidence {
   @@index([activityId])
   @@index([status])
   @@map("evidences")
+}
+
+// Fila unica (singleton, id fijo = 1) con la configuracion de la empresa para
+// marcado automatico por geocerca. officeLatitude/officeLongitude quedan null
+// hasta que el JEFE configure la ubicacion real desde /api/settings — no hay
+// un default sensato para coordenadas de un sitio especifico, a diferencia
+// del radio y las ventanas horarias.
+model CompanySettings {
+  id Int @id @default(1)
+
+  officeLatitude     Float?
+  officeLongitude    Float?
+  officeRadiusMeters Int    @default(125)
+
+  morningWindowStart String @default("06:30")
+  morningWindowEnd   String @default("07:30")
+
+  afternoonWindowStart String @default("16:30")
+  afternoonWindowEnd   String @default("18:00")
+
+  updatedAt DateTime @updatedAt
+
+  @@map("company_settings")
 }
