@@ -130,3 +130,53 @@ Antes de manejar evidencias reales en producción:
 Un Volume resuelve la persistencia entre deploys, pero **no** entre réplicas
 si en algún momento escalas el servicio horizontalmente — para eso sí hace
 falta almacenamiento externo.
+
+## PWA (app instalable)
+
+`client/` usa [`vite-plugin-pwa`](https://vite-pwa-org.netlify.app/) (config
+en `client/vite.config.ts`) con `registerType: 'autoUpdate'`: el service
+worker se actualiza solo en cada visita, sin pedirle nada al usuario.
+
+**Qué cachea y qué no**: solo el *app shell* (el JS/CSS/HTML/imágenes que
+emite `vite build`). Las respuestas de `/api/*` **nunca** se cachean —
+no hay `runtimeCaching` configurado a propósito, porque esos datos
+cambian todo el tiempo y servir una versión vieja desde caché sería peor
+que no tener PWA. Como además el backend vive en otro origen (Railway) que
+el cliente, el service worker ni siquiera intercepta esas llamadas por
+construcción.
+
+**No incluido todavía, a propósito**: notificaciones push (`Notification.
+requestPermission()`, suscripción push, tablas de suscripción en el
+backend). Eso queda para cuando haya un evento real que dispare una
+notificación — probablemente Fase 4 (emergencias). El `registerType:
+'autoUpdate'` y la estructura del manifest ya están listos para agregarlo
+después sin tener que rehacer esta parte.
+
+### ⚠️ Ícono placeholder
+
+`client/public/pwa-192x192.png`, `pwa-512x512.png` y `apple-touch-icon.png`
+son un placeholder generado a mano (fondo navy `#1B2A4A`, la letra "D" en
+gold `#C9A24B`) — **hay que reemplazarlos por el logo real de Decs** cuando
+lo tengan. Mismo nombre de archivo, mismos tamaños (192×192, 512×512, y
+180×180 para `apple-touch-icon.png`), y listo — no hace falta tocar
+`vite.config.ts`. El placeholder tampoco es un ícono "maskable" de verdad
+(le falta el margen de zona segura que Android necesita para recortarlo en
+círculo); si el logo real se agrega como maskable, hay que sumar esa
+variante al array `icons` del manifest en `vite.config.ts`.
+
+### Probar la instalación
+
+El dev server normal (`npm run dev`) **no** activa el service worker igual
+que producción — hay que probarlo con el build real:
+
+```bash
+cd client
+npm run build
+npm run preview   # sirve dist/ tal como quedaría en producción
+```
+
+Abrí la URL que imprime `vite preview` en Chrome/Edge de escritorio o en un
+celular Android — debería aparecer el ícono de instalar en la barra de
+direcciones (desktop) o el banner "Agregar a pantalla de inicio" (Android).
+En iOS Safari no hay prompt automático: se instala manual desde Compartir →
+"Agregar a inicio".
