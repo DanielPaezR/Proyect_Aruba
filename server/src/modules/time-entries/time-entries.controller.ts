@@ -6,6 +6,7 @@ import {
   createTimeEntrySchema,
   listMyTimeEntriesQuerySchema,
   listTimeEntriesQuerySchema,
+  summaryMineQuerySchema,
   summaryQuerySchema,
   updateTimeEntrySchema,
 } from "./time-entries.validators";
@@ -37,6 +38,12 @@ export const list = asyncHandler(async (req: Request, res: Response) => {
 export const summary = asyncHandler(async (req: Request, res: Response) => {
   const filters = summaryQuerySchema.parse(req.query);
   const summary = await timeEntriesService.getSummary(filters);
+  res.json({ summary });
+});
+
+export const summaryMine = asyncHandler(async (req: Request, res: Response) => {
+  const filters = summaryMineQuerySchema.parse(req.query);
+  const summary = await timeEntriesService.getSummary({ ...filters, userId: req.user!.id });
   res.json({ summary });
 });
 

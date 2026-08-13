@@ -33,6 +33,8 @@
       "SALIDA": "Salida"
     },
     "autoBadge": "Automática",
-    "manualBadge": "Manual"
+    "manualBadge": "Manual",
+    "totalLabel": "Total",
+    "openLabel": "En curso"
   }
 }

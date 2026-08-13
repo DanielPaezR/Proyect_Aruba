@@ -4,12 +4,8 @@ import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { MyActivityCard } from "../components/MyActivityCard";
 import type { Activity } from "../types/activity";
-import type { TimeEntry } from "../types/timeEntry";
-
-function startOfTodayIso(): string {
-  const now = new Date();
-  return new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
-}
+import type { UserDaySummary } from "../types/timeEntry";
+import { formatHoursFromMinutes } from "../utils/formatHours";
 
 export function MyActivitiesPage() {
   const { t } = useTranslation(["activities", "common"]);
@@ -18,7 +14,8 @@ export function MyActivitiesPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const [timeEntries, setTimeEntries] = useState<TimeEntry[] | null>(null);
+  // undefined = todavia no se cargo; null = cargado pero sin marcaciones hoy (o error).
+  const [todaySummary, setTodaySummary] = useState<UserDaySummary | null | undefined>(undefined);
 
   useEffect(() => {
     let cancelled = false;
@@ -44,17 +41,16 @@ export function MyActivitiesPage() {
 
     async function loadTimeEntries() {
       try {
-        const response = await apiClient.get<{ timeEntries: TimeEntry[] }>("/time-entries/mine", {
-          params: { from: startOfTodayIso() },
-        });
+        // Sin filtros: el backend usa el dia de hoy en Aruba por default.
+        const response = await apiClient.get<{ summary: UserDaySummary[] }>("/time-entries/summary/mine");
         if (!cancelled) {
-          setTimeEntries(response.data.timeEntries);
+          setTodaySummary(response.data.summary[0] ?? null);
         }
       } catch {
         // Seccion secundaria de la pagina: si falla, las actividades siguen
         // usables igual, no vale la pena mostrar un error aparte para esto.
         if (!cancelled) {
-          setTimeEntries(null);
+          setTodaySummary(null);
         }
       }
     }
@@ -80,31 +76,41 @@ export function MyActivitiesPage() {
         <h1>{t("mine.title", { ns: "activities" })}</h1>
       </div>
 
-      {timeEntries && (
+      {todaySummary !== undefined && (
         <section className="my-time-entries">
           <h2>{t("mine.timeEntriesTitle", { ns: "activities" })}</h2>
-          {timeEntries.length === 0 ? (
+          {!todaySummary || todaySummary.entries.length === 0 ? (
             <p>{t("mine.timeEntriesEmpty", { ns: "activities" })}</p>
           ) : (
-            <ul className="card-list">
-              {timeEntries.map((entry) => (
-                <li key={entry.id} className="card">
-                  <div className="card-header">
-                    <span className="card-title">
-                      {t(`mine.entryType.${entry.type}`, { ns: "activities" })}
+            <>
+              <p className="card-meta">
+                {t("mine.totalLabel", { ns: "activities" })}: {formatHoursFromMinutes(todaySummary.totalMinutes)}
+                {todaySummary.hasOpenEntry && ` · ${t("mine.openLabel", { ns: "activities" })}`}
+              </p>
+              <ul className="card-list">
+                {todaySummary.entries.map((entry) => (
+                  <li key={entry.id} className="card">
+                    <div className="card-header">
+                      <span className="card-title">
+                        {t(`mine.entryType.${entry.type}`, { ns: "activities" })}
+                      </span>
+                      <span
+                        className={
+                          entry.source === "AUTO_GEOFENCE" ? "status-badge status-badge--auto" : "status-badge"
+                        }
+                      >
+                        {entry.source === "AUTO_GEOFENCE"
+                          ? t("mine.autoBadge", { ns: "activities" })
+                          : t("mine.manualBadge", { ns: "activities" })}
+                      </span>
+                    </div>
+                    <span className="card-meta">
+                      {new Date(entry.timestamp).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}
                     </span>
-                    <span className={entry.source === "AUTO_GEOFENCE" ? "status-badge status-badge--auto" : "status-badge"}>
-                      {entry.source === "AUTO_GEOFENCE"
-                        ? t("mine.autoBadge", { ns: "activities" })
-                        : t("mine.manualBadge", { ns: "activities" })}
-                    </span>
-                  </div>
-                  <span className="card-meta">
-                    {new Date(entry.timestamp).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}
-                  </span>
-                </li>
-              ))}
-            </ul>
+                  </li>
+                ))}
+              </ul>
+            </>
           )}
         </section>
       )}

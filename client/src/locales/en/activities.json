@@ -33,6 +33,8 @@
       "SALIDA": "Clock out"
     },
     "autoBadge": "Automatic",
-    "manualBadge": "Manual"
+    "manualBadge": "Manual",
+    "totalLabel": "Total",
+    "openLabel": "In progress"
   }
 }

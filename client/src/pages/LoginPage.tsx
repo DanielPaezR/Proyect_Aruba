@@ -17,8 +17,10 @@ export function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isLoading && user) {
+    // "/" (no "/dashboard" fijo) para que HomeRedirect mande a cada rol a su
+    // landing correcta — un TRABAJADOR_CAMPO no tiene acceso al dashboard.
     const state = location.state as { from?: { pathname?: string } } | null;
-    const redirectTo = state?.from?.pathname ?? "/dashboard";
+    const redirectTo = state?.from?.pathname ?? "/";
     return <Navigate to={redirectTo} replace />;
   }
 
@@ -28,7 +30,8 @@ export function LoginPage() {
     setIsSubmitting(true);
     try {
       await login(email, password);
-      navigate("/dashboard", { replace: true });
+      // Igual que arriba: "/" deja que HomeRedirect decida segun el rol.
+      navigate("/", { replace: true });
     } catch (error) {
       setErrorMessage(translateApiError(t, error));
     } finally {

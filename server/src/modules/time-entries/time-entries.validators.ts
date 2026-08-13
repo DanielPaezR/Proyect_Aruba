@@ -33,6 +33,10 @@ export const summaryQuerySchema = z.object({
   to: z.coerce.date().optional(),
 });
 
+// Igual que summaryQuerySchema pero sin "userId": el trabajador consulta su
+// propio resumen, no puede pedir el de otro.
+export const summaryMineQuerySchema = summaryQuerySchema.omit({ userId: true });
+
 export const updateTimeEntrySchema = z.object({
   timestamp: z.coerce.date(),
   editReason: z.string().min(1).optional(),
@@ -41,4 +45,5 @@ export const updateTimeEntrySchema = z.object({
 export type CreateTimeEntryInput = z.infer<typeof createTimeEntrySchema>;
 export type AutoCheckInput = z.infer<typeof autoCheckSchema>;
 export type SummaryQuery = z.infer<typeof summaryQuerySchema>;
+export type SummaryMineQuery = z.infer<typeof summaryMineQuerySchema>;
 export type UpdateTimeEntryInput = z.infer<typeof updateTimeEntrySchema>;

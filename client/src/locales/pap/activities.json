@@ -33,6 +33,8 @@
       "SALIDA": "Sali"
     },
     "autoBadge": "Automátiko",
-    "manualBadge": "Manual"
+    "manualBadge": "Manual",
+    "totalLabel": "Total",
+    "openLabel": "Na kurso"
   }
 }

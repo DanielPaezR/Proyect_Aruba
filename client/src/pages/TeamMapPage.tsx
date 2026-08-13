@@ -13,6 +13,7 @@ import { useAuth } from "../context/AuthContext";
 import { isManagerRole } from "../types/auth";
 import type { UserDaySummary } from "../types/timeEntry";
 import type { WorkerLocation } from "../types/team";
+import { formatHoursFromMinutes } from "../utils/formatHours";
 import { timeAgo } from "../utils/timeAgo";
 
 // Vite no resuelve las rutas relativas por defecto de Leaflet a los iconos
@@ -196,8 +197,7 @@ export function TeamMapPage() {
                   <div className="card-header">
                     <span className="card-title">{userSummary.user.name}</span>
                     <span className="card-meta">
-                      {t("hours.totalLabel", { ns: "teamMap" })}:{" "}
-                      {(userSummary.totalMinutes / 60).toFixed(1)}h
+                      {t("hours.totalLabel", { ns: "teamMap" })}: {formatHoursFromMinutes(userSummary.totalMinutes)}
                       {userSummary.hasOpenEntry && ` · ${t("hours.openLabel", { ns: "teamMap" })}`}
                     </span>
                   </div>
