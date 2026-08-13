@@ -4,6 +4,8 @@
   "createFormTitle": "Nueva actividad",
   "titleLabel": "Título",
   "descriptionLabel": "Descripción",
+  "referenceImageLabel": "Imagen de referencia (opcional)",
+  "referenceImageAlt": "Imagen de referencia de la actividad",
   "submit": "Crear",
   "submitting": "Creando...",
   "empty": "Todavía no hay actividades en este proyecto",
@@ -35,6 +37,16 @@
     "autoBadge": "Automática",
     "manualBadge": "Manual",
     "totalLabel": "Total",
-    "openLabel": "En curso"
+    "openLabel": "En curso",
+    "stats": {
+      "hoursThisWeek": "Horas trabajadas esta semana",
+      "hoursValue": "{{hours}} h",
+      "completedThisMonth": "Actividades completadas este mes",
+      "pendingEvidences": "Evidencias pendientes de revisión",
+      "streak": "Racha de marcación",
+      "streakValue_one": "{{count}} día seguido",
+      "streakValue_other": "{{count}} días seguidos",
+      "streakEmpty": "Sin racha activa"
+    }
   }
 }

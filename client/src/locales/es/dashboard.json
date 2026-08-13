@@ -5,6 +5,18 @@
     "pendingEvidences": "Evidencias pendientes de revisión",
     "unassignedActivities": "Actividades sin asignar",
     "empty": "No hay actividades programadas para hoy",
-    "noUnassigned": "Todas las actividades tienen al menos un trabajador asignado"
+    "noUnassigned": "Todas las actividades tienen al menos un trabajador asignado",
+    "stats": {
+      "completedActivities": "Actividades completadas esta semana",
+      "completedActivitiesTrend_one": "{{count}} la semana pasada",
+      "completedActivitiesTrend_other": "{{count}} la semana pasada",
+      "teamHours": "Horas del equipo esta semana",
+      "hoursValue": "{{hours}} h",
+      "approvalRate": "Tasa de aprobación de evidencias (último mes)",
+      "activeProjects": "Proyectos activos por prioridad",
+      "activeProjectsValue": "{{high}} alta/urgente · {{low}} media/baja",
+      "topWorkers": "Top trabajadores esta semana",
+      "noDataYet": "Sin datos todavía"
+    }
   }
 }

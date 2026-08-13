@@ -5,6 +5,18 @@
     "pendingEvidences": "Evidence pending review",
     "unassignedActivities": "Unassigned activities",
     "empty": "No activities scheduled for today",
-    "noUnassigned": "Every activity has at least one worker assigned"
+    "noUnassigned": "Every activity has at least one worker assigned",
+    "stats": {
+      "completedActivities": "Activities completed this week",
+      "completedActivitiesTrend_one": "{{count}} last week",
+      "completedActivitiesTrend_other": "{{count}} last week",
+      "teamHours": "Team hours this week",
+      "hoursValue": "{{hours}} h",
+      "approvalRate": "Evidence approval rate (last month)",
+      "activeProjects": "Active projects by priority",
+      "activeProjectsValue": "{{high}} high/urgent · {{low}} medium/low",
+      "topWorkers": "Top workers this week",
+      "noDataYet": "No data yet"
+    }
   }
 }

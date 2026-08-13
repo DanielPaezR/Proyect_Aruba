@@ -11,3 +11,4 @@ dashboardRouter.get(
   authorize(Role.JEFE, Role.SUPERVISOR),
   dashboardController.supervisorDashboard,
 );
+dashboardRouter.get("/worker", dashboardController.workerDashboard);

@@ -4,6 +4,8 @@
   "createFormTitle": "Aktividat nobo",
   "titleLabel": "Título",
   "descriptionLabel": "Deskripshon",
+  "referenceImageLabel": "Imagen di referencia (opshonal)",
+  "referenceImageAlt": "Imagen di referencia di e aktividat",
   "submit": "Krea",
   "submitting": "Ta krea...",
   "empty": "Ainda no tin aktividat den e proyekto aki",
@@ -35,6 +37,16 @@
     "autoBadge": "Automátiko",
     "manualBadge": "Manual",
     "totalLabel": "Total",
-    "openLabel": "Na kurso"
+    "openLabel": "Na kurso",
+    "stats": {
+      "hoursThisWeek": "Oranan trahá e siman aki",
+      "hoursValue": "{{hours}} h",
+      "completedThisMonth": "Aktividat kompletá e luna aki",
+      "pendingEvidences": "Evidensianan pendiente pa revizá",
+      "streak": "Racha di marchashon",
+      "streakValue_one": "{{count}} dia seguido",
+      "streakValue_other": "{{count}} dianan seguido",
+      "streakEmpty": "Sin racha aktivo"
+    }
   }
 }

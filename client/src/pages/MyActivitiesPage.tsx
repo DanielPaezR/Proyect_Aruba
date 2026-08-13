@@ -7,6 +7,13 @@ import type { Activity } from "../types/activity";
 import type { UserDaySummary } from "../types/timeEntry";
 import { formatHoursFromMinutes } from "../utils/formatHours";
 
+interface WorkerStats {
+  hoursThisWeek: number;
+  completedActivitiesThisMonth: number;
+  pendingEvidencesCount: number;
+  punchStreak: number;
+}
+
 export function MyActivitiesPage() {
   const { t } = useTranslation(["activities", "common"]);
 
@@ -16,6 +23,9 @@ export function MyActivitiesPage() {
 
   // undefined = todavia no se cargo; null = cargado pero sin marcaciones hoy (o error).
   const [todaySummary, setTodaySummary] = useState<UserDaySummary | null | undefined>(undefined);
+
+  // undefined = todavia no se cargo; null = error al cargar (seccion secundaria).
+  const [workerStats, setWorkerStats] = useState<WorkerStats | null | undefined>(undefined);
 
   useEffect(() => {
     let cancelled = false;
@@ -55,8 +65,24 @@ export function MyActivitiesPage() {
       }
     }
 
+    async function loadWorkerStats() {
+      try {
+        const response = await apiClient.get<WorkerStats>("/dashboard/worker");
+        if (!cancelled) {
+          setWorkerStats(response.data);
+        }
+      } catch {
+        // Seccion secundaria de la pagina: si falla, las actividades siguen
+        // usables igual, no vale la pena mostrar un error aparte para esto.
+        if (!cancelled) {
+          setWorkerStats(null);
+        }
+      }
+    }
+
     void load();
     void loadTimeEntries();
+    void loadWorkerStats();
     return () => {
       cancelled = true;
     };
@@ -75,6 +101,40 @@ export function MyActivitiesPage() {
       <div className="page-header">
         <h1>{t("mine.title", { ns: "activities" })}</h1>
       </div>
+
+      {workerStats && (
+        <div className="stat-grid">
+          <div className="stat-card">
+            <span className="stat-card__value">
+              {t("mine.stats.hoursValue", { ns: "activities", hours: workerStats.hoursThisWeek })}
+            </span>
+            <span className="stat-card__label">{t("mine.stats.hoursThisWeek", { ns: "activities" })}</span>
+          </div>
+
+          <div className="stat-card">
+            <span className="stat-card__value">{workerStats.completedActivitiesThisMonth}</span>
+            <span className="stat-card__label">{t("mine.stats.completedThisMonth", { ns: "activities" })}</span>
+          </div>
+
+          <div className="stat-card">
+            <span className="stat-card__value">{workerStats.pendingEvidencesCount}</span>
+            <span className="stat-card__label">{t("mine.stats.pendingEvidences", { ns: "activities" })}</span>
+          </div>
+
+          <div className="stat-card">
+            {workerStats.punchStreak === 0 ? (
+              <span className="stat-card__value stat-card__value--empty">
+                {t("mine.stats.streakEmpty", { ns: "activities" })}
+              </span>
+            ) : (
+              <span className="stat-card__value">
+                {t("mine.stats.streakValue", { ns: "activities", count: workerStats.punchStreak })}
+              </span>
+            )}
+            <span className="stat-card__label">{t("mine.stats.streak", { ns: "activities" })}</span>
+          </div>
+        </div>
+      )}
 
       {todaySummary !== undefined && (
         <section className="my-time-entries">

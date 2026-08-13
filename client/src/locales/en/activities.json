@@ -4,6 +4,8 @@
   "createFormTitle": "New activity",
   "titleLabel": "Title",
   "descriptionLabel": "Description",
+  "referenceImageLabel": "Reference image (optional)",
+  "referenceImageAlt": "Activity reference image",
   "submit": "Create",
   "submitting": "Creating...",
   "empty": "No activities in this project yet",
@@ -35,6 +37,16 @@
     "autoBadge": "Automatic",
     "manualBadge": "Manual",
     "totalLabel": "Total",
-    "openLabel": "In progress"
+    "openLabel": "In progress",
+    "stats": {
+      "hoursThisWeek": "Hours worked this week",
+      "hoursValue": "{{hours}} h",
+      "completedThisMonth": "Activities completed this month",
+      "pendingEvidences": "Evidence pending review",
+      "streak": "Clock-in streak",
+      "streakValue_one": "{{count}} day in a row",
+      "streakValue_other": "{{count}} days in a row",
+      "streakEmpty": "No active streak"
+    }
   }
 }

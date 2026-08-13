@@ -64,6 +64,11 @@ export function arubaToday(at: Date = new Date()): Date {
   return new Date(`${ARUBA_DATE_FORMATTER.format(at)}T00:00:00.000Z`);
 }
 
+/** "YYYY-MM-DD" del dia calendario en Aruba para un instante dado. */
+export function arubaDateKey(at: Date = new Date()): string {
+  return ARUBA_DATE_FORMATTER.format(at);
+}
+
 /**
  * Instante UTC que corresponde a la medianoche de hoy en Aruba. Aruba esta
  * fija en UTC-4 (sin horario de verano), asi que sumar 4 horas al dia
@@ -83,4 +88,20 @@ export function arubaDayRangeUtc(dateStr: string): { start: Date; end: Date } {
   const start = new Date(`${dateStr}T04:00:00.000Z`);
   const end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
   return { start, end };
+}
+
+/** Instante UTC de la medianoche del lunes de esta semana, hora de Aruba. */
+export function arubaStartOfWeekUtc(at: Date = new Date()): Date {
+  const today = arubaToday(at);
+  const dayOfWeek = today.getUTCDay(); // 0=domingo..6=sabado
+  const daysSinceMonday = (dayOfWeek + 6) % 7; // lunes=0, martes=1, ..., domingo=6
+  const monday = new Date(today.getTime() - daysSinceMonday * 24 * 60 * 60 * 1000);
+  return new Date(monday.getTime() + 4 * 60 * 60 * 1000);
+}
+
+/** Instante UTC de la medianoche del dia 1 de este mes, hora de Aruba. */
+export function arubaStartOfMonthUtc(at: Date = new Date()): Date {
+  const today = arubaToday(at);
+  const firstOfMonth = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), 1));
+  return new Date(firstOfMonth.getTime() + 4 * 60 * 60 * 1000);
 }

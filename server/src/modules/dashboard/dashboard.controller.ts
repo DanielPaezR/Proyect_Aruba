@@ -8,3 +8,8 @@ export const supervisorDashboard = asyncHandler(async (req: Request, res: Respon
   const dashboard = await dashboardService.getSupervisorDashboard(date);
   res.json(dashboard);
 });
+
+export const workerDashboard = asyncHandler(async (req: Request, res: Response) => {
+  const dashboard = await dashboardService.getWorkerDashboard(req.user!.id);
+  res.json(dashboard);
+});
