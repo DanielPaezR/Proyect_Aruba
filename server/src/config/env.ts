@@ -17,4 +17,7 @@ export const env = {
   jwtAccessExpiresIn: process.env.JWT_ACCESS_EXPIRES_IN ?? "15m",
   jwtRefreshExpiresInDays: Number(process.env.JWT_REFRESH_EXPIRES_IN_DAYS ?? 30),
   corsOrigin: process.env.CORS_ORIGIN ?? "http://localhost:5173",
+  vapidPublicKey: required("VAPID_PUBLIC_KEY"),
+  vapidPrivateKey: required("VAPID_PRIVATE_KEY"),
+  vapidSubject: required("VAPID_SUBJECT"),
 };

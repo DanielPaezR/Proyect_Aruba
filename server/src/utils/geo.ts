@@ -51,3 +51,25 @@ export function currentArubaMinutes(at: Date = new Date()): number {
 export function isWithinWindow(nowMinutes: number, start: string, end: string): boolean {
   return nowMinutes >= parseMinutesSinceMidnight(start) && nowMinutes <= parseMinutesSinceMidnight(end);
 }
+
+const ARUBA_DATE_FORMATTER = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "America/Aruba",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+/** Dia calendario actual en Aruba, como Date a medianoche UTC (para columnas `@db.Date`). */
+export function arubaToday(at: Date = new Date()): Date {
+  return new Date(`${ARUBA_DATE_FORMATTER.format(at)}T00:00:00.000Z`);
+}
+
+/**
+ * Instante UTC que corresponde a la medianoche de hoy en Aruba. Aruba esta
+ * fija en UTC-4 (sin horario de verano), asi que sumar 4 horas al dia
+ * calendario es exacto — no hace falta una libreria de zonas horarias para
+ * este caso particular.
+ */
+export function arubaStartOfTodayUtc(at: Date = new Date()): Date {
+  return new Date(arubaToday(at).getTime() + 4 * 60 * 60 * 1000);
+}

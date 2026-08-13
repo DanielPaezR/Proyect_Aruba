@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { apiClient } from "../api/client";
 import { onUnauthorized, setAccessToken } from "../api/tokenStore";
 import type { User, UserLocale } from "../types/auth";
+import { subscribeToPushIfPossible } from "../utils/pushSubscription";
 
 interface AuthContextValue {
   user: User | null;
@@ -62,6 +63,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAccessToken(data.accessToken);
     setUser(data.user);
     void i18n.changeLanguage(data.user.locale.toLowerCase());
+
+    // No intrusivo: no bloquea el login si el permiso se niega o el
+    // navegador no soporta push. Solo aplica a TRABAJADOR_CAMPO, que es
+    // quien necesita el recordatorio de marcado.
+    if (data.user.role === "TRABAJADOR_CAMPO") {
+      void subscribeToPushIfPossible();
+    }
   }
 
   async function logout() {

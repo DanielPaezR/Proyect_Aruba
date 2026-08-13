@@ -121,6 +121,8 @@ que lee el servidor:
 | `CORS_ORIGIN` | No | Default `http://localhost:5173` — **cámbialo a la URL real del cliente en producción**, o el navegador bloqueará las peticiones. |
 | `PORT` | No | Railway la asigna automáticamente; no hace falta fijarla a mano. |
 | `NODE_ENV` | No | Poner `production`. |
+| `VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY` | Sí | Push notifications. Generar con `npx web-push generate-vapid-keys` (dentro de `server/`). La clave pública también va en `client/.env`/`.env.production` como `VITE_VAPID_PUBLIC_KEY` — **debe ser exactamente el mismo par**. |
+| `VAPID_SUBJECT` | Sí | `mailto:` o `https:` de contacto, requerido por el estándar VAPID (no es secreto). |
 
 `SEED_JEFE_EMAIL` / `SEED_JEFE_PASSWORD` solo se usan al correr manualmente
 `npm run prisma:seed` (por ejemplo desde la shell de Railway la primera vez).
@@ -150,20 +152,45 @@ falta almacenamiento externo.
 en `client/vite.config.ts`) con `registerType: 'autoUpdate'`: el service
 worker se actualiza solo en cada visita, sin pedirle nada al usuario.
 
+**Estrategia `injectManifest`** (no `generateSW`): el service worker es
+propio (`client/src/sw.ts`), no autogenerado, porque necesita manejar el
+evento `push` para mostrar notificaciones — `generateSW` no permite agregar
+listeners personalizados. `sw.ts` hace `precacheAndRoute` del app shell
+(igual que antes) más el fallback de navegación SPA, y agrega los listeners
+`push`/`notificationclick`.
+
 **Qué cachea y qué no**: solo el *app shell* (el JS/CSS/HTML/imágenes que
 emite `vite build`). Las respuestas de `/api/*` **nunca** se cachean —
-no hay `runtimeCaching` configurado a propósito, porque esos datos
-cambian todo el tiempo y servir una versión vieja desde caché sería peor
-que no tener PWA. Como además el backend vive en otro origen (Railway) que
-el cliente, el service worker ni siquiera intercepta esas llamadas por
-construcción.
+esos datos cambian todo el tiempo y servir una versión vieja desde caché
+sería peor que no tener PWA. Como además el backend vive en otro origen
+(Railway) que el cliente, el service worker ni siquiera intercepta esas
+llamadas por construcción.
 
-**No incluido todavía, a propósito**: notificaciones push (`Notification.
-requestPermission()`, suscripción push, tablas de suscripción en el
-backend). Eso queda para cuando haya un evento real que dispare una
-notificación — probablemente Fase 4 (emergencias). El `registerType:
-'autoUpdate'` y la estructura del manifest ya están listos para agregarlo
-después sin tener que rehacer esta parte.
+### Notificaciones push
+
+Implementadas con [`web-push`](https://github.com/web-push-libs/web-push)
+(VAPID) — ver variables de entorno arriba. Piezas:
+
+- `server/src/modules/push/`: `POST /api/push/subscribe` (cualquier
+  autenticado) guarda `endpoint`/`p256dh`/`auth` del dispositivo actual
+  (`PushSubscription`, upsert por `endpoint` — resuscribirse actualiza en
+  vez de duplicar).
+- `server/src/jobs/punchReminders.ts`: corre cada 5 minutos (`node-cron`,
+  dentro del mismo proceso — Railway mantiene el contenedor siempre activo).
+  Si la hora actual (`America/Aruba`) cae en `morningWindow` o
+  `afternoonWindow` (`CompanySettings`), busca `TRABAJADOR_CAMPO` a quienes
+  les falte la marcación correspondiente hoy y les manda un recordatorio —
+  una sola vez por ventana por día (`PunchReminderLog` lleva la cuenta).
+- Cliente: al hacer login como `TRABAJADOR_CAMPO`, pide permiso de
+  notificaciones (no bloquea el login si se niega) y si se concede, suscribe
+  y registra el push (`client/src/utils/pushSubscription.ts`).
+
+**Probar el envío real de push necesita Chrome de verdad, no el Chromium que
+trae Playwright/Puppeteer por defecto** — ese Chromium genérico no tiene las
+claves de Google horneadas que requiere `pushManager.subscribe()` y falla
+siempre con `AbortError: push service not available`. Para pruebas
+automatizadas, lanzar con `channel: "chrome"` (o probar a mano en Chrome de
+escritorio).
 
 ### Ícono
 

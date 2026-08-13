@@ -7,6 +7,13 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+      // injectManifest (en vez de generateSW): necesitamos un service worker
+      // propio para manejar el evento 'push' (notificaciones) y mostrar la
+      // notificacion — generateSW no permite agregar listeners personalizados,
+      // solo genera un SW estandar de precache. Ver src/sw.ts.
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.ts',
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
       manifest: {
@@ -28,13 +35,10 @@ export default defineConfig({
           { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png' },
         ],
       },
-      workbox: {
+      injectManifest: {
         // Precachea el app shell (JS/CSS/HTML/imagenes que emite el build de
         // Vite) — el default de globPatterns ya cubre eso, no hace falta
-        // customizarlo. A proposito NO se agrega runtimeCaching para /api:
-        // esas llamadas van a otro origen (el backend) y los datos cambian
-        // todo el tiempo, cachearlas daria informacion vieja al usuario.
-        navigateFallbackDenylist: [/^\/api\//],
+        // customizarlo.
       },
       devOptions: {
         // El SW real solo se prueba con "vite build && vite preview";
