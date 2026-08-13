@@ -25,6 +25,14 @@
     "uploadSubmitting": "Uploading...",
     "viewEvidencesButton": "View evidence ({{count}})",
     "hideEvidencesButton": "Hide evidence",
-    "noEvidences": "You haven't uploaded evidence for this activity yet"
+    "noEvidences": "You haven't uploaded evidence for this activity yet",
+    "timeEntriesTitle": "Today's clock-ins",
+    "timeEntriesEmpty": "No clock-ins yet today",
+    "entryType": {
+      "ENTRADA": "Clock in",
+      "SALIDA": "Clock out"
+    },
+    "autoBadge": "Automatic",
+    "manualBadge": "Manual"
   }
 }

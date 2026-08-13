@@ -27,7 +27,8 @@
     "projects": "Proyectos",
     "myActivities": "Mis actividades",
     "evidences": "Evidencias",
-    "users": "Usuarios"
+    "users": "Usuarios",
+    "settings": "Configuración"
   },
   "activityStatus": {
     "PENDIENTE": "Pendiente",

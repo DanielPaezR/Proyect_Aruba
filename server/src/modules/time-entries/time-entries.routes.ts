@@ -9,5 +9,6 @@ export const timeEntriesRouter = Router();
 
 timeEntriesRouter.use(authenticate);
 timeEntriesRouter.post("/", timeEntriesController.create);
+timeEntriesRouter.post("/auto-check", timeEntriesController.autoCheck);
 timeEntriesRouter.get("/mine", timeEntriesController.listMine);
 timeEntriesRouter.get("/", authorize(...MANAGERS), timeEntriesController.list);

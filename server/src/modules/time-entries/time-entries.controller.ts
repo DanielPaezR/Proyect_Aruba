@@ -2,6 +2,7 @@ import type { Request, Response } from "express";
 import { asyncHandler } from "../../utils/asyncHandler";
 import * as timeEntriesService from "./time-entries.service";
 import {
+  autoCheckSchema,
   createTimeEntrySchema,
   listMyTimeEntriesQuerySchema,
   listTimeEntriesQuerySchema,
@@ -11,6 +12,12 @@ export const create = asyncHandler(async (req: Request, res: Response) => {
   const input = createTimeEntrySchema.parse(req.body);
   const timeEntry = await timeEntriesService.createTimeEntry(req.user!, input);
   res.status(201).json({ timeEntry });
+});
+
+export const autoCheck = asyncHandler(async (req: Request, res: Response) => {
+  const input = autoCheckSchema.parse(req.body);
+  const result = await timeEntriesService.autoCheck(req.user!, input);
+  res.json(result);
 });
 
 export const listMine = asyncHandler(async (req: Request, res: Response) => {

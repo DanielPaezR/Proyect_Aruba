@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
+import { useGeofenceCheck } from "../hooks/useGeofenceCheck";
 import { isManagerRole } from "../types/auth";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 
@@ -11,6 +12,8 @@ function navLinkClassName({ isActive }: { isActive: boolean }) {
 export function Layout() {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
+
+  useGeofenceCheck();
 
   return (
     <div className="app-shell">
@@ -44,6 +47,11 @@ export function Layout() {
             {user.role === "JEFE" && (
               <NavLink to="/users" className={navLinkClassName}>
                 {t("nav.users", { ns: "common" })}
+              </NavLink>
+            )}
+            {user.role === "JEFE" && (
+              <NavLink to="/settings" className={navLinkClassName}>
+                {t("nav.settings", { ns: "common" })}
               </NavLink>
             )}
           </nav>

@@ -25,6 +25,14 @@
     "uploadSubmitting": "Subiendo...",
     "viewEvidencesButton": "Ver evidencias ({{count}})",
     "hideEvidencesButton": "Ocultar evidencias",
-    "noEvidences": "Todavía no subiste evidencia para esta actividad"
+    "noEvidences": "Todavía no subiste evidencia para esta actividad",
+    "timeEntriesTitle": "Marcaciones de hoy",
+    "timeEntriesEmpty": "Todavía no tienes marcaciones hoy",
+    "entryType": {
+      "ENTRADA": "Entrada",
+      "SALIDA": "Salida"
+    },
+    "autoBadge": "Automática",
+    "manualBadge": "Manual"
   }
 }

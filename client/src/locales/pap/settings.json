@@ -1,0 +1,22 @@
+{
+  "title": "Konfigurashon",
+  "form": {
+    "locationSection": "Ubikashon di ofisina",
+    "locationHint": "Ta usa esaki pa e markashon automátiko di drenta/sali via geoserka.",
+    "useCurrentLocation": "Usa mi ubikashon actual",
+    "locating": "Ta haña ubikashon...",
+    "geolocationUnsupported": "E navegador aki no ta soportá geolokalisashon",
+    "geolocationDenied": "No a logra haña bo ubikashon. Verifiká e permisonan di e navegador.",
+    "officeLatitude": "Latitud",
+    "officeLongitude": "Longitud",
+    "officeRadiusMeters": "Rayo (meter)",
+    "windowsSection": "Ventananan di ora",
+    "morningWindowStart": "Drenta for di",
+    "morningWindowEnd": "Drenta te",
+    "afternoonWindowStart": "Sali for di",
+    "afternoonWindowEnd": "Sali te",
+    "save": "Warda",
+    "saving": "Ta warda...",
+    "saved": "Konfigurashon wardá"
+  }
+}

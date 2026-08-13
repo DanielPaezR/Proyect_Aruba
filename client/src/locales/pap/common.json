@@ -27,7 +27,8 @@
     "projects": "Proyektonan",
     "myActivities": "Mi aktividatnan",
     "evidences": "Evidensianan",
-    "users": "Usuarionan"
+    "users": "Usuarionan",
+    "settings": "Konfigurashon"
   },
   "activityStatus": {
     "PENDIENTE": "Pendiente",

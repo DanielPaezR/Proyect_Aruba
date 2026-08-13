@@ -370,9 +370,28 @@ button {
   font-size: 14px;
 }
 
+.form-success {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 6px;
+  background: var(--accent-bg);
+  color: var(--text-h);
+  font-size: 14px;
+}
+
+.form-hint {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text);
+}
+
 /* Dashboard */
 
 .dashboard section {
+  margin-bottom: 32px;
+}
+
+.my-time-entries {
   margin-bottom: 32px;
 }
 
@@ -571,6 +590,14 @@ button {
    mas legible que gold-500 como texto sobre fondo claro, que da ~2:1). */
 .status-badge--priority-high {
   background: var(--gold-500);
+  color: var(--navy-900);
+}
+
+/* Marcacion automatica por geocerca: lime-500 solido + texto navy-900 (mismo
+   par de alto contraste que priority-high), para distinguirla de un vistazo
+   de las marcaciones manuales (badge neutro por defecto). */
+.status-badge--auto {
+  background: var(--lime-500);
   color: var(--navy-900);
 }
 

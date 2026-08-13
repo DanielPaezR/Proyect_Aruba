@@ -8,6 +8,7 @@ import { LoginPage } from "./pages/LoginPage";
 import { MyActivitiesPage } from "./pages/MyActivitiesPage";
 import { ProjectDetailPage } from "./pages/ProjectDetailPage";
 import { ProjectsListPage } from "./pages/ProjectsListPage";
+import { SettingsPage } from "./pages/SettingsPage";
 import { SupervisorDashboardPage } from "./pages/SupervisorDashboardPage";
 import { UsersManagementPage } from "./pages/UsersManagementPage";
 
@@ -26,6 +27,7 @@ function App() {
               <Route path="/projects/:projectId" element={<ProjectDetailPage />} />
               <Route path="/evidences" element={<EvidencesReviewPage />} />
               <Route path="/users" element={<UsersManagementPage />} />
+              <Route path="/settings" element={<SettingsPage />} />
             </Route>
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

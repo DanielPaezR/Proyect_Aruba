@@ -1,0 +1,22 @@
+{
+  "title": "Configuración",
+  "form": {
+    "locationSection": "Ubicación de la oficina",
+    "locationHint": "Se usa para el marcado automático de entrada/salida por geocerca.",
+    "useCurrentLocation": "Usar mi ubicación actual",
+    "locating": "Obteniendo ubicación...",
+    "geolocationUnsupported": "Este navegador no soporta geolocalización",
+    "geolocationDenied": "No se pudo obtener tu ubicación. Revisa los permisos del navegador.",
+    "officeLatitude": "Latitud",
+    "officeLongitude": "Longitud",
+    "officeRadiusMeters": "Radio (metros)",
+    "windowsSection": "Ventanas horarias",
+    "morningWindowStart": "Entrada desde",
+    "morningWindowEnd": "Entrada hasta",
+    "afternoonWindowStart": "Salida desde",
+    "afternoonWindowEnd": "Salida hasta",
+    "save": "Guardar",
+    "saving": "Guardando...",
+    "saved": "Configuración guardada"
+  }
+}

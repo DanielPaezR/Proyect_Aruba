@@ -25,6 +25,14 @@
     "uploadSubmitting": "Ta subi...",
     "viewEvidencesButton": "Wak evidensia ({{count}})",
     "hideEvidencesButton": "Skonde evidensia",
-    "noEvidences": "Ainda bo no a subi evidensia pa e aktividat aki"
+    "noEvidences": "Ainda bo no a subi evidensia pa e aktividat aki",
+    "timeEntriesTitle": "Markashon di awe",
+    "timeEntriesEmpty": "Ainda bo no tin markashon awe",
+    "entryType": {
+      "ENTRADA": "Drenta",
+      "SALIDA": "Sali"
+    },
+    "autoBadge": "Automátiko",
+    "manualBadge": "Manual"
   }
 }

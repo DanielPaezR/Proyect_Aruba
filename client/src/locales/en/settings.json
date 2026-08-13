@@ -1,0 +1,22 @@
+{
+  "title": "Settings",
+  "form": {
+    "locationSection": "Office location",
+    "locationHint": "Used for automatic clock-in/out via geofence.",
+    "useCurrentLocation": "Use my current location",
+    "locating": "Getting location...",
+    "geolocationUnsupported": "This browser doesn't support geolocation",
+    "geolocationDenied": "Couldn't get your location. Check your browser permissions.",
+    "officeLatitude": "Latitude",
+    "officeLongitude": "Longitude",
+    "officeRadiusMeters": "Radius (meters)",
+    "windowsSection": "Time windows",
+    "morningWindowStart": "Clock-in from",
+    "morningWindowEnd": "Clock-in until",
+    "afternoonWindowStart": "Clock-out from",
+    "afternoonWindowEnd": "Clock-out until",
+    "save": "Save",
+    "saving": "Saving...",
+    "saved": "Settings saved"
+  }
+}
