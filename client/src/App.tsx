@@ -6,6 +6,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { EvidencesReviewPage } from "./pages/EvidencesReviewPage";
 import { LoginPage } from "./pages/LoginPage";
 import { MyActivitiesPage } from "./pages/MyActivitiesPage";
+import { ProfilePage } from "./pages/ProfilePage";
 import { ProjectDetailPage } from "./pages/ProjectDetailPage";
 import { ProjectsListPage } from "./pages/ProjectsListPage";
 import { SettingsPage } from "./pages/SettingsPage";
@@ -24,6 +25,7 @@ function App() {
               <Route path="/" element={<HomeRedirect />} />
               <Route path="/dashboard" element={<SupervisorDashboardPage />} />
               <Route path="/my-activities" element={<MyActivitiesPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
               <Route path="/projects" element={<ProjectsListPage />} />
               <Route path="/projects/:projectId" element={<ProjectDetailPage />} />
               <Route path="/evidences" element={<EvidencesReviewPage />} />

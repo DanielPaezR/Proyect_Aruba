@@ -45,7 +45,7 @@ export async function listMyActivities(userId: string, filters: { status?: Activ
       assignments: { some: { userId } },
       ...(filters.status ? { status: filters.status } : {}),
     },
-    include: { ...activityInclude, project: { select: { id: true, name: true } } },
+    include: { ...activityInclude, project: { select: { id: true, name: true, address: true } } },
     orderBy: { scheduledDate: "asc" },
   });
 }

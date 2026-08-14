@@ -1,9 +1,9 @@
-import { Prisma, PunchType, Role, TimeEntrySource } from "@prisma/client";
+import { Prisma, PunchType, Role } from "@prisma/client";
 import { prisma } from "../../config/prisma";
 import * as settingsService from "../settings/settings.service";
 import { ApiError } from "../../utils/ApiError";
 import { ErrorCode } from "../../utils/errorCodes";
-import { arubaDayRangeUtc, arubaStartOfTodayUtc, currentArubaMinutes, haversineDistanceMeters, isWithinWindow } from "../../utils/geo";
+import { arubaDayRangeUtc, arubaStartOfTodayUtc, haversineDistanceMeters } from "../../utils/geo";
 import type { AutoCheckInput, CreateTimeEntryInput, SummaryQuery, UpdateTimeEntryInput } from "./time-entries.validators";
 
 type AuthUser = { id: string; role: Role };
@@ -96,20 +96,20 @@ export async function createTimeEntry(user: AuthUser, input: CreateTimeEntryInpu
 }
 
 export interface AutoCheckResult {
-  created: boolean;
-  timeEntry: Awaited<ReturnType<typeof prisma.timeEntry.create>> | null;
+  logged: boolean;
+  distanceMeters: number | null;
 }
 
 /**
- * Marcado automatico por geocerca: silencioso por diseno. Si la oficina no
- * esta configurada, el usuario esta fuera del radio, la hora no cae en
- * ninguna ventana, o la secuencia ENTRADA/SALIDA no aplica (ya se marco hoy),
- * simplemente no hace nada — nunca lanza error, para que el cliente pueda
- * llamarlo en segundo plano sin manejar casos de fallo.
- *
- * Siempre actualiza la ultima ubicacion conocida del usuario, se haya
- * marcado o no, para que el mapa de ubicaciones (prompt D) no tenga que
- * pedir geolocalizacion de nuevo por separado.
+ * Ya NO marca ENTRADA/SALIDA — el marcado real es siempre una accion manual
+ * del trabajador (ver createTimeEntry). Este endpoint corre en segundo plano
+ * y solo dos cosas: (1) actualiza la ultima ubicacion conocida del usuario,
+ * para que el mapa de ubicaciones no tenga que pedir geolocalizacion aparte,
+ * y (2) si el trabajador esta dentro del radio configurado de la oficina,
+ * guarda un GeofenceProximityLog de referencia ("estuvo cerca a esta hora")
+ * que un manager puede usar despues para detectar un olvido de marcado.
+ * Silencioso por diseno: nunca lanza error, para que el cliente pueda
+ * llamarlo sin manejar casos de fallo.
  */
 export async function autoCheck(user: AuthUser, input: AutoCheckInput): Promise<AutoCheckResult> {
   await prisma.user.update({
@@ -123,7 +123,7 @@ export async function autoCheck(user: AuthUser, input: AutoCheckInput): Promise<
 
   const settings = await settingsService.getSettings();
   if (settings.officeLatitude === null || settings.officeLongitude === null) {
-    return { created: false, timeEntry: null };
+    return { logged: false, distanceMeters: null };
   }
 
   const distance = haversineDistanceMeters(
@@ -133,36 +133,19 @@ export async function autoCheck(user: AuthUser, input: AutoCheckInput): Promise<
     settings.officeLongitude,
   );
   if (distance > settings.officeRadiusMeters) {
-    return { created: false, timeEntry: null };
+    return { logged: false, distanceMeters: distance };
   }
 
-  const nowMinutes = currentArubaMinutes();
-  let type: PunchType;
-  if (isWithinWindow(nowMinutes, settings.morningWindowStart, settings.morningWindowEnd)) {
-    type = PunchType.ENTRADA;
-  } else if (isWithinWindow(nowMinutes, settings.afternoonWindowStart, settings.afternoonWindowEnd)) {
-    type = PunchType.SALIDA;
-  } else {
-    return { created: false, timeEntry: null };
-  }
-
-  const lastEntry = await getLastEntry(user.id);
-  if (!isValidPunchSequence(lastEntry, type)) {
-    return { created: false, timeEntry: null };
-  }
-
-  const timeEntry = await prisma.timeEntry.create({
+  await prisma.geofenceProximityLog.create({
     data: {
       userId: user.id,
-      type,
       latitude: input.latitude,
       longitude: input.longitude,
-      source: TimeEntrySource.AUTO_GEOFENCE,
+      distanceMeters: distance,
     },
-    include: timeEntryInclude,
   });
 
-  return { created: true, timeEntry };
+  return { logged: true, distanceMeters: distance };
 }
 
 export async function listMine(userId: string, filters: { from?: Date; to?: Date }) {
@@ -184,11 +167,32 @@ export async function listForManagers(filters: { userId?: string; from?: Date; t
   });
 }
 
+export interface ProximityLogReference {
+  id: string;
+  detectedAt: Date;
+  distanceMeters: number;
+}
+
 export interface UserDaySummary {
   user: { id: string; name: string };
   entries: TimeEntryWithRelations[];
   totalMinutes: number;
   hasOpenEntry: boolean;
+  // GeofenceProximityLog de este rango que no cae cerca (en el tiempo) de
+  // ninguna marcacion real — referencia informativa de "estuvo cerca de la
+  // oficina" para cuando el trabajador olvido marcar. Nunca reemplaza ni
+  // cuenta como una marcacion.
+  unmatchedProximityLogs: ProximityLogReference[];
+}
+
+// Una marcacion real dentro de esta ventana de un log de proximidad se
+// considera "el mismo evento" (el trabajador tardo unos minutos en abrir la
+// app y marcar despues de llegar) — el log deja de mostrarse como referencia.
+const PROXIMITY_REFERENCE_WINDOW_MINUTES = 30;
+
+function isNearAnyEntry(detectedAt: Date, entries: { timestamp: Date }[]): boolean {
+  const windowMs = PROXIMITY_REFERENCE_WINDOW_MINUTES * 60 * 1000;
+  return entries.some((entry) => Math.abs(entry.timestamp.getTime() - detectedAt.getTime()) <= windowMs);
 }
 
 /**
@@ -196,6 +200,10 @@ export interface UserDaySummary {
  * SALIDA que le sigue. Una ENTRADA sin SALIDA todavia (hasOpenEntry) no suma
  * a totalMinutes — se muestra aparte para que quien revisa sepa que sigue
  * abierta, en vez de inflar el total silenciosamente en cada consulta.
+ *
+ * Tambien adjunta, por usuario, los GeofenceProximityLog del mismo rango que
+ * no tienen una marcacion real cerca en el tiempo — referencia para el
+ * manager cuando revisa las horas y el trabajador olvido marcar.
  */
 export async function getSummary(filters: SummaryQuery): Promise<UserDaySummary[]> {
   let start: Date;
@@ -211,23 +219,33 @@ export async function getSummary(filters: SummaryQuery): Promise<UserDaySummary[
     end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
   }
 
-  const entries = await prisma.timeEntry.findMany({
-    where: {
-      ...(filters.userId ? { userId: filters.userId } : { user: { role: Role.TRABAJADOR_CAMPO } }),
-      timestamp: { gte: start, ...(end ? { lt: end } : {}) },
-    },
-    include: timeEntryInclude,
-    orderBy: [{ userId: "asc" }, { timestamp: "asc" }],
-  });
+  const userFilter = filters.userId ? { userId: filters.userId } : { user: { role: Role.TRABAJADOR_CAMPO } };
+
+  const [entries, proximityLogs] = await Promise.all([
+    prisma.timeEntry.findMany({
+      where: { ...userFilter, timestamp: { gte: start, ...(end ? { lt: end } : {}) } },
+      include: timeEntryInclude,
+      orderBy: [{ userId: "asc" }, { timestamp: "asc" }],
+    }),
+    prisma.geofenceProximityLog.findMany({
+      where: { ...userFilter, detectedAt: { gte: start, ...(end ? { lt: end } : {}) } },
+      include: { user: { select: { id: true, name: true } } },
+      orderBy: [{ userId: "asc" }, { detectedAt: "asc" }],
+    }),
+  ]);
 
   const byUser = new Map<string, UserDaySummary>();
-  for (const entry of entries) {
-    let bucket = byUser.get(entry.userId);
+  function ensureBucket(userId: string, user: { id: string; name: string }): UserDaySummary {
+    let bucket = byUser.get(userId);
     if (!bucket) {
-      bucket = { user: entry.user, entries: [], totalMinutes: 0, hasOpenEntry: false };
-      byUser.set(entry.userId, bucket);
+      bucket = { user, entries: [], totalMinutes: 0, hasOpenEntry: false, unmatchedProximityLogs: [] };
+      byUser.set(userId, bucket);
     }
-    bucket.entries.push(entry);
+    return bucket;
+  }
+
+  for (const entry of entries) {
+    ensureBucket(entry.userId, entry.user).entries.push(entry);
   }
 
   for (const bucket of byUser.values()) {
@@ -241,6 +259,17 @@ export async function getSummary(filters: SummaryQuery): Promise<UserDaySummary[
       }
     }
     bucket.hasOpenEntry = openEntradaAt !== null;
+  }
+
+  for (const log of proximityLogs) {
+    const bucket = ensureBucket(log.userId, log.user);
+    if (!isNearAnyEntry(log.detectedAt, bucket.entries)) {
+      bucket.unmatchedProximityLogs.push({
+        id: log.id,
+        detectedAt: log.detectedAt,
+        distanceMeters: log.distanceMeters,
+      });
+    }
   }
 
   return Array.from(byUser.values());

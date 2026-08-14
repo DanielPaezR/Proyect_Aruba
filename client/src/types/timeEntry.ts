@@ -23,9 +23,17 @@ export interface TimeEntry {
   activity: { id: string; title: string; projectId: string } | null;
 }
 
+export interface ProximityLogReference {
+  id: string;
+  detectedAt: string;
+  distanceMeters: number;
+}
+
 export interface UserDaySummary {
   user: { id: string; name: string };
   entries: TimeEntry[];
   totalMinutes: number;
   hasOpenEntry: boolean;
+  /** Referencia informativa ("estuvo cerca de la oficina a esta hora"), no una marcacion real. */
+  unmatchedProximityLogs: ProximityLogReference[];
 }

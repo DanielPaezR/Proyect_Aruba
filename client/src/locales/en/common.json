@@ -63,7 +63,9 @@
       "UPLOAD_ERROR": "Something went wrong uploading the file",
       "VALIDATION_ERROR": "Please check the submitted data",
       "INTERNAL_ERROR": "Server error, please try again later",
-      "TIME_ENTRY_NOT_FOUND": "Time entry not found"
+      "TIME_ENTRY_NOT_FOUND": "Time entry not found",
+      "OPEN_ENTRY_EXISTS": "You already have a clock-in without a matching clock-out",
+      "NO_OPEN_ENTRY": "You don't have an open clock-in to close with a clock-out"
     }
   }
 }

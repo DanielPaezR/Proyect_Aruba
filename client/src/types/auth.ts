@@ -19,5 +19,6 @@ export interface User {
   hourlyRate: string | null;
   isActive: boolean;
   locale: UserLocale;
+  photoUrl: string | null;
   createdAt: string;
 }

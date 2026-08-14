@@ -24,6 +24,7 @@
     "save": "Save",
     "saving": "Saving...",
     "editedBadge": "Edited by {{name}}, reason: {{reason}}",
-    "editedBadgeNoReason": "Edited by {{name}}"
+    "editedBadgeNoReason": "Edited by {{name}}",
+    "proximityReference": "Was near the office at {{time}} (reference only, not a clock-in)"
   }
 }

@@ -1,0 +1,12 @@
+{
+  "title": "Mi perfil",
+  "photoLabel": "Foto de perfil",
+  "nameLabel": "Nombre",
+  "emailLabel": "Correo electrónico",
+  "roleLabel": "Rol",
+  "readOnlyHint": "El nombre, correo y rol los administra el Jefe desde gestión de usuarios.",
+  "phoneLabel": "Teléfono",
+  "save": "Guardar",
+  "saving": "Guardando...",
+  "saved": "Perfil actualizado"
+}

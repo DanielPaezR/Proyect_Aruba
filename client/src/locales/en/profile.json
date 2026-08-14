@@ -1,0 +1,12 @@
+{
+  "title": "My profile",
+  "photoLabel": "Profile photo",
+  "nameLabel": "Name",
+  "emailLabel": "Email",
+  "roleLabel": "Role",
+  "readOnlyHint": "Name, email and role are managed by the Jefe from user management.",
+  "phoneLabel": "Phone",
+  "save": "Save",
+  "saving": "Saving...",
+  "saved": "Profile updated"
+}

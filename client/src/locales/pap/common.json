@@ -63,7 +63,9 @@
       "UPLOAD_ERROR": "A sosodé un eror ora di subi e archivo",
       "VALIDATION_ERROR": "Verifiká e datonan ku bo a hisa",
       "INTERNAL_ERROR": "Eror di server, purba mas lat",
-      "TIME_ENTRY_NOT_FOUND": "No a haña e markashon"
+      "TIME_ENTRY_NOT_FOUND": "No a haña e markashon",
+      "OPEN_ENTRY_EXISTS": "Bo ya tin un drenta registrá sin un sali anterior",
+      "NO_OPEN_ENTRY": "Bo no tin un drenta habrí pa registrá un sali"
     }
   }
 }

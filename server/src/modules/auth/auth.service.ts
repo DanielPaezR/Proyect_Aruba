@@ -2,10 +2,11 @@ import bcrypt from "bcryptjs";
 import type { Locale } from "@prisma/client";
 import { prisma } from "../../config/prisma";
 import { env } from "../../config/env";
+import { deleteImage, uploadImage, USER_PROFILE_PHOTOS_FOLDER } from "../../config/storage";
 import { ApiError } from "../../utils/ApiError";
 import { ErrorCode } from "../../utils/errorCodes";
 import { generateRefreshToken, hashRefreshToken, signAccessToken } from "../../utils/jwt";
-import type { CreateUserInput, LoginInput } from "./auth.validators";
+import type { CreateUserInput, LoginInput, UpdateProfileInput } from "./auth.validators";
 
 const PUBLIC_USER_FIELDS = {
   id: true,
@@ -16,6 +17,7 @@ const PUBLIC_USER_FIELDS = {
   hourlyRate: true,
   isActive: true,
   locale: true,
+  photoUrl: true,
   createdAt: true,
 } as const;
 
@@ -64,6 +66,7 @@ export async function login(input: LoginInput) {
       hourlyRate: user.hourlyRate,
       isActive: user.isActive,
       locale: user.locale,
+      photoUrl: user.photoUrl,
       createdAt: user.createdAt,
     },
     ...tokens,
@@ -146,6 +149,44 @@ export async function updateLocale(userId: string, locale: Locale) {
   return prisma.user.update({
     where: { id: userId },
     data: { locale },
+    select: PUBLIC_USER_FIELDS,
+  });
+}
+
+/**
+ * Autoservicio: cualquier usuario edita su propio telefono y foto. El
+ * nombre/email quedan fuera a proposito — eso lo controla el JEFE desde
+ * gestión de usuarios, no el propio usuario.
+ */
+export async function updateProfile(userId: string, input: UpdateProfileInput, photo?: Express.Multer.File) {
+  const existing = await prisma.user.findUnique({ where: { id: userId } });
+  if (!existing) {
+    throw ApiError.notFound(ErrorCode.USER_NOT_FOUND, "Usuario no encontrado");
+  }
+
+  let photoFields: { photoUrl?: string; photoPublicId?: string } = {};
+  if (photo) {
+    const uploaded = await uploadImage(photo.buffer, { folder: USER_PROFILE_PHOTOS_FOLDER });
+    photoFields = { photoUrl: uploaded.url, photoPublicId: uploaded.publicId };
+
+    if (existing.photoPublicId) {
+      // Best-effort, mismo patron que activities/evidences: la fila ya se va
+      // a actualizar igual, un fallo limpiando la foto vieja de Cloudinary
+      // no debe tumbar la respuesta.
+      try {
+        await deleteImage(existing.photoPublicId);
+      } catch (error) {
+        console.error(`No se pudo borrar la foto de perfil anterior (public_id ${existing.photoPublicId}):`, error);
+      }
+    }
+  }
+
+  return prisma.user.update({
+    where: { id: userId },
+    data: {
+      ...(input.phone !== undefined ? { phone: input.phone || null } : {}),
+      ...photoFields,
+    },
     select: PUBLIC_USER_FIELDS,
   });
 }

@@ -65,9 +65,9 @@ export function Layout() {
           <LanguageSwitcher />
           {user && (
             <div className="user-menu">
-              <span className="user-name">
+              <NavLink to="/profile" className="user-name">
                 {user.name} · {t(`roles.${user.role}`, { ns: "common" })}
-              </span>
+              </NavLink>
               <button type="button" onClick={() => void logout()}>
                 {t("actions.logout", { ns: "common" })}
               </button>

@@ -20,6 +20,7 @@ cloudinary.config({
 
 export const EVIDENCES_FOLDER = "decs/evidences";
 export const ACTIVITY_REFERENCE_IMAGES_FOLDER = "decs/activities";
+export const USER_PROFILE_PHOTOS_FOLDER = "decs/profiles";
 
 const ALLOWED_MIME_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 

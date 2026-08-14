@@ -3,7 +3,7 @@ import { ApiError } from "../../utils/ApiError";
 import { ErrorCode } from "../../utils/errorCodes";
 import { asyncHandler } from "../../utils/asyncHandler";
 import * as authService from "./auth.service";
-import { createUserSchema, loginSchema, updateLocaleSchema } from "./auth.validators";
+import { createUserSchema, loginSchema, updateLocaleSchema, updateProfileSchema } from "./auth.validators";
 
 const REFRESH_COOKIE = "refreshToken";
 const REFRESH_COOKIE_OPTIONS = {
@@ -60,5 +60,11 @@ export const listUsers = asyncHandler(async (_req: Request, res: Response) => {
 export const updateLocale = asyncHandler(async (req: Request, res: Response) => {
   const { locale } = updateLocaleSchema.parse(req.body);
   const user = await authService.updateLocale(req.user!.id, locale);
+  res.json({ user });
+});
+
+export const updateProfile = asyncHandler(async (req: Request, res: Response) => {
+  const input = updateProfileSchema.parse(req.body);
+  const user = await authService.updateProfile(req.user!.id, input, req.file);
   res.json({ user });
 });

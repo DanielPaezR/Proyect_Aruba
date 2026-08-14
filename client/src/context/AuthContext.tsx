@@ -12,6 +12,7 @@ interface AuthContextValue {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   updateLocale: (locale: UserLocale) => Promise<void>;
+  updateProfile: (input: { phone?: string; photo?: File }) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -87,8 +88,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     void i18n.changeLanguage(locale.toLowerCase());
   }
 
+  async function updateProfile(input: { phone?: string; photo?: File }) {
+    const formData = new FormData();
+    if (input.phone !== undefined) {
+      formData.append("phone", input.phone);
+    }
+    if (input.photo) {
+      formData.append("photo", input.photo);
+    }
+    const { data } = await apiClient.patch<{ user: User }>("/auth/me/profile", formData);
+    setUser(data.user);
+  }
+
   const value = useMemo<AuthContextValue>(
-    () => ({ user, isLoading, login, logout, updateLocale }),
+    () => ({ user, isLoading, login, logout, updateLocale, updateProfile }),
     [user, isLoading],
   );
 

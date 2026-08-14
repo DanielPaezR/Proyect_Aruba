@@ -28,6 +28,10 @@
     "viewEvidencesButton": "Ver evidencias ({{count}})",
     "hideEvidencesButton": "Ocultar evidencias",
     "noEvidences": "Todavía no subiste evidencia para esta actividad",
+    "removeEvidenceButton": "Quitar",
+    "removingEvidence": "Quitando...",
+    "removeEvidenceConfirm": "¿Quitar esta evidencia? Esta acción no se puede deshacer.",
+    "directionsButton": "Cómo llegar",
     "timeEntriesTitle": "Marcaciones de hoy",
     "timeEntriesEmpty": "Todavía no tienes marcaciones hoy",
     "entryType": {
@@ -38,6 +42,11 @@
     "manualBadge": "Manual",
     "totalLabel": "Total",
     "openLabel": "En curso",
+    "punch": {
+      "clockIn": "Marcar entrada",
+      "clockOut": "Marcar salida",
+      "submitting": "Marcando..."
+    },
     "stats": {
       "hoursThisWeek": "Horas trabajadas esta semana",
       "hoursValue": "{{hours}} h",

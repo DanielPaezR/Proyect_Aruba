@@ -63,7 +63,9 @@
       "UPLOAD_ERROR": "Ocurrió un error al subir el archivo",
       "VALIDATION_ERROR": "Revisa los datos ingresados",
       "INTERNAL_ERROR": "Error del servidor, intenta más tarde",
-      "TIME_ENTRY_NOT_FOUND": "Marcación no encontrada"
+      "TIME_ENTRY_NOT_FOUND": "Marcación no encontrada",
+      "OPEN_ENTRY_EXISTS": "Ya tienes una entrada registrada sin una salida previa",
+      "NO_OPEN_ENTRY": "No tienes una entrada abierta para registrar una salida"
     }
   }
 }

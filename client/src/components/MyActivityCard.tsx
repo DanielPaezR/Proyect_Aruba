@@ -3,9 +3,14 @@ import type { ChangeEvent, FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
+import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
 import type { Activity, ActivityStatus } from "../types/activity";
 import type { Evidence } from "../types/evidence";
+
+function googleMapsUrl(address: string): string {
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+}
 
 interface MyActivityCardProps {
   activity: Activity;
@@ -25,9 +30,13 @@ function nextStatusFor(status: ActivityStatus): ActivityStatus | null {
 
 export function MyActivityCard({ activity, onActivityUpdated }: MyActivityCardProps) {
   const { t } = useTranslation(["activities", "common"]);
+  const { user } = useAuth();
 
   const [isChangingStatus, setIsChangingStatus] = useState(false);
   const [statusError, setStatusError] = useState<string | null>(null);
+
+  const [removingEvidenceId, setRemovingEvidenceId] = useState<string | null>(null);
+  const [removeEvidenceError, setRemoveEvidenceError] = useState<string | null>(null);
 
   const [isUploadFormOpen, setIsUploadFormOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -117,6 +126,22 @@ export function MyActivityCard({ activity, onActivityUpdated }: MyActivityCardPr
     }
   }
 
+  async function handleRemoveEvidence(evidenceId: string) {
+    if (!window.confirm(t("mine.removeEvidenceConfirm", { ns: "activities" }))) {
+      return;
+    }
+    setRemoveEvidenceError(null);
+    setRemovingEvidenceId(evidenceId);
+    try {
+      await apiClient.delete(`/evidences/${evidenceId}`);
+      setEvidences((current) => current?.filter((evidence) => evidence.id !== evidenceId) ?? null);
+    } catch (error) {
+      setRemoveEvidenceError(translateApiError(t, error));
+    } finally {
+      setRemovingEvidenceId(null);
+    }
+  }
+
   return (
     <li className="card">
       <div className="card-header">
@@ -131,6 +156,17 @@ export function MyActivityCard({ activity, onActivityUpdated }: MyActivityCardPr
       )}
 
       {activity.description && <p className="card-description">{activity.description}</p>}
+
+      {activity.project?.address && (
+        <a
+          href={googleMapsUrl(activity.project.address)}
+          target="_blank"
+          rel="noreferrer"
+          className="button-link button-link--secondary"
+        >
+          {t("mine.directionsButton", { ns: "activities" })}
+        </a>
+      )}
 
       <div className="form-actions">
         {nextStatus && (
@@ -197,6 +233,11 @@ export function MyActivityCard({ activity, onActivityUpdated }: MyActivityCardPr
               {evidencesError}
             </p>
           )}
+          {removeEvidenceError && (
+            <p className="form-error" role="alert">
+              {removeEvidenceError}
+            </p>
+          )}
           {!isLoadingEvidences &&
             !evidencesError &&
             evidences &&
@@ -209,6 +250,18 @@ export function MyActivityCard({ activity, onActivityUpdated }: MyActivityCardPr
                     <img src={evidence.imageUrl} alt={evidence.description ?? ""} className="evidence-thumb" />
                   </a>
                   <span className="status-badge">{translateStatus(t, "common", "evidenceStatus", evidence.status)}</span>
+                  {evidence.uploadedById === user?.id && evidence.status === "PENDIENTE" && (
+                    <button
+                      type="button"
+                      className="evidence-remove-button"
+                      onClick={() => void handleRemoveEvidence(evidence.id)}
+                      disabled={removingEvidenceId === evidence.id}
+                    >
+                      {removingEvidenceId === evidence.id
+                        ? t("mine.removingEvidence", { ns: "activities" })
+                        : t("mine.removeEvidenceButton", { ns: "activities" })}
+                    </button>
+                  )}
                 </div>
               ))
             ))}

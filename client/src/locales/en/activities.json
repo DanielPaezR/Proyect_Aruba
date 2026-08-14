@@ -28,6 +28,10 @@
     "viewEvidencesButton": "View evidence ({{count}})",
     "hideEvidencesButton": "Hide evidence",
     "noEvidences": "You haven't uploaded evidence for this activity yet",
+    "removeEvidenceButton": "Remove",
+    "removingEvidence": "Removing...",
+    "removeEvidenceConfirm": "Remove this evidence? This action cannot be undone.",
+    "directionsButton": "Get directions",
     "timeEntriesTitle": "Today's clock-ins",
     "timeEntriesEmpty": "No clock-ins yet today",
     "entryType": {
@@ -38,6 +42,11 @@
     "manualBadge": "Manual",
     "totalLabel": "Total",
     "openLabel": "In progress",
+    "punch": {
+      "clockIn": "Clock in",
+      "clockOut": "Clock out",
+      "submitting": "Clocking..."
+    },
     "stats": {
       "hoursThisWeek": "Hours worked this week",
       "hoursValue": "{{hours}} h",

@@ -1,0 +1,12 @@
+{
+  "title": "Mi perfil",
+  "photoLabel": "Foto di perfil",
+  "nameLabel": "Nòmber",
+  "emailLabel": "Email",
+  "roleLabel": "Rol",
+  "readOnlyHint": "Nòmber, email i rol ta administrá pa Hefe for di gestion di usuarionan.",
+  "phoneLabel": "Telefòn",
+  "save": "Warda",
+  "saving": "Ta warda...",
+  "saved": "Perfil actualisá"
+}

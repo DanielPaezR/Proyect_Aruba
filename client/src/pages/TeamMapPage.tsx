@@ -239,6 +239,22 @@ export function TeamMapPage() {
                     ))}
                   </div>
 
+                  {userSummary.unmatchedProximityLogs.length > 0 && (
+                    <ul className="proximity-reference-list">
+                      {userSummary.unmatchedProximityLogs.map((log) => (
+                        <li key={log.id} className="proximity-reference">
+                          {t("hours.proximityReference", {
+                            ns: "teamMap",
+                            time: new Date(log.detectedAt).toLocaleTimeString(undefined, {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            }),
+                          })}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
                   {editForm && userSummary.entries.some((e) => e.id === editForm.entryId) && (
                     <form className="inline-form" onSubmit={(event) => void handleSaveEdit(event)}>
                       <h2>{t("hours.editFormTitle", { ns: "teamMap" })}</h2>

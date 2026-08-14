@@ -44,6 +44,10 @@ enum PunchType {
   SALIDA
 }
 
+// AUTO_GEOFENCE ya no se genera: el marcado real de ENTRADA/SALIDA siempre es
+// una accion manual del trabajador (ver GeofenceProximityLog para el registro
+// de referencia por proximidad). Se deja el valor en el enum unicamente por
+// compatibilidad con TimeEntry historicos que ya lo tengan.
 enum TimeEntrySource {
   MANUAL
   AUTO_GEOFENCE
@@ -108,6 +112,11 @@ model User {
   // por ahora solo se captura el dato.
   hourlyRate Decimal? @db.Decimal(10, 2)
 
+  // Foto de perfil, editable por el propio usuario desde /profile. Nullable:
+  // la mayoria de usuarios sembrados/creados no la van a tener de entrada.
+  photoUrl      String?
+  photoPublicId String?
+
   // Ultima ubicacion conocida, capturada por el cliente durante una sesion
   // (no es rastreo continuo en segundo plano). La usa el marcado automatico
   // por geocerca para saber si el trabajador esta cerca de la oficina.
@@ -127,6 +136,7 @@ model User {
   refreshTokens       RefreshToken[]
   pushSubscriptions   PushSubscription[]
   punchReminderLogs   PunchReminderLog[]
+  geofenceProximityLogs GeofenceProximityLog[]
 
   @@map("users")
 }
@@ -250,6 +260,26 @@ model TimeEntry {
 
   @@index([userId, timestamp])
   @@map("time_entries")
+}
+
+// Registro de referencia: "el trabajador estuvo cerca de la oficina a esta
+// hora", generado en segundo plano por POST /time-entries/auto-check cuando
+// el trabajador esta dentro del radio configurado. NO crea ni reemplaza una
+// marcacion real — el marcado de ENTRADA/SALIDA es siempre una accion manual
+// del trabajador. Sirve como dato informativo para el manager cuando revisa
+// las horas de un dia y el trabajador olvido marcar.
+model GeofenceProximityLog {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  latitude       Float
+  longitude      Float
+  distanceMeters Float
+  detectedAt     DateTime @default(now())
+
+  @@index([userId, detectedAt])
+  @@map("geofence_proximity_logs")
 }
 
 model Evidence {

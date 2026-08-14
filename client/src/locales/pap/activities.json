@@ -28,6 +28,10 @@
     "viewEvidencesButton": "Wak evidensia ({{count}})",
     "hideEvidencesButton": "Skonde evidensia",
     "noEvidences": "Ainda bo no a subi evidensia pa e aktividat aki",
+    "removeEvidenceButton": "Kita",
+    "removingEvidence": "Ta kita...",
+    "removeEvidenceConfirm": "Kita e evidensia aki? E akshon aki no por wordu revertí.",
+    "directionsButton": "Kon pa yega",
     "timeEntriesTitle": "Markashon di awe",
     "timeEntriesEmpty": "Ainda bo no tin markashon awe",
     "entryType": {
@@ -38,6 +42,11 @@
     "manualBadge": "Manual",
     "totalLabel": "Total",
     "openLabel": "Na kurso",
+    "punch": {
+      "clockIn": "Marka drenta",
+      "clockOut": "Marka sali",
+      "submitting": "Ta marka..."
+    },
     "stats": {
       "hoursThisWeek": "Oranan trahá e siman aki",
       "hoursValue": "{{hours}} h",

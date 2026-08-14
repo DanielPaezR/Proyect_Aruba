@@ -26,5 +26,5 @@ export interface Activity {
   assignments: ActivityAssignment[];
   _count?: { evidences: number };
   /** Solo presente en GET /api/activities/mine. */
-  project?: { id: string; name: string };
+  project?: { id: string; name: string; address: string | null };
 }

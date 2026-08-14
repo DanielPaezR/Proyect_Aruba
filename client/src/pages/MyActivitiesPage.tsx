@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
@@ -27,6 +27,38 @@ export function MyActivitiesPage() {
   // undefined = todavia no se cargo; null = error al cargar (seccion secundaria).
   const [workerStats, setWorkerStats] = useState<WorkerStats | null | undefined>(undefined);
 
+  const [isPunching, setIsPunching] = useState(false);
+  const [punchError, setPunchError] = useState<string | null>(null);
+
+  // Se reutiliza tanto en la carga inicial como despues de marcar, para
+  // refrescar el estado (siguiente tipo de marcacion, total del dia) sin
+  // recargar toda la pagina.
+  const loadTimeEntries = useCallback(async () => {
+    try {
+      // Sin filtros: el backend usa el dia de hoy en Aruba por default.
+      const response = await apiClient.get<{ summary: UserDaySummary[] }>("/time-entries/summary/mine");
+      setTodaySummary(response.data.summary[0] ?? null);
+    } catch {
+      // Seccion secundaria de la pagina: si falla, las actividades siguen
+      // usables igual, no vale la pena mostrar un error aparte para esto.
+      setTodaySummary(null);
+    }
+  }, []);
+
+  async function handlePunch() {
+    const type = todaySummary?.hasOpenEntry ? "SALIDA" : "ENTRADA";
+    setPunchError(null);
+    setIsPunching(true);
+    try {
+      await apiClient.post("/time-entries", { type });
+      await loadTimeEntries();
+    } catch (error) {
+      setPunchError(translateApiError(t, error));
+    } finally {
+      setIsPunching(false);
+    }
+  }
+
   useEffect(() => {
     let cancelled = false;
 
@@ -45,22 +77,6 @@ export function MyActivitiesPage() {
       } finally {
         if (!cancelled) {
           setIsLoading(false);
-        }
-      }
-    }
-
-    async function loadTimeEntries() {
-      try {
-        // Sin filtros: el backend usa el dia de hoy en Aruba por default.
-        const response = await apiClient.get<{ summary: UserDaySummary[] }>("/time-entries/summary/mine");
-        if (!cancelled) {
-          setTodaySummary(response.data.summary[0] ?? null);
-        }
-      } catch {
-        // Seccion secundaria de la pagina: si falla, las actividades siguen
-        // usables igual, no vale la pena mostrar un error aparte para esto.
-        if (!cancelled) {
-          setTodaySummary(null);
         }
       }
     }
@@ -86,7 +102,7 @@ export function MyActivitiesPage() {
     return () => {
       cancelled = true;
     };
-  }, [t]);
+  }, [t, loadTimeEntries]);
 
   function handleActivityUpdated(updated: Activity) {
     // PATCH /activities/:id/status no devuelve "project" (a diferencia de GET
@@ -101,6 +117,28 @@ export function MyActivitiesPage() {
       <div className="page-header">
         <h1>{t("mine.title", { ns: "activities" })}</h1>
       </div>
+
+      {todaySummary !== undefined && (
+        <div className="punch-panel">
+          <button
+            type="button"
+            className={todaySummary?.hasOpenEntry ? "punch-button punch-button--out" : "punch-button punch-button--in"}
+            onClick={() => void handlePunch()}
+            disabled={isPunching}
+          >
+            {isPunching
+              ? t("mine.punch.submitting", { ns: "activities" })
+              : todaySummary?.hasOpenEntry
+                ? t("mine.punch.clockOut", { ns: "activities" })
+                : t("mine.punch.clockIn", { ns: "activities" })}
+          </button>
+          {punchError && (
+            <p className="form-error" role="alert">
+              {punchError}
+            </p>
+          )}
+        </div>
+      )}
 
       {workerStats && (
         <div className="stat-grid">

@@ -24,6 +24,7 @@
     "save": "Warda",
     "saving": "Ta warda...",
     "editedBadge": "Editá pa {{name}}, motibu: {{reason}}",
-    "editedBadgeNoReason": "Editá pa {{name}}"
+    "editedBadgeNoReason": "Editá pa {{name}}",
+    "proximityReference": "Tabata serka di ofisina na {{time}} (referencia, no ta un markashon)"
   }
 }

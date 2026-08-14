@@ -24,6 +24,7 @@
     "save": "Guardar",
     "saving": "Guardando...",
     "editedBadge": "Editado por {{name}}, motivo: {{reason}}",
-    "editedBadgeNoReason": "Editado por {{name}}"
+    "editedBadgeNoReason": "Editado por {{name}}",
+    "proximityReference": "Estuvo cerca de la oficina a las {{time}} (referencia, no es una marcación)"
   }
 }
