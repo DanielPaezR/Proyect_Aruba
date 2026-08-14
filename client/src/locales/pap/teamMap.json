@@ -25,7 +25,13 @@
     "saving": "Ta warda...",
     "editedBadge": "Editá pa {{name}}, motibu: {{reason}}",
     "editedBadgeNoReason": "Editá pa {{name}}",
-    "proximityReference": "Tabata serka di ofisina na {{time}} (referencia, no ta un markashon)"
+    "proximityReference": "Tabata serka di ofisina na {{time}} (referencia, no ta un markashon)",
+    "historyButton": "Wak historial kompletu",
+    "hideHistoryButton": "Skonde historial kompletu",
+    "historyFromLabel": "Desde",
+    "historyToLabel": "Te",
+    "historySearch": "Buska",
+    "historyEmpty": "No tin markashon den e rango di fecha aki"
   },
   "workerStatus": {
     "title": "Estado di ekipo",

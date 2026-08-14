@@ -20,6 +20,13 @@
   },
   "deleteTitle": "Elimina aktividat",
   "deleteMessage": "Bo ta sigur bo ke elimina \"{{title}}\"? Su evidensianan i asignashonnan lo perdí. E akshon aki no por wordu revertí.",
+  "assign": {
+    "button": "Asigná",
+    "title": "Asigná trahadónan",
+    "noWorkers": "No tin trahadó di kampo aktivo",
+    "save": "Warda asignashon",
+    "saving": "Ta warda..."
+  },
   "mine": {
     "title": "Mi aktividatnan",
     "empty": "Bo no tin aktividat asigná",

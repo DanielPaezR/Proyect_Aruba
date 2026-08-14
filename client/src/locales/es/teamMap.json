@@ -25,7 +25,13 @@
     "saving": "Guardando...",
     "editedBadge": "Editado por {{name}}, motivo: {{reason}}",
     "editedBadgeNoReason": "Editado por {{name}}",
-    "proximityReference": "Estuvo cerca de la oficina a las {{time}} (referencia, no es una marcación)"
+    "proximityReference": "Estuvo cerca de la oficina a las {{time}} (referencia, no es una marcación)",
+    "historyButton": "Ver historial completo",
+    "hideHistoryButton": "Ocultar historial completo",
+    "historyFromLabel": "Desde",
+    "historyToLabel": "Hasta",
+    "historySearch": "Buscar",
+    "historyEmpty": "No hay marcaciones en este rango de fechas"
   },
   "workerStatus": {
     "title": "Estado del equipo",

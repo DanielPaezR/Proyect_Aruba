@@ -13,9 +13,12 @@ authRouter.get("/me", authenticate, authController.me);
 authRouter.patch("/me/locale", authenticate, authController.updateLocale);
 authRouter.patch("/me/profile", authenticate, imageUpload.single("photo"), authController.updateProfile);
 
-// Alta y listado de usuarios: solo el Jefe (no hay auto-registro ni gestión por Supervisor).
+// Alta de usuarios: solo el Jefe (no hay auto-registro ni gestión por Supervisor).
 authRouter.post("/users", authenticate, authorize(Role.JEFE), authController.createUser);
-authRouter.get("/users", authenticate, authorize(Role.JEFE), authController.listUsers);
+// Listado: tambien el Supervisor — lo necesita de solo-lectura para asignar
+// trabajadores a actividades (ProjectDetailPage), mismo criterio que
+// /users/locations (lectura de equipo compartida, gestion sigue siendo del Jefe).
+authRouter.get("/users", authenticate, authorize(Role.JEFE, Role.SUPERVISOR), authController.listUsers);
 
 // Precio por hora e historial de aumentos: solo el Jefe.
 authRouter.patch(

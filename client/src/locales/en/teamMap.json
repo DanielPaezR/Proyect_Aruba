@@ -25,7 +25,13 @@
     "saving": "Saving...",
     "editedBadge": "Edited by {{name}}, reason: {{reason}}",
     "editedBadgeNoReason": "Edited by {{name}}",
-    "proximityReference": "Was near the office at {{time}} (reference only, not a clock-in)"
+    "proximityReference": "Was near the office at {{time}} (reference only, not a clock-in)",
+    "historyButton": "View full history",
+    "hideHistoryButton": "Hide full history",
+    "historyFromLabel": "From",
+    "historyToLabel": "To",
+    "historySearch": "Search",
+    "historyEmpty": "No time entries in this date range"
   },
   "workerStatus": {
     "title": "Team status",

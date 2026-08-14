@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import type { FormEvent } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
@@ -9,9 +8,11 @@ import { useTranslation } from "react-i18next";
 import { Navigate } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
+import { TimeEntryCard } from "../components/TimeEntryCard";
+import { WorkerHistoryPanel } from "../components/WorkerHistoryPanel";
 import { useAuth } from "../context/AuthContext";
 import { isManagerRole } from "../types/auth";
-import type { UserDaySummary } from "../types/timeEntry";
+import type { TimeEntry, UserDaySummary } from "../types/timeEntry";
 import type { WorkerLocation } from "../types/team";
 import { formatHoursFromMinutes } from "../utils/formatHours";
 import { timeAgo } from "../utils/timeAgo";
@@ -24,12 +25,6 @@ L.Icon.Default.mergeOptions({
   iconUrl: markerIcon,
   shadowUrl: markerShadow,
 });
-
-function toDatetimeLocalValue(iso: string): string {
-  const d = new Date(iso);
-  const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
-}
 
 interface LocatedWorker extends WorkerLocation {
   lastKnownLatitude: number;
@@ -126,12 +121,6 @@ function TeamMap({ workers }: { workers: WorkerLocation[] }) {
   return <div ref={mapContainerRef} className="team-map" />;
 }
 
-interface EditFormState {
-  entryId: string;
-  timestamp: string;
-  editReason: string;
-}
-
 export function TeamMapPage() {
   const { t } = useTranslation(["teamMap", "activities", "common"]);
   const { user } = useAuth();
@@ -144,9 +133,7 @@ export function TeamMapPage() {
 
   const [isLoading, setIsLoading] = useState(true);
 
-  const [editForm, setEditForm] = useState<EditFormState | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
+  const [historyOpenUserId, setHistoryOpenUserId] = useState<string | null>(null);
 
   async function loadAll() {
     setIsLoading(true);
@@ -179,30 +166,20 @@ export function TeamMapPage() {
     return <Navigate to="/" replace />;
   }
 
-  function openEditForm(entryId: string, currentTimestamp: string) {
-    setSaveError(null);
-    setEditForm({ entryId, timestamp: toDatetimeLocalValue(currentTimestamp), editReason: "" });
+  // Reemplaza la marcacion editada en el resumen de hoy ya cargado, en vez de
+  // recargar todo (mismo patron que handleReviewed en EvidencesReviewPage).
+  function handleTodayEntryUpdated(updated: TimeEntry) {
+    setSummary((current) =>
+      current?.map((userSummary) =>
+        userSummary.user.id === updated.userId
+          ? { ...userSummary, entries: userSummary.entries.map((e) => (e.id === updated.id ? updated : e)) }
+          : userSummary,
+      ) ?? null,
+    );
   }
 
-  async function handleSaveEdit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    if (!editForm) {
-      return;
-    }
-    setSaveError(null);
-    setIsSaving(true);
-    try {
-      await apiClient.patch(`/time-entries/${editForm.entryId}`, {
-        timestamp: new Date(editForm.timestamp).toISOString(),
-        editReason: editForm.editReason || undefined,
-      });
-      setEditForm(null);
-      await loadAll();
-    } catch (error) {
-      setSaveError(translateApiError(t, error));
-    } finally {
-      setIsSaving(false);
-    }
+  function toggleHistory(userId: string) {
+    setHistoryOpenUserId((current) => (current === userId ? null : userId));
   }
 
   function formatTimeAgoLabel(isoTimestamp: string): string {
@@ -294,38 +271,7 @@ export function TeamMapPage() {
 
                   <div className="team-hours-entries">
                     {userSummary.entries.map((entry) => (
-                      <div key={entry.id} className="team-hours-entry">
-                        <span>
-                          {t(`mine.entryType.${entry.type}`, { ns: "activities" })} —{" "}
-                          {new Date(entry.timestamp).toLocaleTimeString(undefined, {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </span>
-                        <span
-                          className={
-                            entry.source === "AUTO_GEOFENCE" ? "status-badge status-badge--auto" : "status-badge"
-                          }
-                        >
-                          {entry.source === "AUTO_GEOFENCE"
-                            ? t("mine.autoBadge", { ns: "activities" })
-                            : t("mine.manualBadge", { ns: "activities" })}
-                        </span>
-                        {entry.editedBy && (
-                          <span className="status-badge">
-                            {entry.editReason
-                              ? t("hours.editedBadge", {
-                                  ns: "teamMap",
-                                  name: entry.editedBy.name,
-                                  reason: entry.editReason,
-                                })
-                              : t("hours.editedBadgeNoReason", { ns: "teamMap", name: entry.editedBy.name })}
-                          </span>
-                        )}
-                        <button type="button" onClick={() => openEditForm(entry.id, entry.timestamp)}>
-                          {t("hours.editButton", { ns: "teamMap" })}
-                        </button>
-                      </div>
+                      <TimeEntryCard key={entry.id} entry={entry} onUpdated={handleTodayEntryUpdated} />
                     ))}
                   </div>
 
@@ -345,40 +291,16 @@ export function TeamMapPage() {
                     </ul>
                   )}
 
-                  {editForm && userSummary.entries.some((e) => e.id === editForm.entryId) && (
-                    <form className="inline-form" onSubmit={(event) => void handleSaveEdit(event)}>
-                      <h2>{t("hours.editFormTitle", { ns: "teamMap" })}</h2>
-                      <label>
-                        {t("hours.newTimestamp", { ns: "teamMap" })}
-                        <input
-                          type="datetime-local"
-                          value={editForm.timestamp}
-                          onChange={(event) => setEditForm({ ...editForm, timestamp: event.target.value })}
-                          required
-                        />
-                      </label>
-                      <label>
-                        {t("hours.reasonLabel", { ns: "teamMap" })}
-                        <input
-                          type="text"
-                          value={editForm.editReason}
-                          onChange={(event) => setEditForm({ ...editForm, editReason: event.target.value })}
-                        />
-                      </label>
-                      {saveError && (
-                        <p className="form-error" role="alert">
-                          {saveError}
-                        </p>
-                      )}
-                      <div className="form-actions">
-                        <button type="submit" disabled={isSaving}>
-                          {isSaving ? t("hours.saving", { ns: "teamMap" }) : t("hours.save", { ns: "teamMap" })}
-                        </button>
-                        <button type="button" onClick={() => setEditForm(null)}>
-                          {t("actions.cancel", { ns: "common" })}
-                        </button>
-                      </div>
-                    </form>
+                  <div className="card-actions">
+                    <button type="button" onClick={() => toggleHistory(userSummary.user.id)}>
+                      {historyOpenUserId === userSummary.user.id
+                        ? t("hours.hideHistoryButton", { ns: "teamMap" })
+                        : t("hours.historyButton", { ns: "teamMap" })}
+                    </button>
+                  </div>
+
+                  {historyOpenUserId === userSummary.user.id && (
+                    <WorkerHistoryPanel userId={userSummary.user.id} />
                   )}
                 </li>
               ))}

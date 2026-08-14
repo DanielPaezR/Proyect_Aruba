@@ -20,6 +20,13 @@
   },
   "deleteTitle": "Eliminar actividad",
   "deleteMessage": "¿Estás seguro de que quieres eliminar \"{{title}}\"? Se perderán sus evidencias y asignaciones. Esta acción no se puede deshacer.",
+  "assign": {
+    "button": "Asignar",
+    "title": "Asignar trabajadores",
+    "noWorkers": "No hay trabajadores de campo activos",
+    "save": "Guardar asignación",
+    "saving": "Guardando..."
+  },
   "mine": {
     "title": "Mis actividades",
     "empty": "No tienes actividades asignadas",

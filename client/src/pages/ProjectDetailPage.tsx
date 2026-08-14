@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
+import { AssignWorkersPanel } from "../components/AssignWorkersPanel";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
@@ -84,6 +85,8 @@ export function ProjectDetailPage() {
   const [activityToDelete, setActivityToDelete] = useState<Activity | null>(null);
   const [isDeletingActivity, setIsDeletingActivity] = useState(false);
   const [activityDeleteError, setActivityDeleteError] = useState<string | null>(null);
+
+  const [assigningActivityId, setAssigningActivityId] = useState<string | null>(null);
 
   async function loadProject(id: string) {
     setIsLoading(true);
@@ -620,10 +623,29 @@ export function ProjectDetailPage() {
                       <button type="button" onClick={() => openActivityEdit(activity)}>
                         {t("actions.edit", { ns: "common" })}
                       </button>
+                      <button
+                        type="button"
+                        onClick={() => setAssigningActivityId((current) => (current === activity.id ? null : activity.id))}
+                      >
+                        {t("assign.button", { ns: "activities" })}
+                      </button>
                       <button type="button" className="danger-button" onClick={() => setActivityToDelete(activity)}>
                         {t("actions.delete", { ns: "common" })}
                       </button>
                     </div>
+                  )}
+
+                  {assigningActivityId === activity.id && (
+                    <AssignWorkersPanel
+                      activityId={activity.id}
+                      currentAssignments={activity.assignments}
+                      onSaved={async () => {
+                        if (projectId) {
+                          await loadProject(projectId);
+                        }
+                      }}
+                      onClose={() => setAssigningActivityId(null)}
+                    />
                   )}
 
                   {editingActivityId === activity.id && activityEditForm && (
