@@ -3,7 +3,15 @@ import { ApiError } from "../../utils/ApiError";
 import { ErrorCode } from "../../utils/errorCodes";
 import { asyncHandler } from "../../utils/asyncHandler";
 import * as authService from "./auth.service";
-import { createUserSchema, loginSchema, updateLocaleSchema, updateProfileSchema } from "./auth.validators";
+import {
+  createScoreEventSchema,
+  createUserSchema,
+  getMonthlyScoreQuerySchema,
+  loginSchema,
+  updateHourlyRateSchema,
+  updateLocaleSchema,
+  updateProfileSchema,
+} from "./auth.validators";
 
 const REFRESH_COOKIE = "refreshToken";
 const REFRESH_COOKIE_OPTIONS = {
@@ -67,4 +75,27 @@ export const updateProfile = asyncHandler(async (req: Request, res: Response) =>
   const input = updateProfileSchema.parse(req.body);
   const user = await authService.updateProfile(req.user!.id, input, req.file);
   res.json({ user });
+});
+
+export const updateHourlyRate = asyncHandler(async (req: Request, res: Response) => {
+  const input = updateHourlyRateSchema.parse(req.body);
+  const user = await authService.updateHourlyRate(req.params.userId, req.user!.id, input);
+  res.json({ user });
+});
+
+export const salaryHistory = asyncHandler(async (req: Request, res: Response) => {
+  const history = await authService.getSalaryHistory(req.params.userId);
+  res.json({ history });
+});
+
+export const createScoreEvent = asyncHandler(async (req: Request, res: Response) => {
+  const input = createScoreEventSchema.parse(req.body);
+  const event = await authService.createScoreEvent(req.params.userId, req.user!.id, input);
+  res.status(201).json({ event });
+});
+
+export const monthlyScore = asyncHandler(async (req: Request, res: Response) => {
+  const { month, year } = getMonthlyScoreQuerySchema.parse(req.query);
+  const score = await authService.getMonthlyScore(req.params.userId, month, year);
+  res.json(score);
 });

@@ -9,5 +9,7 @@
   "rejectFormTitle": "Reject evidence",
   "rejectCommentLabel": "Reason (optional)",
   "confirmReject": "Confirm rejection",
-  "reviewedBy": "Reviewed by"
+  "reviewedBy": "Reviewed by",
+  "pendingCount_one": "{{count}} pending",
+  "pendingCount_other": "{{count}} pending"
 }

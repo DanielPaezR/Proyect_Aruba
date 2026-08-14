@@ -2,12 +2,33 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
-import { EvidenceReviewCard } from "../components/EvidenceReviewCard";
+import { EvidenceReviewGroup } from "../components/EvidenceReviewGroup";
 import { translateStatus } from "../i18n/statusLabel";
 import { EVIDENCE_STATUSES } from "../types/evidence";
 import type { EvidenceStatus, EvidenceWithActivity } from "../types/evidence";
 
 type StatusFilter = "ALL" | EvidenceStatus;
+
+interface ActivityGroup {
+  activity: EvidenceWithActivity["activity"];
+  evidences: EvidenceWithActivity[];
+}
+
+/** Agrupa la lista plana del backend por actividad, preservando el orden de
+ * aparicion (el backend ya ordena por createdAt desc, asi que la actividad
+ * con la evidencia mas reciente queda primero). */
+function groupByActivity(evidences: EvidenceWithActivity[]): ActivityGroup[] {
+  const groups = new Map<string, ActivityGroup>();
+  for (const evidence of evidences) {
+    let group = groups.get(evidence.activity.id);
+    if (!group) {
+      group = { activity: evidence.activity, evidences: [] };
+      groups.set(evidence.activity.id, group);
+    }
+    group.evidences.push(evidence);
+  }
+  return Array.from(groups.values());
+}
 
 export function EvidencesReviewPage() {
   const { t } = useTranslation(["evidences", "common"]);
@@ -94,8 +115,13 @@ export function EvidencesReviewPage() {
           <p>{t("empty", { ns: "evidences" })}</p>
         ) : (
           <ul className="card-list">
-            {evidences.map((evidence) => (
-              <EvidenceReviewCard key={evidence.id} evidence={evidence} onReviewed={handleReviewed} />
+            {groupByActivity(evidences).map((group) => (
+              <EvidenceReviewGroup
+                key={group.activity.id}
+                activity={group.activity}
+                evidences={group.evidences}
+                onReviewed={handleReviewed}
+              />
             ))}
           </ul>
         ))}

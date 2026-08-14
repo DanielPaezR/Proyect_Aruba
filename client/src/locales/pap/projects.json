@@ -27,6 +27,15 @@
     "priority": "Prioridat",
     "electricalPlansUrl": "Link pa plano elektriko"
   },
+  "edit": {
+    "formTitle": "Edita proyekto",
+    "submit": "Warda kambio",
+    "saving": "Ta warda..."
+  },
+  "delete": {
+    "title": "Elimina proyekto",
+    "message": "Bo ta sigur bo ke elimina \"{{name}}\"? E akshon aki no por wordu revertí."
+  },
   "empty": "Ainda no tin proyekto",
   "activitiesCount_one": "{{count}} aktividat",
   "activitiesCount_other": "{{count}} aktividatnan",

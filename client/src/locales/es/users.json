@@ -18,5 +18,33 @@
     "inactive": "Inactivo",
     "hourlyRateNotSpecified": "Precio por hora no especificado"
   },
+  "salary": {
+    "showButton": "Ver historial de sueldo",
+    "hideButton": "Ocultar historial de sueldo",
+    "currentRate": "Precio por hora actual",
+    "registerButton": "Registrar aumento",
+    "formTitle": "Registrar aumento de sueldo",
+    "newRateLabel": "Nuevo precio por hora (AWG)",
+    "reasonLabel": "Motivo (opcional)",
+    "submit": "Guardar aumento",
+    "saving": "Guardando...",
+    "historyTitle": "Historial de aumentos",
+    "historyEmpty": "Todavía no hay aumentos registrados",
+    "rateChange": "{{previous}} → {{next}}",
+    "registeredBy": "Registrado por {{name}}"
+  },
+  "score": {
+    "showButton": "Ver puntaje del mes",
+    "hideButton": "Ocultar puntaje del mes",
+    "currentScore": "Puntaje de {{month}}/{{year}}: {{score}} / {{base}}",
+    "registerButton": "Registrar descuento",
+    "formTitle": "Registrar descuento de puntaje",
+    "pointsLabel": "Puntos a descontar",
+    "reasonLabel": "Motivo",
+    "submit": "Guardar descuento",
+    "saving": "Guardando...",
+    "historyTitle": "Eventos del mes",
+    "historyEmpty": "Todavía no hay eventos este mes"
+  },
   "empty": "Todavía no hay usuarios"
 }

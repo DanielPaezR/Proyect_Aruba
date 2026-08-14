@@ -90,6 +90,21 @@ export function arubaDayRangeUtc(dateStr: string): { start: Date; end: Date } {
   return { start, end };
 }
 
+/**
+ * Rango [start, end) en UTC para un mes calendario de Aruba dado (year, month
+ * 1-12). Mismo criterio de +4h que arubaDayRangeUtc, construyendo el primer
+ * dia de "month" y del mes siguiente directamente como string ISO — evita el
+ * indexado 0-based de mes que usa Date.UTC.
+ */
+export function arubaMonthRangeUtc(year: number, month: number): { start: Date; end: Date } {
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const nextMonth = month === 12 ? 1 : month + 1;
+  const nextYear = month === 12 ? year + 1 : year;
+  const start = new Date(`${year}-${pad(month)}-01T04:00:00.000Z`);
+  const end = new Date(`${nextYear}-${pad(nextMonth)}-01T04:00:00.000Z`);
+  return { start, end };
+}
+
 /** Instante UTC de la medianoche del lunes de esta semana, hora de Aruba. */
 export function arubaStartOfWeekUtc(at: Date = new Date()): Date {
   const today = arubaToday(at);

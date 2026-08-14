@@ -13,6 +13,13 @@
   "unassigned": "Sin asignar",
   "evidencesCount_one": "{{count}} evidencia",
   "evidencesCount_other": "{{count}} evidencias",
+  "edit": {
+    "formTitle": "Editar actividad",
+    "submit": "Guardar cambios",
+    "saving": "Guardando..."
+  },
+  "deleteTitle": "Eliminar actividad",
+  "deleteMessage": "¿Estás seguro de que quieres eliminar \"{{title}}\"? Se perderán sus evidencias y asignaciones. Esta acción no se puede deshacer.",
   "mine": {
     "title": "Mis actividades",
     "empty": "No tienes actividades asignadas",

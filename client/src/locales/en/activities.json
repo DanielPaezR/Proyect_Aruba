@@ -13,6 +13,13 @@
   "unassigned": "Unassigned",
   "evidencesCount_one": "{{count}} evidence item",
   "evidencesCount_other": "{{count}} evidence items",
+  "edit": {
+    "formTitle": "Edit activity",
+    "submit": "Save changes",
+    "saving": "Saving..."
+  },
+  "deleteTitle": "Delete activity",
+  "deleteMessage": "Are you sure you want to delete \"{{title}}\"? Its evidence and assignments will be lost. This action cannot be undone.",
   "mine": {
     "title": "My activities",
     "empty": "You have no activities assigned",

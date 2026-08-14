@@ -9,7 +9,10 @@
     "save": "Guardar",
     "cancel": "Cancelar",
     "retry": "Reintentar",
-    "logout": "Cerrar sesión"
+    "logout": "Cerrar sesión",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "deleting": "Eliminando..."
   },
   "language": {
     "label": "Idioma",
@@ -55,9 +58,11 @@
       "USER_NOT_FOUND": "Usuario no encontrado",
       "EMAIL_TAKEN": "Ya existe un usuario con ese correo",
       "PROJECT_NOT_FOUND": "Proyecto no encontrado",
+      "PROJECT_HAS_ACTIVITIES": "No se puede eliminar un proyecto con actividades. Cambia su estado a Cancelado en su lugar.",
       "ACTIVITY_NOT_FOUND": "Actividad no encontrada",
       "ACTIVITY_NOT_ASSIGNED": "No tienes esta actividad asignada",
       "INVALID_STATUS_TRANSITION": "Ese cambio de estado no está permitido",
+      "EVIDENCE_DELETE_FORBIDDEN": "No puedes eliminar esta evidencia",
       "IMAGE_REQUIRED": "Selecciona una imagen para subir",
       "UNSUPPORTED_IMAGE_TYPE": "Formato de imagen no soportado (usa JPEG, PNG o WEBP)",
       "UPLOAD_ERROR": "Ocurrió un error al subir el archivo",

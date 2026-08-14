@@ -18,5 +18,33 @@
     "inactive": "Inactive",
     "hourlyRateNotSpecified": "Hourly rate not specified"
   },
+  "salary": {
+    "showButton": "View salary history",
+    "hideButton": "Hide salary history",
+    "currentRate": "Current hourly rate",
+    "registerButton": "Register raise",
+    "formTitle": "Register salary raise",
+    "newRateLabel": "New hourly rate (AWG)",
+    "reasonLabel": "Reason (optional)",
+    "submit": "Save raise",
+    "saving": "Saving...",
+    "historyTitle": "Raise history",
+    "historyEmpty": "No raises registered yet",
+    "rateChange": "{{previous}} → {{next}}",
+    "registeredBy": "Registered by {{name}}"
+  },
+  "score": {
+    "showButton": "View monthly score",
+    "hideButton": "Hide monthly score",
+    "currentScore": "Score for {{month}}/{{year}}: {{score}} / {{base}}",
+    "registerButton": "Register discount",
+    "formTitle": "Register score discount",
+    "pointsLabel": "Points to deduct",
+    "reasonLabel": "Reason",
+    "submit": "Save discount",
+    "saving": "Saving...",
+    "historyTitle": "This month's events",
+    "historyEmpty": "No events yet this month"
+  },
   "empty": "No users yet"
 }

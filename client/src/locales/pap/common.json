@@ -9,7 +9,10 @@
     "save": "Warda",
     "cancel": "Kanselá",
     "retry": "Purba di nobo",
-    "logout": "Sali"
+    "logout": "Sali",
+    "edit": "Edita",
+    "delete": "Elimina",
+    "deleting": "Ta elimina..."
   },
   "language": {
     "label": "Idioma",
@@ -55,9 +58,11 @@
       "USER_NOT_FOUND": "No a haña e usuario",
       "EMAIL_TAKEN": "Ya tin un usuario ku e email ei",
       "PROJECT_NOT_FOUND": "No a haña e proyekto",
+      "PROJECT_HAS_ACTIVITIES": "No por elimina un proyekto ku aktividat. Kambia su estado pa Kanselá en bes di esei.",
       "ACTIVITY_NOT_FOUND": "No a haña e aktividat",
       "ACTIVITY_NOT_ASSIGNED": "E aktividat aki no ta asigná na bo",
       "INVALID_STATUS_TRANSITION": "E kambio di estado ei no ta permitino",
+      "EVIDENCE_DELETE_FORBIDDEN": "Bo no por elimina e evidensia aki",
       "IMAGE_REQUIRED": "Skohe un imagen pa subi",
       "UNSUPPORTED_IMAGE_TYPE": "Formato di imagen no ta soportá (usa JPEG, PNG òf WEBP)",
       "UPLOAD_ERROR": "A sosodé un eror ora di subi e archivo",

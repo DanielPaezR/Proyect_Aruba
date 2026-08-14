@@ -9,5 +9,7 @@
   "rejectFormTitle": "Rechazar evidencia",
   "rejectCommentLabel": "Motivo (opcional)",
   "confirmReject": "Confirmar rechazo",
-  "reviewedBy": "Revisado por"
+  "reviewedBy": "Revisado por",
+  "pendingCount_one": "{{count}} pendiente",
+  "pendingCount_other": "{{count}} pendientes"
 }

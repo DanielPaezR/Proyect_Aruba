@@ -9,5 +9,7 @@
   "rejectFormTitle": "Rechasá evidensia",
   "rejectCommentLabel": "Motibu (opshonal)",
   "confirmReject": "Konfirmá rechaso",
-  "reviewedBy": "Revisá pa"
+  "reviewedBy": "Revisá pa",
+  "pendingCount_one": "{{count}} pendiente",
+  "pendingCount_other": "{{count}} pendiente"
 }

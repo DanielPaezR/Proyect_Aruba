@@ -13,6 +13,13 @@
   "unassigned": "Sin asigná",
   "evidencesCount_one": "{{count}} evidensia",
   "evidencesCount_other": "{{count}} evidensianan",
+  "edit": {
+    "formTitle": "Edita aktividat",
+    "submit": "Warda kambio",
+    "saving": "Ta warda..."
+  },
+  "deleteTitle": "Elimina aktividat",
+  "deleteMessage": "Bo ta sigur bo ke elimina \"{{title}}\"? Su evidensianan i asignashonnan lo perdí. E akshon aki no por wordu revertí.",
   "mine": {
     "title": "Mi aktividatnan",
     "empty": "Bo no tin aktividat asigná",

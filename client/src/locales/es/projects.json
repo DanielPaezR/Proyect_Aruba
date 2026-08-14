@@ -27,6 +27,15 @@
     "priority": "Prioridad",
     "electricalPlansUrl": "Link a planos eléctricos"
   },
+  "edit": {
+    "formTitle": "Editar proyecto",
+    "submit": "Guardar cambios",
+    "saving": "Guardando..."
+  },
+  "delete": {
+    "title": "Eliminar proyecto",
+    "message": "¿Estás seguro de que quieres eliminar \"{{name}}\"? Esta acción no se puede deshacer."
+  },
   "empty": "Todavía no hay proyectos",
   "activitiesCount_one": "{{count}} actividad",
   "activitiesCount_other": "{{count}} actividades",

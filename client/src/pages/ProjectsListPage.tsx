@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
+import { ConfirmDialog } from "../components/ConfirmDialog";
 import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
 import { isManagerRole } from "../types/auth";
@@ -33,6 +34,10 @@ export function ProjectsListPage() {
   const [electricalPlansUrl, setElectricalPlansUrl] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+
+  const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   async function loadProjects() {
     setIsLoading(true);
@@ -99,6 +104,23 @@ export function ProjectsListPage() {
       setFormError(translateApiError(t, error));
     } finally {
       setIsSubmitting(false);
+    }
+  }
+
+  async function handleDeleteProject() {
+    if (!projectToDelete) {
+      return;
+    }
+    setDeleteError(null);
+    setIsDeleting(true);
+    try {
+      await apiClient.delete(`/projects/${projectToDelete.id}`);
+      setProjectToDelete(null);
+      await loadProjects();
+    } catch (error) {
+      setDeleteError(translateApiError(t, error));
+    } finally {
+      setIsDeleting(false);
     }
   }
 
@@ -257,10 +279,32 @@ export function ProjectsListPage() {
                     {t("activitiesCount", { ns: "projects", count: project._count?.activities ?? 0 })}
                   </span>
                 </Link>
+                {user.role === "JEFE" && (
+                  <div className="card-actions">
+                    <button type="button" className="danger-button" onClick={() => setProjectToDelete(project)}>
+                      {t("actions.delete", { ns: "common" })}
+                    </button>
+                  </div>
+                )}
               </li>
             ))}
           </ul>
         ))}
+
+      {projectToDelete && (
+        <ConfirmDialog
+          title={t("delete.title", { ns: "projects" })}
+          message={t("delete.message", { ns: "projects", name: projectToDelete.name })}
+          confirmLabel={t("actions.delete", { ns: "common" })}
+          isConfirming={isDeleting}
+          error={deleteError}
+          onConfirm={() => void handleDeleteProject()}
+          onCancel={() => {
+            setProjectToDelete(null);
+            setDeleteError(null);
+          }}
+        />
+      )}
     </div>
   );
 }

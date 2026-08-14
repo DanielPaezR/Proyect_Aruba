@@ -137,6 +137,10 @@ model User {
   pushSubscriptions   PushSubscription[]
   punchReminderLogs   PunchReminderLog[]
   geofenceProximityLogs GeofenceProximityLog[]
+  salaryRaises        SalaryRaise[] @relation("SalaryRaiseForUser")
+  createdSalaryRaises SalaryRaise[] @relation("SalaryRaiseCreatedBy")
+  scoreEvents        WorkerScoreEvent[] @relation("WorkerScoreEventForUser")
+  createdScoreEvents WorkerScoreEvent[] @relation("WorkerScoreEventCreatedBy")
 
   @@map("users")
 }
@@ -280,6 +284,49 @@ model GeofenceProximityLog {
 
   @@index([userId, detectedAt])
   @@map("geofence_proximity_logs")
+}
+
+// Historial de aumentos de sueldo por hora. Cada fila es un evento inmutable
+// (no se edita ni se borra) — el precio actual vive en User.hourlyRate, esto
+// es solo el registro de como llego ahi. previousRate queda null si el
+// usuario no tenia un precio por hora configurado antes de este aumento.
+model SalaryRaise {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation("SalaryRaiseForUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  previousRate Decimal? @db.Decimal(10, 2)
+  newRate      Decimal  @db.Decimal(10, 2)
+  reason       String?
+
+  createdById String
+  createdBy   User   @relation("SalaryRaiseCreatedBy", fields: [createdById], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@map("salary_raises")
+}
+
+// Evento de puntaje mensual (bonos/descuentos por incidentes). El puntaje de
+// un mes se calcula sumando estos eventos sobre una base fija — nunca se
+// decrementa un contador directo, para que quede auditable desde el origen
+// en vez de un numero que alguien pudo pisar sin dejar rastro.
+model WorkerScoreEvent {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation("WorkerScoreEventForUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  points Int
+  reason String
+
+  createdById String
+  createdBy   User   @relation("WorkerScoreEventCreatedBy", fields: [createdById], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@map("worker_score_events")
 }
 
 model Evidence {

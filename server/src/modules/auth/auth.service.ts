@@ -5,8 +5,21 @@ import { env } from "../../config/env";
 import { deleteImage, uploadImage, USER_PROFILE_PHOTOS_FOLDER } from "../../config/storage";
 import { ApiError } from "../../utils/ApiError";
 import { ErrorCode } from "../../utils/errorCodes";
+import { arubaMonthRangeUtc, arubaToday } from "../../utils/geo";
 import { generateRefreshToken, hashRefreshToken, signAccessToken } from "../../utils/jwt";
-import type { CreateUserInput, LoginInput, UpdateProfileInput } from "./auth.validators";
+import type {
+  CreateScoreEventInput,
+  CreateUserInput,
+  LoginInput,
+  UpdateHourlyRateInput,
+  UpdateProfileInput,
+} from "./auth.validators";
+
+// Puntaje con el que arranca cada trabajador al inicio del mes; los eventos
+// (siempre negativos por ahora, ver createScoreEventSchema) se suman sobre
+// esta base para calcular el puntaje del mes — nunca se decrementa un
+// contador directo.
+const BASE_MONTHLY_SCORE = 100;
 
 const PUBLIC_USER_FIELDS = {
   id: true,
@@ -189,4 +202,96 @@ export async function updateProfile(userId: string, input: UpdateProfileInput, p
     },
     select: PUBLIC_USER_FIELDS,
   });
+}
+
+/**
+ * Registra un aumento de sueldo por hora: crea la fila de historial
+ * (previousRate = el hourlyRate actual antes de este cambio) y actualiza
+ * User.hourlyRate, todo en una sola transaccion — no debe quedar el precio
+ * actualizado sin su registro en el historial, ni al reves.
+ */
+export async function updateHourlyRate(userId: string, createdById: string, input: UpdateHourlyRateInput) {
+  const existing = await prisma.user.findUnique({ where: { id: userId } });
+  if (!existing) {
+    throw ApiError.notFound(ErrorCode.USER_NOT_FOUND, "Usuario no encontrado");
+  }
+
+  const [updatedUser] = await prisma.$transaction([
+    prisma.user.update({
+      where: { id: userId },
+      data: { hourlyRate: input.newRate },
+      select: PUBLIC_USER_FIELDS,
+    }),
+    prisma.salaryRaise.create({
+      data: {
+        userId,
+        previousRate: existing.hourlyRate,
+        newRate: input.newRate,
+        reason: input.reason,
+        createdById,
+      },
+    }),
+  ]);
+
+  return updatedUser;
+}
+
+export async function getSalaryHistory(userId: string) {
+  const exists = await prisma.user.findUnique({ where: { id: userId }, select: { id: true } });
+  if (!exists) {
+    throw ApiError.notFound(ErrorCode.USER_NOT_FOUND, "Usuario no encontrado");
+  }
+
+  return prisma.salaryRaise.findMany({
+    where: { userId },
+    include: { createdBy: { select: { id: true, name: true } } },
+    orderBy: { createdAt: "desc" },
+  });
+}
+
+export async function createScoreEvent(userId: string, createdById: string, input: CreateScoreEventInput) {
+  const exists = await prisma.user.findUnique({ where: { id: userId }, select: { id: true } });
+  if (!exists) {
+    throw ApiError.notFound(ErrorCode.USER_NOT_FOUND, "Usuario no encontrado");
+  }
+
+  return prisma.workerScoreEvent.create({
+    data: { userId, points: input.points, reason: input.reason, createdById },
+    include: { createdBy: { select: { id: true, name: true } } },
+  });
+}
+
+/**
+ * Puntaje de un mes = base fija + suma de los eventos de ese mes. Nunca se
+ * lee ni se escribe un "puntaje actual" guardado — se recalcula desde el
+ * origen cada vez, mismo patron de agregacion por periodo que getSummary()
+ * en time-entries.service.ts.
+ */
+export async function getMonthlyScore(userId: string, month?: number, year?: number) {
+  const exists = await prisma.user.findUnique({ where: { id: userId }, select: { id: true } });
+  if (!exists) {
+    throw ApiError.notFound(ErrorCode.USER_NOT_FOUND, "Usuario no encontrado");
+  }
+
+  const today = arubaToday();
+  const targetMonth = month ?? today.getUTCMonth() + 1;
+  const targetYear = year ?? today.getUTCFullYear();
+
+  const { start, end } = arubaMonthRangeUtc(targetYear, targetMonth);
+
+  const events = await prisma.workerScoreEvent.findMany({
+    where: { userId, createdAt: { gte: start, lt: end } },
+    include: { createdBy: { select: { id: true, name: true } } },
+    orderBy: { createdAt: "desc" },
+  });
+
+  const pointsSum = events.reduce((sum, event) => sum + event.points, 0);
+
+  return {
+    month: targetMonth,
+    year: targetYear,
+    baseScore: BASE_MONTHLY_SCORE,
+    currentScore: BASE_MONTHLY_SCORE + pointsSum,
+    events,
+  };
 }

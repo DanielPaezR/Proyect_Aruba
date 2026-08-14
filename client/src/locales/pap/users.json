@@ -18,5 +18,33 @@
     "inactive": "Inaktivo",
     "hourlyRateNotSpecified": "Preis pa ora no spesifiká"
   },
+  "salary": {
+    "showButton": "Wak historial di salario",
+    "hideButton": "Skonde historial di salario",
+    "currentRate": "Preis pa ora aktual",
+    "registerButton": "Registra aumento",
+    "formTitle": "Registra aumento di salario",
+    "newRateLabel": "Preis pa ora nobo (AWG)",
+    "reasonLabel": "Motibu (opshonal)",
+    "submit": "Warda aumento",
+    "saving": "Ta warda...",
+    "historyTitle": "Historial di aumento",
+    "historyEmpty": "Ainda no tin aumento registrá",
+    "rateChange": "{{previous}} → {{next}}",
+    "registeredBy": "Registrá pa {{name}}"
+  },
+  "score": {
+    "showButton": "Wak puntuashon di e luna",
+    "hideButton": "Skonde puntuashon di e luna",
+    "currentScore": "Puntuashon di {{month}}/{{year}}: {{score}} / {{base}}",
+    "registerButton": "Registra deskuento",
+    "formTitle": "Registra deskuento di puntuashon",
+    "pointsLabel": "Punto pa deskontá",
+    "reasonLabel": "Motibu",
+    "submit": "Warda deskuento",
+    "saving": "Ta warda...",
+    "historyTitle": "Evento di e luna aki",
+    "historyEmpty": "Ainda no tin evento e luna aki"
+  },
   "empty": "Ainda no tin usuario"
 }

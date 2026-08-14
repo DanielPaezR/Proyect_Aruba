@@ -27,6 +27,15 @@
     "priority": "Priority",
     "electricalPlansUrl": "Electrical plans link"
   },
+  "edit": {
+    "formTitle": "Edit project",
+    "submit": "Save changes",
+    "saving": "Saving..."
+  },
+  "delete": {
+    "title": "Delete project",
+    "message": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone."
+  },
   "empty": "No projects yet",
   "activitiesCount_one": "{{count}} activity",
   "activitiesCount_other": "{{count}} activities",
