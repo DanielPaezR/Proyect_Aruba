@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import type { Locale } from "@prisma/client";
+import type { Locale, Role } from "@prisma/client";
 import { prisma } from "../../config/prisma";
 import { env } from "../../config/env";
 import { deleteImage, uploadImage, USER_PROFILE_PHOTOS_FOLDER } from "../../config/storage";
@@ -32,6 +32,20 @@ const PUBLIC_USER_FIELDS = {
   locale: true,
   photoUrl: true,
   createdAt: true,
+} as const;
+
+// Listado para SUPERVISOR (p.ej. panel de asignación de trabajadores en
+// ProjectDetailPage): sin hourlyRate, que es exclusivo de vistas del JEFE
+// (sueldo/puntaje) aunque el propio GET /users ya sea de lectura compartida.
+const SUPERVISOR_USER_FIELDS = {
+  id: true,
+  name: true,
+  email: true,
+  role: true,
+  phone: true,
+  isActive: true,
+  locale: true,
+  photoUrl: true,
 } as const;
 
 function refreshTokenExpiryDate(): Date {
@@ -151,9 +165,9 @@ export async function createUser(input: CreateUserInput) {
   return user;
 }
 
-export async function listUsers() {
+export async function listUsers(requesterRole: Role) {
   return prisma.user.findMany({
-    select: PUBLIC_USER_FIELDS,
+    select: requesterRole === "JEFE" ? PUBLIC_USER_FIELDS : SUPERVISOR_USER_FIELDS,
     orderBy: { name: "asc" },
   });
 }

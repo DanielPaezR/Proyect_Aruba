@@ -60,8 +60,8 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
   res.status(201).json({ user });
 });
 
-export const listUsers = asyncHandler(async (_req: Request, res: Response) => {
-  const users = await authService.listUsers();
+export const listUsers = asyncHandler(async (req: Request, res: Response) => {
+  const users = await authService.listUsers(req.user!.role);
   res.json({ users });
 });
 
