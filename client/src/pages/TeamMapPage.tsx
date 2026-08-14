@@ -31,13 +31,59 @@ function toDatetimeLocalValue(iso: string): string {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
+interface LocatedWorker extends WorkerLocation {
+  lastKnownLatitude: number;
+  lastKnownLongitude: number;
+  lastLocationAt: string;
+}
+
+function hasLocation(worker: WorkerLocation): worker is LocatedWorker {
+  return worker.lastKnownLatitude !== null && worker.lastKnownLongitude !== null && worker.lastLocationAt !== null;
+}
+
+const CONNECTED_THRESHOLD_MINUTES = 20;
+
+/** "Conectado" = reporto ubicacion en los ultimos 20 minutos. Sin ubicacion
+ * nunca reportada (lastLocationAt null) cuenta como desconectado. */
+function isConnected(worker: WorkerLocation): boolean {
+  if (!worker.lastLocationAt) {
+    return false;
+  }
+  const diffMinutes = (Date.now() - new Date(worker.lastLocationAt).getTime()) / 60000;
+  return diffMinutes <= CONNECTED_THRESHOLD_MINUTES;
+}
+
+/** Conectados primero; dentro de cada grupo, el reporte mas reciente primero
+ * y los que nunca reportaron ubicacion al final. */
+function sortWorkersByStatus(workers: WorkerLocation[]): WorkerLocation[] {
+  return [...workers].sort((a, b) => {
+    const aConnected = isConnected(a);
+    const bConnected = isConnected(b);
+    if (aConnected !== bConnected) {
+      return aConnected ? -1 : 1;
+    }
+    if (!a.lastLocationAt && !b.lastLocationAt) {
+      return 0;
+    }
+    if (!a.lastLocationAt) {
+      return 1;
+    }
+    if (!b.lastLocationAt) {
+      return -1;
+    }
+    return new Date(b.lastLocationAt).getTime() - new Date(a.lastLocationAt).getTime();
+  });
+}
+
 function TeamMap({ workers }: { workers: WorkerLocation[] }) {
   const { t } = useTranslation(["teamMap"]);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<L.Map | null>(null);
 
+  const locatedWorkers = workers.filter(hasLocation);
+
   useEffect(() => {
-    if (!mapContainerRef.current || workers.length === 0) {
+    if (!mapContainerRef.current || locatedWorkers.length === 0) {
       return;
     }
 
@@ -49,7 +95,7 @@ function TeamMap({ workers }: { workers: WorkerLocation[] }) {
       maxZoom: 19,
     }).addTo(map);
 
-    const markers = workers.map((worker) => {
+    const markers = locatedWorkers.map((worker) => {
       const ago = timeAgo(worker.lastLocationAt);
       const marker = L.marker([worker.lastKnownLatitude, worker.lastKnownLongitude]).addTo(map);
       marker.bindPopup(
@@ -71,9 +117,9 @@ function TeamMap({ workers }: { workers: WorkerLocation[] }) {
       mapRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [workers]);
+  }, [locatedWorkers]);
 
-  if (workers.length === 0) {
+  if (locatedWorkers.length === 0) {
     return <p>{t("map.empty")}</p>;
   }
 
@@ -159,6 +205,13 @@ export function TeamMapPage() {
     }
   }
 
+  function formatTimeAgoLabel(isoTimestamp: string): string {
+    const ago = timeAgo(isoTimestamp);
+    return ago.count === 0
+      ? t("map.justNow", { ns: "teamMap" })
+      : t(`map.${ago.unit}Ago`, { ns: "teamMap", count: ago.count });
+  }
+
   return (
     <div className="team-map-page">
       <div className="page-header">
@@ -176,8 +229,45 @@ export function TeamMapPage() {
       )}
       {!isLoading && !locationsError && workers && <TeamMap workers={workers} />}
 
+      <section className="team-worker-status">
+        <h2 className="section-label">{t("workerStatus.title", { ns: "teamMap" })}</h2>
+
+        {!isLoading &&
+          !locationsError &&
+          workers &&
+          (workers.length === 0 ? (
+            <p>{t("workerStatus.empty", { ns: "teamMap" })}</p>
+          ) : (
+            <ul className="card-list">
+              {sortWorkersByStatus(workers).map((worker) => {
+                const connected = isConnected(worker);
+                return (
+                  <li key={worker.id} className="card">
+                    <div className="card-header">
+                      <span className="card-title">{worker.name}</span>
+                      <span className={connected ? "status-badge" : "status-badge status-badge--muted"}>
+                        {connected
+                          ? t("workerStatus.connected", { ns: "teamMap" })
+                          : t("workerStatus.disconnected", { ns: "teamMap" })}
+                      </span>
+                    </div>
+                    <span className="card-meta">
+                      {worker.lastLocationAt
+                        ? t("workerStatus.sinceLabel", {
+                            ns: "teamMap",
+                            time: formatTimeAgoLabel(worker.lastLocationAt),
+                          })
+                        : t("workerStatus.noLocation", { ns: "teamMap" })}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          ))}
+      </section>
+
       <section className="team-hours">
-        <h2>{t("hours.title", { ns: "teamMap" })}</h2>
+        <h2 className="section-label">{t("hours.title", { ns: "teamMap" })}</h2>
 
         {!isLoading && summaryError && (
           <p className="form-error" role="alert">

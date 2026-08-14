@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
+import { Camera, CheckCircle2, Images, MapPin, Play } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
@@ -157,32 +158,56 @@ export function MyActivityCard({ activity, onActivityUpdated }: MyActivityCardPr
 
       {activity.description && <p className="card-description">{activity.description}</p>}
 
-      {activity.project?.address && (
-        <a
-          href={googleMapsUrl(activity.project.address)}
-          target="_blank"
-          rel="noreferrer"
-          className="button-link button-link--secondary"
-        >
-          {t("mine.directionsButton", { ns: "activities" })}
-        </a>
-      )}
-
-      <div className="form-actions">
+      <div className="activity-actions">
+        {activity.project?.address && (
+          <a
+            href={googleMapsUrl(activity.project.address)}
+            target="_blank"
+            rel="noreferrer"
+            className="activity-action-button activity-action-button--secondary"
+          >
+            <MapPin size={18} aria-hidden="true" />
+            <span>{t("mine.directionsButton", { ns: "activities" })}</span>
+          </a>
+        )}
         {nextStatus && (
-          <button type="button" onClick={() => void handleStatusChange()} disabled={isChangingStatus}>
-            {nextStatus === "EN_PROGRESO"
-              ? t("mine.startButton", { ns: "activities" })
-              : t("mine.completeButton", { ns: "activities" })}
+          <button
+            type="button"
+            className="activity-action-button activity-action-button--primary"
+            onClick={() => void handleStatusChange()}
+            disabled={isChangingStatus}
+          >
+            {nextStatus === "EN_PROGRESO" ? (
+              <Play size={18} aria-hidden="true" />
+            ) : (
+              <CheckCircle2 size={18} aria-hidden="true" />
+            )}
+            <span>
+              {nextStatus === "EN_PROGRESO"
+                ? t("mine.startButton", { ns: "activities" })
+                : t("mine.completeButton", { ns: "activities" })}
+            </span>
           </button>
         )}
-        <button type="button" onClick={() => setIsUploadFormOpen((open) => !open)}>
-          {t("mine.uploadButton", { ns: "activities" })}
+        <button
+          type="button"
+          className="activity-action-button activity-action-button--secondary"
+          onClick={() => setIsUploadFormOpen((open) => !open)}
+        >
+          <Camera size={18} aria-hidden="true" />
+          <span>{t("mine.uploadButton", { ns: "activities" })}</span>
         </button>
-        <button type="button" onClick={() => void handleToggleEvidences()}>
-          {isEvidencesOpen
-            ? t("mine.hideEvidencesButton", { ns: "activities" })
-            : t("mine.viewEvidencesButton", { ns: "activities", count: activity._count?.evidences ?? 0 })}
+        <button
+          type="button"
+          className="activity-action-button activity-action-button--secondary"
+          onClick={() => void handleToggleEvidences()}
+        >
+          <Images size={18} aria-hidden="true" />
+          <span>
+            {isEvidencesOpen
+              ? t("mine.hideEvidencesButton", { ns: "activities" })
+              : t("mine.viewEvidencesButton", { ns: "activities", count: activity._count?.evidences ?? 0 })}
+          </span>
         </button>
       </div>
 

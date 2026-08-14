@@ -26,5 +26,13 @@
     "editedBadge": "Editá pa {{name}}, motibu: {{reason}}",
     "editedBadgeNoReason": "Editá pa {{name}}",
     "proximityReference": "Tabata serka di ofisina na {{time}} (referencia, no ta un markashon)"
+  },
+  "workerStatus": {
+    "title": "Estado di ekipo",
+    "empty": "Ainda no tin trahadó di kampo",
+    "connected": "Konektá",
+    "disconnected": "Deskonektá",
+    "sinceLabel": "Ultimo ubikashon: {{time}}",
+    "noLocation": "Ainda no tin ubikashon reportá"
   }
 }

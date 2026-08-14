@@ -14,7 +14,6 @@
       "hoursValue": "{{hours}} h",
       "approvalRate": "Tasa de aprobación de evidencias (último mes)",
       "activeProjects": "Proyectos activos por prioridad",
-      "activeProjectsValue": "{{high}} alta/urgente · {{low}} media/baja",
       "topWorkers": "Top trabajadores esta semana",
       "noDataYet": "Sin datos todavía"
     }

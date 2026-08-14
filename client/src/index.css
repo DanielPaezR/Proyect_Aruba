@@ -433,10 +433,25 @@ button {
   font-style: italic;
 }
 
+/* Etiqueta de seccion discreta ("eyebrow"): para separar visualmente el
+   titulo de una seccion del dato que contiene, sin competir en peso visual
+   con el <h1> de la pagina ni con las tarjetas/numeros de abajo. Se aplica
+   a mano via className en vez de un selector amplio tipo "section h2" —
+   asi nunca choca con titulos de formularios/dialogos anidados (esos deben
+   seguir leyendose fuertes). */
+.section-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+}
+
 /* Dashboard */
 
 .dashboard section {
-  margin-bottom: 32px;
+  margin-bottom: 40px;
 }
 
 .my-time-entries {
@@ -449,6 +464,10 @@ button {
   border-radius: 8px;
   border: 1px solid var(--border);
   margin-bottom: 24px;
+}
+
+.team-worker-status {
+  margin-bottom: 32px;
 }
 
 .team-hours-entries {
@@ -469,6 +488,11 @@ button {
 .team-hours-entry button {
   padding: 2px 10px;
   font-size: 13px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 28px;
 }
 
 .status-columns {
@@ -552,6 +576,49 @@ button {
   font-size: 14px;
 }
 
+.priority-breakdown {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.priority-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 4px;
+  border-radius: 8px;
+  background: var(--bg);
+}
+
+.priority-cell__count {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-h);
+  line-height: 1.1;
+}
+
+.priority-cell__label {
+  font-size: 11px;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+/* Mismo gold-500/navy-900 que .status-badge--priority-high, para que
+   "urgente"/"alta" se lean como los niveles que necesitan atencion sin
+   tener que leer la etiqueta. */
+.priority-cell--high {
+  background: var(--gold-500);
+}
+
+.priority-cell--high .priority-cell__count,
+.priority-cell--high .priority-cell__label {
+  color: var(--navy-900);
+}
+
 /* Paginas de listado (proyectos, actividades, evidencias...) */
 
 .page-header {
@@ -560,7 +627,11 @@ button {
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px 16px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+}
+
+.project-detail-page section {
+  margin-bottom: 32px;
 }
 
 .page-header button {
@@ -663,6 +734,15 @@ button {
   min-height: 44px;
 }
 
+/* Override explicito para una accion secundaria por defecto (type="button")
+   que en realidad es LA accion principal del contexto (ej. "Aprobar" frente
+   a "Rechazar") — mismo peso visual que un submit primario. */
+.form-actions button.button-primary {
+  border: none;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+}
+
 /* Lista de tarjetas generica: proyectos, actividades, evidencias... */
 
 .card-list {
@@ -725,6 +805,13 @@ button {
 .status-badge--auto {
   background: var(--lime-500);
   color: var(--navy-900);
+}
+
+/* Estado neutro (ej. trabajador desconectado o sin dato aun) — ni positivo
+   (--accent) ni de alerta (--danger/--gold), solo informativo. */
+.status-badge--muted {
+  background: var(--bg-subtle);
+  color: var(--text);
 }
 
 .card-description {
@@ -809,10 +896,48 @@ button {
   border: 1px solid var(--border);
 }
 
-.button-link--secondary {
-  background: transparent;
-  color: var(--accent);
+.activity-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.activity-action-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  min-height: 44px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.activity-action-button svg {
+  flex-shrink: 0;
+}
+
+.activity-action-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* La accion principal de la tarjeta (iniciar / marcar completada). */
+.activity-action-button--primary {
+  border: none;
+  background: var(--btn-bg);
+  color: var(--btn-text);
+}
+
+/* Cómo llegar, subir evidencia, ver evidencias: mismo tamaño e icono que la
+   primaria, pero con menos peso — acompañan, no compiten. */
+.activity-action-button--secondary {
   border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
 }
 
 .evidence-remove-button {
@@ -858,6 +983,40 @@ button {
   }
 }
 
+.project-evidence-group {
+  background: var(--bg-page);
+}
+
+.project-evidence-group__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  text-align: left;
+  min-height: auto;
+  color: inherit;
+}
+
+.project-evidence-group__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.project-evidence-group__chevron {
+  color: var(--text);
+  font-size: 14px;
+}
+
+.project-evidence-group__activities {
+  margin: 12px 0 0;
+}
+
 .card-actions {
   display: flex;
   gap: 8px;
@@ -870,7 +1029,10 @@ button {
   border-radius: 6px;
   border: 1px solid var(--border);
   background: var(--bg);
-  color: var(--text-h);
+  /* Texto --text (mas suave) en vez de --text-h: son acciones secundarias
+     (editar, ver historial...), no deben competir con los botones primarios
+     (crear, aprobar) por atencion. */
+  color: var(--text);
   min-height: 36px;
 }
 

@@ -23,7 +23,12 @@ const activitySummarySelect = {
   project: { select: { id: true, name: true } },
 } as const;
 
-const HIGH_PRIORITIES = new Set<ProjectPriority>([ProjectPriority.ALTA, ProjectPriority.URGENTE]);
+const PRIORITY_LEVELS: ProjectPriority[] = [
+  ProjectPriority.URGENTE,
+  ProjectPriority.ALTA,
+  ProjectPriority.MEDIA,
+  ProjectPriority.BAJA,
+];
 
 async function getSupervisorStats() {
   const thisWeekStart = arubaStartOfWeekUtc();
@@ -80,18 +85,16 @@ async function getSupervisorStats() {
   const evidenceApprovalRate =
     totalReviewedLastMonth === 0 ? null : Math.round((approvedLastMonth / totalReviewedLastMonth) * 100);
 
-  const activeProjectsHighPriority = activeProjects.filter(
-    (project) => project.priority !== null && HIGH_PRIORITIES.has(project.priority),
-  ).length;
-  const activeProjectsLowPriority = activeProjects.length - activeProjectsHighPriority;
+  const activeProjectsByPriority = Object.fromEntries(
+    PRIORITY_LEVELS.map((level) => [level, activeProjects.filter((project) => project.priority === level).length]),
+  ) as Record<ProjectPriority, number>;
 
   return {
     completedActivitiesThisWeek,
     completedActivitiesLastWeek,
     teamHoursThisWeek,
     evidenceApprovalRate,
-    activeProjectsHighPriority,
-    activeProjectsLowPriority,
+    activeProjectsByPriority,
     topWorkersThisWeek,
   };
 }

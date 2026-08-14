@@ -293,11 +293,6 @@ export function ProjectDetailPage() {
                   {t("actions.delete", { ns: "common" })}
                 </button>
               )}
-              {canManage && (
-                <button type="button" onClick={() => setIsFormOpen((open) => !open)}>
-                  {t("createButton", { ns: "activities" })}
-                </button>
-              )}
             </div>
           </div>
 
@@ -463,7 +458,7 @@ export function ProjectDetailPage() {
           )}
 
           <section>
-            <h2>{t("detail.ownerSection", { ns: "projects" })}</h2>
+            <h2 className="section-label">{t("detail.ownerSection", { ns: "projects" })}</h2>
             <dl className="info-grid">
               <div>
                 <dt>{t("create.ownerName", { ns: "projects" })}</dt>
@@ -481,7 +476,7 @@ export function ProjectDetailPage() {
           </section>
 
           <section>
-            <h2>{t("detail.locationSection", { ns: "projects" })}</h2>
+            <h2 className="section-label">{t("detail.locationSection", { ns: "projects" })}</h2>
             <dl className="info-grid">
               <div>
                 <dt>{t("create.address", { ns: "projects" })}</dt>
@@ -503,7 +498,7 @@ export function ProjectDetailPage() {
           </section>
 
           <section>
-            <h2>{t("detail.workSection", { ns: "projects" })}</h2>
+            <h2 className="section-label">{t("detail.workSection", { ns: "projects" })}</h2>
             <dl className="info-grid">
               <div>
                 <dt>{t("create.propertyType", { ns: "projects" })}</dt>
@@ -547,6 +542,15 @@ export function ProjectDetailPage() {
             )}
           </section>
 
+          <div className="page-header">
+            <h2>{t("listTitle", { ns: "activities" })}</h2>
+            {canManage && (
+              <button type="button" onClick={() => setIsFormOpen((open) => !open)}>
+                {t("createButton", { ns: "activities" })}
+              </button>
+            )}
+          </div>
+
           {canManage && isFormOpen && (
             <form className="inline-form" onSubmit={(event) => void handleCreateActivity(event)}>
               <h2>{t("createFormTitle", { ns: "activities" })}</h2>
@@ -577,8 +581,6 @@ export function ProjectDetailPage() {
               </div>
             </form>
           )}
-
-          <h2>{t("listTitle", { ns: "activities" })}</h2>
 
           {project.activities.length === 0 ? (
             <p>{t("empty", { ns: "activities" })}</p>

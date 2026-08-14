@@ -26,5 +26,13 @@
     "editedBadge": "Edited by {{name}}, reason: {{reason}}",
     "editedBadgeNoReason": "Edited by {{name}}",
     "proximityReference": "Was near the office at {{time}} (reference only, not a clock-in)"
+  },
+  "workerStatus": {
+    "title": "Team status",
+    "empty": "No field workers yet",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "sinceLabel": "Last location: {{time}}",
+    "noLocation": "No location reported yet"
   }
 }

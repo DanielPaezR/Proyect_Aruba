@@ -14,7 +14,6 @@
       "hoursValue": "{{hours}} h",
       "approvalRate": "Tasa di aprobashon di evidensia (ultimo luna)",
       "activeProjects": "Proyekto aktivo pa prioridat",
-      "activeProjectsValue": "{{high}} haltu/urgente · {{low}} mediano/abou",
       "topWorkers": "Top trahadónan e siman aki",
       "noDataYet": "Ainda no tin data"
     }

@@ -26,5 +26,13 @@
     "editedBadge": "Editado por {{name}}, motivo: {{reason}}",
     "editedBadgeNoReason": "Editado por {{name}}",
     "proximityReference": "Estuvo cerca de la oficina a las {{time}} (referencia, no es una marcación)"
+  },
+  "workerStatus": {
+    "title": "Estado del equipo",
+    "empty": "Todavía no hay trabajadores de campo",
+    "connected": "Conectado",
+    "disconnected": "Desconectado",
+    "sinceLabel": "Última ubicación: {{time}}",
+    "noLocation": "Sin ubicación registrada"
   }
 }

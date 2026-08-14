@@ -76,7 +76,7 @@ export function EvidenceReviewItem({ evidence, onReviewed }: EvidenceReviewItemP
         {evidence.status === "PENDIENTE" ? (
           <>
             <div className="form-actions">
-              <button type="button" onClick={() => void handleApprove()} disabled={isApproving}>
+              <button type="button" className="button-primary" onClick={() => void handleApprove()} disabled={isApproving}>
                 {t("approveButton", { ns: "evidences" })}
               </button>
               <button type="button" onClick={() => setIsRejectFormOpen((open) => !open)}>

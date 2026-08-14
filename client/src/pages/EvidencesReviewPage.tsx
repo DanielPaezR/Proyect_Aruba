@@ -2,32 +2,43 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
-import { EvidenceReviewGroup } from "../components/EvidenceReviewGroup";
+import { ProjectEvidenceGroup } from "../components/ProjectEvidenceGroup";
+import type { ActivityGroup } from "../components/ProjectEvidenceGroup";
 import { translateStatus } from "../i18n/statusLabel";
 import { EVIDENCE_STATUSES } from "../types/evidence";
 import type { EvidenceStatus, EvidenceWithActivity } from "../types/evidence";
 
 type StatusFilter = "ALL" | EvidenceStatus;
 
-interface ActivityGroup {
-  activity: EvidenceWithActivity["activity"];
-  evidences: EvidenceWithActivity[];
+interface ProjectGroup {
+  project: { id: string; name: string };
+  activityGroups: ActivityGroup[];
 }
 
-/** Agrupa la lista plana del backend por actividad, preservando el orden de
- * aparicion (el backend ya ordena por createdAt desc, asi que la actividad
- * con la evidencia mas reciente queda primero). */
-function groupByActivity(evidences: EvidenceWithActivity[]): ActivityGroup[] {
-  const groups = new Map<string, ActivityGroup>();
+/** Agrupa la lista plana del backend primero por proyecto y despues por
+ * actividad dentro de cada proyecto, preservando el orden de aparicion (el
+ * backend ya ordena por createdAt desc, asi que el proyecto/actividad con la
+ * evidencia mas reciente queda primero). */
+function groupByProjectThenActivity(evidences: EvidenceWithActivity[]): ProjectGroup[] {
+  const projectGroups = new Map<string, ProjectGroup>();
+
   for (const evidence of evidences) {
-    let group = groups.get(evidence.activity.id);
-    if (!group) {
-      group = { activity: evidence.activity, evidences: [] };
-      groups.set(evidence.activity.id, group);
+    const projectId = evidence.activity.project.id;
+    let projectGroup = projectGroups.get(projectId);
+    if (!projectGroup) {
+      projectGroup = { project: evidence.activity.project, activityGroups: [] };
+      projectGroups.set(projectId, projectGroup);
     }
-    group.evidences.push(evidence);
+
+    let activityGroup = projectGroup.activityGroups.find((group) => group.activity.id === evidence.activity.id);
+    if (!activityGroup) {
+      activityGroup = { activity: evidence.activity, evidences: [] };
+      projectGroup.activityGroups.push(activityGroup);
+    }
+    activityGroup.evidences.push(evidence);
   }
-  return Array.from(groups.values());
+
+  return Array.from(projectGroups.values());
 }
 
 export function EvidencesReviewPage() {
@@ -115,11 +126,11 @@ export function EvidencesReviewPage() {
           <p>{t("empty", { ns: "evidences" })}</p>
         ) : (
           <ul className="card-list">
-            {groupByActivity(evidences).map((group) => (
-              <EvidenceReviewGroup
-                key={group.activity.id}
-                activity={group.activity}
-                evidences={group.evidences}
+            {groupByProjectThenActivity(evidences).map((group) => (
+              <ProjectEvidenceGroup
+                key={group.project.id}
+                project={group.project}
+                activityGroups={group.activityGroups}
                 onReviewed={handleReviewed}
               />
             ))}

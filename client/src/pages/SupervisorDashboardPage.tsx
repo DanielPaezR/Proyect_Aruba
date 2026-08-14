@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { translateStatus } from "../i18n/statusLabel";
+import type { ProjectPriority } from "../types/project";
 
 interface ActivitySummary {
   id: string;
@@ -22,10 +23,12 @@ interface SupervisorStats {
   completedActivitiesLastWeek: number;
   teamHoursThisWeek: number;
   evidenceApprovalRate: number | null;
-  activeProjectsHighPriority: number;
-  activeProjectsLowPriority: number;
+  activeProjectsByPriority: Record<ProjectPriority, number>;
   topWorkersThisWeek: TopWorker[];
 }
+
+const PRIORITY_LEVELS: ProjectPriority[] = ["URGENTE", "ALTA", "MEDIA", "BAJA"];
+const HIGH_PRIORITY_LEVELS = new Set<ProjectPriority>(["URGENTE", "ALTA"]);
 
 interface SupervisorDashboardData {
   date: string;
@@ -41,7 +44,7 @@ interface SupervisorDashboardData {
 const STATUS_ORDER = ["PENDIENTE", "EN_PROGRESO", "COMPLETADA", "CANCELADA"];
 
 export function SupervisorDashboardPage() {
-  const { t } = useTranslation(["dashboard", "common"]);
+  const { t } = useTranslation(["dashboard", "common", "projects"]);
   const [data, setData] = useState<SupervisorDashboardData | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -125,14 +128,20 @@ export function SupervisorDashboardPage() {
         </div>
 
         <div className="stat-card">
-          <span className="stat-card__value">
-            {t("supervisor.stats.activeProjectsValue", {
-              ns: "dashboard",
-              high: data.stats.activeProjectsHighPriority,
-              low: data.stats.activeProjectsLowPriority,
-            })}
-          </span>
           <span className="stat-card__label">{t("supervisor.stats.activeProjects", { ns: "dashboard" })}</span>
+          <div className="priority-breakdown">
+            {PRIORITY_LEVELS.map((level) => (
+              <div
+                key={level}
+                className={
+                  HIGH_PRIORITY_LEVELS.has(level) ? "priority-cell priority-cell--high" : "priority-cell"
+                }
+              >
+                <span className="priority-cell__count">{data.stats.activeProjectsByPriority[level]}</span>
+                <span className="priority-cell__label">{translateStatus(t, "projects", "priority", level)}</span>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="stat-card">
@@ -154,7 +163,7 @@ export function SupervisorDashboardPage() {
       </div>
 
       <section>
-        <h2>{t("supervisor.todayActivities", { ns: "dashboard" })}</h2>
+        <h2 className="section-label">{t("supervisor.todayActivities", { ns: "dashboard" })}</h2>
         {data.activitiesToday.total === 0 ? (
           <p>{t("supervisor.empty", { ns: "dashboard" })}</p>
         ) : (
@@ -176,12 +185,12 @@ export function SupervisorDashboardPage() {
       </section>
 
       <section>
-        <h2>{t("supervisor.pendingEvidences", { ns: "dashboard" })}</h2>
+        <h2 className="section-label">{t("supervisor.pendingEvidences", { ns: "dashboard" })}</h2>
         <p className="metric">{data.pendingEvidencesCount}</p>
       </section>
 
       <section>
-        <h2>{t("supervisor.unassignedActivities", { ns: "dashboard" })}</h2>
+        <h2 className="section-label">{t("supervisor.unassignedActivities", { ns: "dashboard" })}</h2>
         {data.unassignedActivities.length === 0 ? (
           <p>{t("supervisor.noUnassigned", { ns: "dashboard" })}</p>
         ) : (

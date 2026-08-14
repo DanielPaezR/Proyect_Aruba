@@ -14,7 +14,6 @@
       "hoursValue": "{{hours}} h",
       "approvalRate": "Evidence approval rate (last month)",
       "activeProjects": "Active projects by priority",
-      "activeProjectsValue": "{{high}} high/urgent · {{low}} medium/low",
       "topWorkers": "Top workers this week",
       "noDataYet": "No data yet"
     }
