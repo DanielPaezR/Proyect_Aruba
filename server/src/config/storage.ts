@@ -82,3 +82,43 @@ export async function deleteImage(publicId: string): Promise<void> {
   // el cache del CDN puede seguir sirviendo la imagen vieja por un rato.
   await cloudinary.uploader.destroy(publicId, { invalidate: true });
 }
+
+export const INVOICES_FOLDER = "decs/invoices";
+
+const ALLOWED_INVOICE_MIME_TYPES = new Set(["application/pdf"]);
+
+/** Solo facturas (PDF) — multer/fileFilter separado del de imagenes para no
+ * abrir PDF en evidencias/perfil/actividades, que siguen siendo solo imagen. */
+export const invoiceUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 15 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (!ALLOWED_INVOICE_MIME_TYPES.has(file.mimetype)) {
+      cb(new ApiError(400, ErrorCode.UNSUPPORTED_FILE_TYPE, "Formato de archivo no soportado (usa PDF)"));
+      return;
+    }
+    cb(null, true);
+  },
+});
+
+/** Sube un PDF a Cloudinary como resource_type "raw" (no es una imagen que
+ * Cloudinary deba procesar/transformar, solo un archivo que se sirve tal cual). */
+export function uploadInvoiceFile(buffer: Buffer): Promise<UploadedImage> {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { folder: INVOICES_FOLDER, resource_type: "raw" },
+      (error?: UploadApiErrorResponse, result?: UploadApiResponse) => {
+        if (error || !result) {
+          reject(error ?? new Error("Cloudinary no devolvió resultado al subir la factura"));
+          return;
+        }
+        resolve({ url: result.secure_url, publicId: result.public_id });
+      },
+    );
+    uploadStream.end(buffer);
+  });
+}
+
+export async function deleteInvoiceFile(publicId: string): Promise<void> {
+  await cloudinary.uploader.destroy(publicId, { resource_type: "raw", invalidate: true });
+}

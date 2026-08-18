@@ -1,0 +1,30 @@
+{
+  "sectionTitle": "Invoices",
+  "uploadButton": "Upload invoice",
+  "uploadFormTitle": "Upload invoice",
+  "fileLabel": "PDF file",
+  "uploadSubmit": "Upload",
+  "uploadSubmitting": "Uploading...",
+  "empty": "No invoices for this project yet",
+  "uploadedOn": "Uploaded on {{date}}",
+  "uploadedBy": "Uploaded by",
+  "viewButton": "View invoice",
+  "reviewCommentLabel": "Reason for return",
+  "resubmitButton": "Upload correction",
+  "resubmitFormTitle": "Upload correction",
+  "queueTitle": "Invoices",
+  "statusFilterLabel": "Status",
+  "statusFilterAll": "All",
+  "queueEmpty": "No invoices for this filter",
+  "approveButton": "Approve",
+  "returnButton": "Return",
+  "returnFormTitle": "Return invoice",
+  "returnCommentLabel": "Reason (required)",
+  "confirmReturn": "Confirm return",
+  "reviewedBy": "Reviewed by",
+  "status": {
+    "PENDIENTE_REVISION": "Pending review",
+    "APROBADA": "Approved",
+    "DEVUELTA": "Returned"
+  }
+}

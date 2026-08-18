@@ -50,6 +50,11 @@ export function Layout() {
               </NavLink>
             )}
             {user.role === "JEFE" && (
+              <NavLink to="/invoices" className={navLinkClassName}>
+                {t("nav.invoices", { ns: "common" })}
+              </NavLink>
+            )}
+            {user.role === "JEFE" && (
               <NavLink to="/users" className={navLinkClassName}>
                 {t("nav.users", { ns: "common" })}
               </NavLink>

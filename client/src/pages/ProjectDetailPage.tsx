@@ -6,6 +6,7 @@ import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { AssignWorkersPanel } from "../components/AssignWorkersPanel";
 import { ConfirmDialog } from "../components/ConfirmDialog";
+import { ProjectInvoicesSection } from "../components/ProjectInvoicesSection";
 import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
 import { isManagerRole } from "../types/auth";
@@ -706,6 +707,8 @@ export function ProjectDetailPage() {
               ))}
             </ul>
           )}
+
+          {canManage && <ProjectInvoicesSection projectId={projectId} />}
         </>
       )}
 

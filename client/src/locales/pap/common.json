@@ -30,6 +30,7 @@
     "projects": "Proyektonan",
     "myActivities": "Mi aktividatnan",
     "evidences": "Evidensianan",
+    "invoices": "Facturanan",
     "users": "Usuarionan",
     "settings": "Konfigurashon",
     "teamMap": "Mapa di ekipo"
@@ -70,7 +71,12 @@
       "INTERNAL_ERROR": "Eror di server, purba mas lat",
       "TIME_ENTRY_NOT_FOUND": "No a haña e markashon",
       "OPEN_ENTRY_EXISTS": "Bo ya tin un drenta registrá sin un sali anterior",
-      "NO_OPEN_ENTRY": "Bo no tin un drenta habrí pa registrá un sali"
+      "NO_OPEN_ENTRY": "Bo no tin un drenta habrí pa registrá un sali",
+      "INVOICE_NOT_FOUND": "No a haña e factura",
+      "INVALID_INVOICE_TRANSITION": "E akshon ei no ta permitino pa e estado aktual di e factura",
+      "RETURN_COMMENT_REQUIRED": "Mester splika e motibu di e debolushon",
+      "FILE_REQUIRED": "Skohe un archivo pa subi",
+      "UNSUPPORTED_FILE_TYPE": "Formato di archivo no ta soportá (usa PDF)"
     }
   }
 }

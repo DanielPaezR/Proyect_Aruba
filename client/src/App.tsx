@@ -4,6 +4,7 @@ import { Layout } from "./components/Layout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
 import { EvidencesReviewPage } from "./pages/EvidencesReviewPage";
+import { InvoicesQueuePage } from "./pages/InvoicesQueuePage";
 import { LoginPage } from "./pages/LoginPage";
 import { MyActivitiesPage } from "./pages/MyActivitiesPage";
 import { ProfilePage } from "./pages/ProfilePage";
@@ -29,6 +30,7 @@ function App() {
               <Route path="/projects" element={<ProjectsListPage />} />
               <Route path="/projects/:projectId" element={<ProjectDetailPage />} />
               <Route path="/evidences" element={<EvidencesReviewPage />} />
+              <Route path="/invoices" element={<InvoicesQueuePage />} />
               <Route path="/users" element={<UsersManagementPage />} />
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="/team-map" element={<TeamMapPage />} />

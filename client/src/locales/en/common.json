@@ -30,6 +30,7 @@
     "projects": "Projects",
     "myActivities": "My activities",
     "evidences": "Evidence",
+    "invoices": "Invoices",
     "users": "Users",
     "settings": "Settings",
     "teamMap": "Team map"
@@ -70,7 +71,12 @@
       "INTERNAL_ERROR": "Server error, please try again later",
       "TIME_ENTRY_NOT_FOUND": "Time entry not found",
       "OPEN_ENTRY_EXISTS": "You already have a clock-in without a matching clock-out",
-      "NO_OPEN_ENTRY": "You don't have an open clock-in to close with a clock-out"
+      "NO_OPEN_ENTRY": "You don't have an open clock-in to close with a clock-out",
+      "INVOICE_NOT_FOUND": "Invoice not found",
+      "INVALID_INVOICE_TRANSITION": "That action isn't allowed for the invoice's current status",
+      "RETURN_COMMENT_REQUIRED": "You must explain the reason for the return",
+      "FILE_REQUIRED": "Select a file to upload",
+      "UNSUPPORTED_FILE_TYPE": "Unsupported file format (use PDF)"
     }
   }
 }

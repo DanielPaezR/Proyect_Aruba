@@ -1,0 +1,30 @@
+{
+  "sectionTitle": "Facturas",
+  "uploadButton": "Subir factura",
+  "uploadFormTitle": "Subir factura",
+  "fileLabel": "Archivo PDF",
+  "uploadSubmit": "Subir",
+  "uploadSubmitting": "Subiendo...",
+  "empty": "Todavía no hay facturas para este proyecto",
+  "uploadedOn": "Subida el {{date}}",
+  "uploadedBy": "Subida por",
+  "viewButton": "Ver factura",
+  "reviewCommentLabel": "Motivo de la devolución",
+  "resubmitButton": "Subir corrección",
+  "resubmitFormTitle": "Subir corrección",
+  "queueTitle": "Facturas",
+  "statusFilterLabel": "Estado",
+  "statusFilterAll": "Todas",
+  "queueEmpty": "No hay facturas para este filtro",
+  "approveButton": "Aprobar",
+  "returnButton": "Devolver",
+  "returnFormTitle": "Devolver factura",
+  "returnCommentLabel": "Motivo (obligatorio)",
+  "confirmReturn": "Confirmar devolución",
+  "reviewedBy": "Revisada por",
+  "status": {
+    "PENDIENTE_REVISION": "Pendiente de revisión",
+    "APROBADA": "Aprobada",
+    "DEVUELTA": "Devuelta"
+  }
+}

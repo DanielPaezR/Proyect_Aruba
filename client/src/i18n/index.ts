@@ -8,6 +8,7 @@ import esDashboard from "../locales/es/dashboard.json";
 import esProjects from "../locales/es/projects.json";
 import esActivities from "../locales/es/activities.json";
 import esEvidences from "../locales/es/evidences.json";
+import esInvoices from "../locales/es/invoices.json";
 import esUsers from "../locales/es/users.json";
 import esSettings from "../locales/es/settings.json";
 import esTeamMap from "../locales/es/teamMap.json";
@@ -18,6 +19,7 @@ import enDashboard from "../locales/en/dashboard.json";
 import enProjects from "../locales/en/projects.json";
 import enActivities from "../locales/en/activities.json";
 import enEvidences from "../locales/en/evidences.json";
+import enInvoices from "../locales/en/invoices.json";
 import enUsers from "../locales/en/users.json";
 import enSettings from "../locales/en/settings.json";
 import enTeamMap from "../locales/en/teamMap.json";
@@ -28,6 +30,7 @@ import papDashboard from "../locales/pap/dashboard.json";
 import papProjects from "../locales/pap/projects.json";
 import papActivities from "../locales/pap/activities.json";
 import papEvidences from "../locales/pap/evidences.json";
+import papInvoices from "../locales/pap/invoices.json";
 import papUsers from "../locales/pap/users.json";
 import papSettings from "../locales/pap/settings.json";
 import papTeamMap from "../locales/pap/teamMap.json";
@@ -51,6 +54,7 @@ void i18n
         projects: esProjects,
         activities: esActivities,
         evidences: esEvidences,
+        invoices: esInvoices,
         users: esUsers,
         settings: esSettings,
         teamMap: esTeamMap,
@@ -63,6 +67,7 @@ void i18n
         projects: enProjects,
         activities: enActivities,
         evidences: enEvidences,
+        invoices: enInvoices,
         users: enUsers,
         settings: enSettings,
         teamMap: enTeamMap,
@@ -75,6 +80,7 @@ void i18n
         projects: papProjects,
         activities: papActivities,
         evidences: papEvidences,
+        invoices: papInvoices,
         users: papUsers,
         settings: papSettings,
         teamMap: papTeamMap,
@@ -83,7 +89,19 @@ void i18n
     },
     fallbackLng: "es",
     supportedLngs: SUPPORTED_LANGUAGES,
-    ns: ["common", "auth", "dashboard", "projects", "activities", "evidences", "users", "settings", "teamMap", "profile"],
+    ns: [
+      "common",
+      "auth",
+      "dashboard",
+      "projects",
+      "activities",
+      "evidences",
+      "invoices",
+      "users",
+      "settings",
+      "teamMap",
+      "profile",
+    ],
     defaultNS: "common",
     interpolation: { escapeValue: false },
     detection: {

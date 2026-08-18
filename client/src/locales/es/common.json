@@ -30,6 +30,7 @@
     "projects": "Proyectos",
     "myActivities": "Mis actividades",
     "evidences": "Evidencias",
+    "invoices": "Facturas",
     "users": "Usuarios",
     "settings": "Configuración",
     "teamMap": "Mapa del equipo"
@@ -70,7 +71,12 @@
       "INTERNAL_ERROR": "Error del servidor, intenta más tarde",
       "TIME_ENTRY_NOT_FOUND": "Marcación no encontrada",
       "OPEN_ENTRY_EXISTS": "Ya tienes una entrada registrada sin una salida previa",
-      "NO_OPEN_ENTRY": "No tienes una entrada abierta para registrar una salida"
+      "NO_OPEN_ENTRY": "No tienes una entrada abierta para registrar una salida",
+      "INVOICE_NOT_FOUND": "Factura no encontrada",
+      "INVALID_INVOICE_TRANSITION": "Esa acción no está permitida para el estado actual de la factura",
+      "RETURN_COMMENT_REQUIRED": "Debes explicar el motivo de la devolución",
+      "FILE_REQUIRED": "Selecciona un archivo para subir",
+      "UNSUPPORTED_FILE_TYPE": "Formato de archivo no soportado (usa PDF)"
     }
   }
 }

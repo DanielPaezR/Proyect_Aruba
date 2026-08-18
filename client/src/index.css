@@ -865,6 +865,20 @@ button {
   color: var(--text);
 }
 
+/* Estado positivo/aprobado generico (ej. factura aprobada) — mismo par de
+   alto contraste que --auto, con nombre semantico para usos fuera de marcado. */
+.status-badge--success {
+  background: var(--lime-500);
+  color: var(--navy-900);
+}
+
+/* Estado que requiere atencion/accion generico (ej. factura devuelta) — mismo
+   par de alto contraste que --priority-high, con nombre semantico generico. */
+.status-badge--warning {
+  background: var(--gold-500);
+  color: var(--navy-900);
+}
+
 .card-description {
   margin: 8px 0 0;
   font-size: 14px;

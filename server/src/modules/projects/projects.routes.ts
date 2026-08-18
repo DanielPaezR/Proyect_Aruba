@@ -2,6 +2,7 @@ import { Router } from "express";
 import { Role } from "@prisma/client";
 import { authenticate, authorize } from "../../middleware/auth.middleware";
 import { projectActivitiesRouter } from "../activities/activities.routes";
+import { projectInvoicesRouter } from "../invoices/invoices.routes";
 import * as projectsController from "./projects.controller";
 
 const MANAGERS = [Role.JEFE, Role.SUPERVISOR];
@@ -17,3 +18,4 @@ projectsRouter.patch("/:projectId", authorize(...MANAGERS), projectsController.u
 projectsRouter.delete("/:projectId", authorize(Role.JEFE), projectsController.remove);
 
 projectsRouter.use("/:projectId/activities", projectActivitiesRouter);
+projectsRouter.use("/:projectId/invoices", projectInvoicesRouter);

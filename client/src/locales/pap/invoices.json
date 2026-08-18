@@ -1,0 +1,30 @@
+{
+  "sectionTitle": "Facturanan",
+  "uploadButton": "Subi factura",
+  "uploadFormTitle": "Subi factura",
+  "fileLabel": "Archivo PDF",
+  "uploadSubmit": "Subi",
+  "uploadSubmitting": "Ta subi...",
+  "empty": "Ainda no tin factura pa e proyekto aki",
+  "uploadedOn": "Subí dia {{date}}",
+  "uploadedBy": "Subí pa",
+  "viewButton": "Wak factura",
+  "reviewCommentLabel": "Motibu di debolushon",
+  "resubmitButton": "Subi korekshon",
+  "resubmitFormTitle": "Subi korekshon",
+  "queueTitle": "Facturanan",
+  "statusFilterLabel": "Estado",
+  "statusFilterAll": "Tur",
+  "queueEmpty": "No tin factura pa e filter aki",
+  "approveButton": "Aprobá",
+  "returnButton": "Debolvé",
+  "returnFormTitle": "Debolvé factura",
+  "returnCommentLabel": "Motibu (obligatorio)",
+  "confirmReturn": "Konfirmá debolushon",
+  "reviewedBy": "Revisá pa",
+  "status": {
+    "PENDIENTE_REVISION": "Pendiente di revishon",
+    "APROBADA": "Aprobá",
+    "DEVUELTA": "Debolví"
+  }
+}

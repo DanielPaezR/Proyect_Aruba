@@ -95,6 +95,12 @@ enum ProjectPriority {
   URGENTE
 }
 
+enum InvoiceStatus {
+  PENDIENTE_REVISION
+  APROBADA
+  DEVUELTA
+}
+
 // ---------- Modelos ----------
 
 model User {
@@ -133,6 +139,8 @@ model User {
   editedTimeEntries   TimeEntry[]          @relation("TimeEntryEditedBy")
   uploadedEvidences   Evidence[]           @relation("EvidenceUploadedBy")
   reviewedEvidences   Evidence[]           @relation("EvidenceReviewedBy")
+  uploadedInvoices    Invoice[]            @relation("InvoiceUploadedBy")
+  reviewedInvoices    Invoice[]            @relation("InvoiceReviewedBy")
   refreshTokens       RefreshToken[]
   pushSubscriptions   PushSubscription[]
   punchReminderLogs   PunchReminderLog[]
@@ -185,6 +193,7 @@ model Project {
   createdBy   User   @relation("ProjectCreatedBy", fields: [createdById], references: [id])
 
   activities Activity[]
+  invoices   Invoice[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -357,6 +366,40 @@ model Evidence {
   @@index([activityId])
   @@index([status])
   @@map("evidences")
+}
+
+// Factura en PDF de un proyecto. Flujo: Supervisor sube -> Jefe aprueba o
+// devuelve con comentario -> si fue devuelta, Supervisor resube el PDF
+// corregido (reemplaza el archivo, vuelve a PENDIENTE_REVISION). reviewComment
+// no acumula historial: guarda solo el motivo del ciclo de devolucion mas
+// reciente, se limpia al resubir.
+model Invoice {
+  id String @id @default(cuid())
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  uploadedById String
+  uploadedBy   User   @relation("InvoiceUploadedBy", fields: [uploadedById], references: [id])
+
+  fileUrl String
+  // public_id de Cloudinary (resource_type "raw") — hace falta para poder
+  // borrar el archivo viejo al resubir una correccion.
+  filePublicId String
+
+  status InvoiceStatus @default(PENDIENTE_REVISION)
+
+  reviewComment String?
+  reviewedById  String?
+  reviewedBy    User?     @relation("InvoiceReviewedBy", fields: [reviewedById], references: [id])
+  reviewedAt    DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId])
+  @@index([status])
+  @@map("invoices")
 }
 
 // Fila unica (singleton, id fijo = 1) con la configuracion de la empresa para
