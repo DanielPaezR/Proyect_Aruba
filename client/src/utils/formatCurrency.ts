@@ -10,3 +10,8 @@ export function formatHourlyRate(hourlyRate: string | null): string | null {
   }
   return AWG_FORMATTER.format(Number(hourlyRate));
 }
+
+/** Monto en florines de Aruba (ej. pagos) — nunca null, a diferencia de hourlyRate. */
+export function formatCurrency(amount: string | number): string {
+  return AWG_FORMATTER.format(Number(amount));
+}

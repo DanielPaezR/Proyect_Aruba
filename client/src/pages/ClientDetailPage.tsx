@@ -9,6 +9,12 @@ import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
 import { isManagerRole } from "../types/auth";
 import type { ClientDetail } from "../types/client";
+import type { ClientPaymentsListResponse } from "../types/payment";
+import { formatCurrency } from "../utils/formatCurrency";
+
+function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+}
 
 interface ClientEditFormState {
   name: string;
@@ -27,7 +33,7 @@ function clientToFormState(client: ClientDetail): ClientEditFormState {
 }
 
 export function ClientDetailPage() {
-  const { t } = useTranslation(["clients", "projects", "common"]);
+  const { t } = useTranslation(["clients", "projects", "payments", "common"]);
   const { user } = useAuth();
   const { clientId } = useParams<{ clientId: string }>();
   const navigate = useNavigate();
@@ -45,6 +51,23 @@ export function ClientDetailPage() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
+  const [paymentsResponse, setPaymentsResponse] = useState<ClientPaymentsListResponse | null>(null);
+  const [isLoadingPayments, setIsLoadingPayments] = useState(true);
+  const [paymentsError, setPaymentsError] = useState<string | null>(null);
+
+  async function loadPayments(id: string) {
+    setIsLoadingPayments(true);
+    setPaymentsError(null);
+    try {
+      const response = await apiClient.get<ClientPaymentsListResponse>(`/clients/${id}/payments`);
+      setPaymentsResponse(response.data);
+    } catch (error) {
+      setPaymentsError(translateApiError(t, error));
+    } finally {
+      setIsLoadingPayments(false);
+    }
+  }
+
   async function loadClient(id: string) {
     setIsLoading(true);
     setErrorMessage(null);
@@ -61,6 +84,7 @@ export function ClientDetailPage() {
   useEffect(() => {
     if (clientId) {
       void loadClient(clientId);
+      void loadPayments(clientId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clientId]);
@@ -236,6 +260,58 @@ export function ClientDetailPage() {
                   </li>
                 ))}
               </ul>
+            )}
+          </section>
+
+          <section>
+            <h2 className="section-label">{t("paymentsHistorySection", { ns: "clients" })}</h2>
+
+            {isLoadingPayments && <p className="page-loading">{t("loading", { ns: "common" })}</p>}
+
+            {!isLoadingPayments && paymentsError && (
+              <p className="form-error" role="alert">
+                {paymentsError}
+              </p>
+            )}
+
+            {!isLoadingPayments && !paymentsError && paymentsResponse && (
+              <>
+                <p className="payments-total">
+                  {t("totalReceivedLabel", { ns: "payments" })}:{" "}
+                  <strong>{formatCurrency(paymentsResponse.totalReceived)}</strong>
+                </p>
+                {paymentsResponse.payments.length === 0 ? (
+                  <p>{t("empty", { ns: "payments" })}</p>
+                ) : (
+                  <ul className="card-list">
+                    {paymentsResponse.payments.map((payment) => (
+                      <li key={payment.id} className="card">
+                        <div className="card-header">
+                          <span className="card-title">{formatCurrency(payment.amount)}</span>
+                          <span className="status-badge">
+                            {translateStatus(t, "payments", "method", payment.method)}
+                          </span>
+                        </div>
+                        <span className="card-meta">
+                          {t("paymentDateLabel", { ns: "payments" })}: {formatDate(payment.paymentDate)}
+                        </span>
+                        <span className="card-meta">
+                          {t("projectLabel", { ns: "payments" })}:{" "}
+                          <Link to={`/projects/${payment.project.id}`}>{payment.project.name}</Link>
+                        </span>
+                        <span className="card-meta">
+                          {t("recordedByLabel", { ns: "payments" })}: {payment.recordedBy.name}
+                        </span>
+                        {payment.reference && (
+                          <span className="card-meta">
+                            {t("referenceLabel", { ns: "payments" })}: {payment.reference}
+                          </span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </>
             )}
           </section>
         </>

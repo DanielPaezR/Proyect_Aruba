@@ -101,6 +101,13 @@ enum InvoiceStatus {
   DEVUELTA
 }
 
+enum PaymentMethod {
+  EFECTIVO
+  TRANSFERENCIA
+  CHEQUE
+  OTRO
+}
+
 // ---------- Modelos ----------
 
 model User {
@@ -141,6 +148,7 @@ model User {
   reviewedEvidences   Evidence[]           @relation("EvidenceReviewedBy")
   uploadedInvoices    Invoice[]            @relation("InvoiceUploadedBy")
   reviewedInvoices    Invoice[]            @relation("InvoiceReviewedBy")
+  recordedPayments    Payment[]            @relation("PaymentRecordedBy")
   refreshTokens       RefreshToken[]
   pushSubscriptions   PushSubscription[]
   punchReminderLogs   PunchReminderLog[]
@@ -221,6 +229,7 @@ model Project {
 
   activities Activity[]
   invoices   Invoice[]
+  payments   Payment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -428,6 +437,37 @@ model Invoice {
   @@index([projectId])
   @@index([status])
   @@map("invoices")
+}
+
+// Registro de un pago recibido del cliente de un proyecto. Solo registro y
+// consulta por ahora — sin calculo de saldo/deuda (no hay un "monto total"
+// del proyecto contra el cual comparar todavia). clientId no se duplica aca:
+// se deriva siempre de project.client. Sin edicion auditada: si un registro
+// esta mal, se borra (DELETE, solo Jefe) y se vuelve a crear.
+model Payment {
+  id String @id @default(cuid())
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  amount Decimal @db.Decimal(10, 2)
+
+  // Fecha en que ocurrio el pago, distinta de createdAt: el pago pudo haber
+  // pasado antes de registrarse en el sistema (ej. un cheque cobrado la
+  // semana pasada que recien ahora se carga).
+  paymentDate DateTime
+  method      PaymentMethod
+  reference   String?
+  notes       String?
+
+  recordedById String
+  recordedBy   User   @relation("PaymentRecordedBy", fields: [recordedById], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([projectId])
+  @@index([paymentDate])
+  @@map("payments")
 }
 
 // Fila unica (singleton, id fijo = 1) con la configuracion de la empresa para

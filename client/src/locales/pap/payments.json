@@ -1,0 +1,28 @@
+{
+  "sectionTitle": "Pagonan",
+  "addButton": "Registra pago",
+  "addFormTitle": "Registra pago",
+  "amountLabel": "Suma",
+  "paymentDateLabel": "Fecha di pago",
+  "methodLabel": "Metodo",
+  "referenceLabel": "Referensia",
+  "notesLabel": "Nota",
+  "addSubmit": "Warda",
+  "addSubmitting": "Ta warda...",
+  "empty": "Ainda no tin pago registrá",
+  "totalReceivedLabel": "Total risibí",
+  "recordedByLabel": "Registrá pa",
+  "projectLabel": "Proyekto",
+  "deleteTitle": "Elimina pago",
+  "deleteMessage": "Bo ta sigur bo ke elimina e pago di {{amount}}? E akshon aki no por wordu revertí.",
+  "noClientMessage": "E proyekto aki no tin kliente vinkulá. Vinkula un pa por registra pago.",
+  "linkClientLabel": "Kliente",
+  "linkClientButton": "Vinkula kliente",
+  "linkingClient": "Ta vinkula...",
+  "method": {
+    "EFECTIVO": "Efectivo",
+    "TRANSFERENCIA": "Transferensia",
+    "CHEQUE": "Cheke",
+    "OTRO": "Otro"
+  }
+}

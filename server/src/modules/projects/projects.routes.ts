@@ -3,6 +3,7 @@ import { Role } from "@prisma/client";
 import { authenticate, authorize } from "../../middleware/auth.middleware";
 import { projectActivitiesRouter } from "../activities/activities.routes";
 import { projectInvoicesRouter } from "../invoices/invoices.routes";
+import { projectPaymentsRouter } from "../payments/payments.routes";
 import * as projectsController from "./projects.controller";
 
 const MANAGERS = [Role.JEFE, Role.SUPERVISOR];
@@ -19,3 +20,4 @@ projectsRouter.delete("/:projectId", authorize(Role.JEFE), projectsController.re
 
 projectsRouter.use("/:projectId/activities", projectActivitiesRouter);
 projectsRouter.use("/:projectId/invoices", projectInvoicesRouter);
+projectsRouter.use("/:projectId/payments", projectPaymentsRouter);

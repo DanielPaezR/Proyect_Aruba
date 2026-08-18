@@ -14,6 +14,7 @@
   "notSpecified": "Not specified",
   "detailsSection": "Contact details",
   "projectsHistorySection": "Project history",
+  "paymentsHistorySection": "Payment history",
   "noProjects": "This client has no projects yet",
   "projectsCount_one": "{{count}} project",
   "projectsCount_other": "{{count}} projects",

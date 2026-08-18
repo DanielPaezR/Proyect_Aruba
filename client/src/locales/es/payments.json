@@ -1,0 +1,28 @@
+{
+  "sectionTitle": "Pagos",
+  "addButton": "Registrar pago",
+  "addFormTitle": "Registrar pago",
+  "amountLabel": "Monto",
+  "paymentDateLabel": "Fecha del pago",
+  "methodLabel": "Método",
+  "referenceLabel": "Referencia",
+  "notesLabel": "Notas",
+  "addSubmit": "Guardar",
+  "addSubmitting": "Guardando...",
+  "empty": "Todavía no hay pagos registrados",
+  "totalReceivedLabel": "Total recibido",
+  "recordedByLabel": "Registrado por",
+  "projectLabel": "Proyecto",
+  "deleteTitle": "Eliminar pago",
+  "deleteMessage": "¿Estás seguro de que quieres eliminar el pago de {{amount}}? Esta acción no se puede deshacer.",
+  "noClientMessage": "Este proyecto no tiene un cliente vinculado. Vincula uno para poder registrar pagos.",
+  "linkClientLabel": "Cliente",
+  "linkClientButton": "Vincular cliente",
+  "linkingClient": "Vinculando...",
+  "method": {
+    "EFECTIVO": "Efectivo",
+    "TRANSFERENCIA": "Transferencia",
+    "CHEQUE": "Cheque",
+    "OTRO": "Otro"
+  }
+}

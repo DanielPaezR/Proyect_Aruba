@@ -79,7 +79,9 @@
       "FILE_REQUIRED": "Select a file to upload",
       "UNSUPPORTED_FILE_TYPE": "Unsupported file format (use PDF)",
       "CLIENT_NOT_FOUND": "Client not found",
-      "CLIENT_HAS_PROJECTS": "A client with linked projects can't be deleted"
+      "CLIENT_HAS_PROJECTS": "A client with linked projects can't be deleted",
+      "PROJECT_HAS_NO_CLIENT": "The project doesn't have a linked client — link one before recording payments",
+      "PAYMENT_NOT_FOUND": "Payment not found"
     }
   }
 }

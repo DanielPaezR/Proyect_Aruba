@@ -1,0 +1,28 @@
+{
+  "sectionTitle": "Payments",
+  "addButton": "Record payment",
+  "addFormTitle": "Record payment",
+  "amountLabel": "Amount",
+  "paymentDateLabel": "Payment date",
+  "methodLabel": "Method",
+  "referenceLabel": "Reference",
+  "notesLabel": "Notes",
+  "addSubmit": "Save",
+  "addSubmitting": "Saving...",
+  "empty": "No payments recorded yet",
+  "totalReceivedLabel": "Total received",
+  "recordedByLabel": "Recorded by",
+  "projectLabel": "Project",
+  "deleteTitle": "Delete payment",
+  "deleteMessage": "Are you sure you want to delete the payment of {{amount}}? This action cannot be undone.",
+  "noClientMessage": "This project doesn't have a linked client. Link one to be able to record payments.",
+  "linkClientLabel": "Client",
+  "linkClientButton": "Link client",
+  "linkingClient": "Linking...",
+  "method": {
+    "EFECTIVO": "Cash",
+    "TRANSFERENCIA": "Bank transfer",
+    "CHEQUE": "Check",
+    "OTRO": "Other"
+  }
+}

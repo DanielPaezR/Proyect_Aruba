@@ -79,7 +79,9 @@
       "FILE_REQUIRED": "Selecciona un archivo para subir",
       "UNSUPPORTED_FILE_TYPE": "Formato de archivo no soportado (usa PDF)",
       "CLIENT_NOT_FOUND": "Cliente no encontrado",
-      "CLIENT_HAS_PROJECTS": "No se puede eliminar un cliente con proyectos vinculados"
+      "CLIENT_HAS_PROJECTS": "No se puede eliminar un cliente con proyectos vinculados",
+      "PROJECT_HAS_NO_CLIENT": "El proyecto no tiene un cliente vinculado — vincula uno antes de registrar pagos",
+      "PAYMENT_NOT_FOUND": "Pago no encontrado"
     }
   }
 }

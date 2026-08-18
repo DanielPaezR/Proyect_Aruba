@@ -1173,6 +1173,17 @@ button {
   text-transform: capitalize;
 }
 
+.payments-total {
+  margin: 4px 0 16px;
+  font-size: 15px;
+  color: var(--text);
+}
+
+.payments-total strong {
+  font-size: 22px;
+  color: var(--text-h);
+}
+
 .client-picker {
   position: relative;
 }

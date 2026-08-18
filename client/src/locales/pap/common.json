@@ -79,7 +79,9 @@
       "FILE_REQUIRED": "Skohe un archivo pa subi",
       "UNSUPPORTED_FILE_TYPE": "Formato di archivo no ta soportá (usa PDF)",
       "CLIENT_NOT_FOUND": "No a haña e kliente",
-      "CLIENT_HAS_PROJECTS": "No por elimina un kliente ku proyekto vinkulá"
+      "CLIENT_HAS_PROJECTS": "No por elimina un kliente ku proyekto vinkulá",
+      "PROJECT_HAS_NO_CLIENT": "E proyekto no tin kliente vinkulá — vinkula un promé di registra pago",
+      "PAYMENT_NOT_FOUND": "No a haña e pago"
     }
   }
 }
