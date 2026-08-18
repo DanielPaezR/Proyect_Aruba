@@ -166,6 +166,27 @@ model RefreshToken {
   @@map("refresh_tokens")
 }
 
+// Cliente real (entidad propia) al que pertenece un proyecto. Reemplaza de a
+// poco a los campos sueltos ownerName/ownerPhone/ownerEmail de Project (ver
+// prisma/migrate-owners-to-clients.ts para la migracion de datos de uno a
+// otro) — ambos sistemas conviven mientras tanto, Project.clientId es
+// nullable a proposito. onDelete: Restrict porque es dato financiero: no debe
+// poder borrarse un cliente que todavia tiene proyectos vinculados.
+model Client {
+  id    String  @id @default(cuid())
+  name  String
+  phone String
+  email String?
+  notes String?
+
+  projects Project[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("clients")
+}
+
 model Project {
   id          String        @id @default(cuid())
   name        String
@@ -174,10 +195,16 @@ model Project {
   startDate   DateTime?
   endDate     DateTime?
 
+  clientId String?
+  client   Client? @relation(fields: [clientId], references: [id], onDelete: Restrict)
+
   // Información operativa del sitio de trabajo. Todo nullable a nivel de DB
   // (hay proyectos existentes sin estos datos); el formulario de creación
   // exige un subconjunto de estos campos a nivel de aplicación (ver
   // projects.validators.ts), no a nivel de schema.
+  // ownerName/ownerPhone/ownerEmail: respaldo del owner en texto libre,
+  // anterior al modelo Client — se mantienen hasta confirmar que la
+  // migracion de datos a Client salio bien (se quitan en una ronda aparte).
   ownerName          String?
   ownerPhone         String?
   ownerEmail         String?
@@ -198,6 +225,7 @@ model Project {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([clientId])
   @@map("projects")
 }
 
