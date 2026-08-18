@@ -1,3 +1,5 @@
+import type { ProjectWorkType } from "./project";
+
 export const ACTIVITY_STATUSES = ["PENDIENTE", "EN_PROGRESO", "COMPLETADA", "CANCELADA"] as const;
 export type ActivityStatus = (typeof ACTIVITY_STATUSES)[number];
 
@@ -26,5 +28,5 @@ export interface Activity {
   assignments: ActivityAssignment[];
   _count?: { evidences: number };
   /** Solo presente en GET /api/activities/mine. */
-  project?: { id: string; name: string; address: string | null };
+  project?: { id: string; name: string; address: string | null; workType: ProjectWorkType | null };
 }

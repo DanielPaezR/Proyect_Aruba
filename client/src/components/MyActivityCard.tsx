@@ -1,6 +1,19 @@
 import { useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
-import { Camera, CheckCircle2, Images, MapPin, Play } from "lucide-react";
+import {
+  AlertTriangle,
+  Camera,
+  CheckCircle2,
+  ClipboardCheck,
+  Hammer,
+  Images,
+  ImageIcon,
+  MapPin,
+  Play,
+  Wrench,
+  Zap,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
@@ -8,10 +21,21 @@ import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
 import type { Activity, ActivityStatus } from "../types/activity";
 import type { Evidence } from "../types/evidence";
+import type { ProjectWorkType } from "../types/project";
 
 function googleMapsUrl(address: string): string {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
 }
+
+// Sin imagen de referencia: icono segun el tipo de trabajo del proyecto, para
+// que la tarjeta siga teniendo algo "protagonista" arriba en vez de quedar vacia.
+const WORK_TYPE_ICONS: Record<ProjectWorkType, LucideIcon> = {
+  INSTALACION_NUEVA: Zap,
+  REMODELACION: Hammer,
+  MANTENIMIENTO: Wrench,
+  REPARACION_EMERGENCIA: AlertTriangle,
+  INSPECCION: ClipboardCheck,
+};
 
 interface MyActivityCardProps {
   activity: Activity;
@@ -51,6 +75,7 @@ export function MyActivityCard({ activity, onActivityUpdated }: MyActivityCardPr
   const [evidencesError, setEvidencesError] = useState<string | null>(null);
 
   const nextStatus = nextStatusFor(activity.status);
+  const ReferencePlaceholderIcon = activity.project?.workType ? WORK_TYPE_ICONS[activity.project.workType] : ImageIcon;
 
   async function handleStatusChange() {
     if (!nextStatus) {
@@ -145,6 +170,20 @@ export function MyActivityCard({ activity, onActivityUpdated }: MyActivityCardPr
 
   return (
     <li className="card">
+      <div className="activity-reference">
+        {activity.referenceImageUrl ? (
+          <img
+            src={activity.referenceImageUrl}
+            alt={t("referenceImageAlt", { ns: "activities" })}
+            className="activity-reference-image"
+          />
+        ) : (
+          <div className="activity-reference-placeholder">
+            <ReferencePlaceholderIcon size={40} aria-hidden="true" />
+          </div>
+        )}
+      </div>
+
       <div className="card-header">
         <span className="card-title">{activity.title}</span>
         <span className="status-badge">{translateStatus(t, "common", "activityStatus", activity.status)}</span>
