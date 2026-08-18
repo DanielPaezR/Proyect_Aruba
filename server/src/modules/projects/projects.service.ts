@@ -30,6 +30,7 @@ export async function getProject(user: AuthUser, projectId: string) {
     where: { id: projectId, ...visibilityWhere(user) },
     include: {
       createdBy: { select: { id: true, name: true } },
+      client: { select: { id: true, name: true, phone: true, email: true } },
       activities: {
         orderBy: { createdAt: "desc" },
         include: {

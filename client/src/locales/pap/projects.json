@@ -8,13 +8,12 @@
     "submit": "Krea",
     "submitting": "Ta krea...",
     "sections": {
-      "owner": "Doño",
+      "client": "Kliente",
       "location": "Ubikashon",
       "work": "Detaye di trabou"
     },
-    "ownerName": "Nòmber di doño",
-    "ownerPhone": "Telefon",
-    "ownerEmail": "Email",
+    "client": "Kliente",
+    "clientRequired": "Skohe òf krea un kliente pa e proyekto",
     "address": "Adrès",
     "sector": "Sektor",
     "sectorPlaceholder": "Skohe un sektor",
@@ -74,10 +73,11 @@
     "URGENTE": "Urgente"
   },
   "detail": {
-    "ownerSection": "Doño i kontakto",
+    "clientSection": "Kliente",
     "locationSection": "Ubikashon",
     "workSection": "Detaye di trabou",
     "notSpecified": "No spesifiká",
-    "viewPlansButton": "Wak plano elektriko"
+    "viewPlansButton": "Wak plano elektriko",
+    "viewClientButton": "Wak fichi di kliente"
   }
 }

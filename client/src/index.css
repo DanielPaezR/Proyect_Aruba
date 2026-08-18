@@ -1173,6 +1173,82 @@ button {
   text-transform: capitalize;
 }
 
+.client-picker {
+  position: relative;
+}
+
+.client-picker-hint {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.client-picker-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  z-index: 20;
+  list-style: none;
+  margin: 0;
+  padding: 4px;
+  max-height: 240px;
+  overflow-y: auto;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.client-picker-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-h);
+  font-size: 14px;
+  text-align: left;
+}
+
+.client-picker-option:hover {
+  background: var(--bg-subtle);
+}
+
+.client-picker-option-meta {
+  font-size: 12px;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.client-picker-empty {
+  padding: 8px 10px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.client-picker-create,
+.client-picker-clear {
+  display: block;
+  width: 100%;
+  padding: 8px 10px;
+  border: none;
+  border-top: 1px solid var(--border);
+  background: transparent;
+  color: var(--accent);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.client-picker-clear {
+  color: var(--danger);
+}
+
 .modal-overlay {
   position: fixed;
   inset: 0;

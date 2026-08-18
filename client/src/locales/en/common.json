@@ -28,6 +28,7 @@
   "nav": {
     "dashboard": "Dashboard",
     "projects": "Projects",
+    "clients": "Clients",
     "myActivities": "My activities",
     "evidences": "Evidence",
     "invoices": "Invoices",
@@ -76,7 +77,9 @@
       "INVALID_INVOICE_TRANSITION": "That action isn't allowed for the invoice's current status",
       "RETURN_COMMENT_REQUIRED": "You must explain the reason for the return",
       "FILE_REQUIRED": "Select a file to upload",
-      "UNSUPPORTED_FILE_TYPE": "Unsupported file format (use PDF)"
+      "UNSUPPORTED_FILE_TYPE": "Unsupported file format (use PDF)",
+      "CLIENT_NOT_FOUND": "Client not found",
+      "CLIENT_HAS_PROJECTS": "A client with linked projects can't be deleted"
     }
   }
 }

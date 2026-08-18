@@ -3,6 +3,8 @@ import { HomeRedirect } from "./components/HomeRedirect";
 import { Layout } from "./components/Layout";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
+import { ClientDetailPage } from "./pages/ClientDetailPage";
+import { ClientsListPage } from "./pages/ClientsListPage";
 import { EvidencesReviewPage } from "./pages/EvidencesReviewPage";
 import { InvoicesQueuePage } from "./pages/InvoicesQueuePage";
 import { LoginPage } from "./pages/LoginPage";
@@ -29,6 +31,8 @@ function App() {
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/projects" element={<ProjectsListPage />} />
               <Route path="/projects/:projectId" element={<ProjectDetailPage />} />
+              <Route path="/clients" element={<ClientsListPage />} />
+              <Route path="/clients/:clientId" element={<ClientDetailPage />} />
               <Route path="/evidences" element={<EvidencesReviewPage />} />
               <Route path="/invoices" element={<InvoicesQueuePage />} />
               <Route path="/users" element={<UsersManagementPage />} />

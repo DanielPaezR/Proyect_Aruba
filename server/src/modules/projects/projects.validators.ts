@@ -14,9 +14,12 @@ export const createProjectSchema = z.object({
   // null explicito para desvincular un proyecto de su cliente.
   clientId: z.string().nullable().optional(),
 
-  // Información operativa del sitio de trabajo.
-  ownerName: z.string().min(2),
-  ownerPhone: z.string().min(1),
+  // Información operativa del sitio de trabajo. ownerName/ownerPhone/ownerEmail
+  // ahora son opcionales (antes required): el cliente los reemplaza como forma
+  // primaria de capturar el dueño, ver clientId arriba — se mantienen solo
+  // como respaldo/legado, ya no se les exige nada al crear.
+  ownerName: z.string().min(2).optional(),
+  ownerPhone: z.string().min(1).optional(),
   ownerEmail: z.string().email().optional(),
   address: z.string().min(1),
   sector: z.nativeEnum(ProjectSector).optional(),

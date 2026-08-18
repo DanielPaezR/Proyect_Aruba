@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { AssignWorkersPanel } from "../components/AssignWorkersPanel";
+import { ClientPicker } from "../components/ClientPicker";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { ProjectInvoicesSection } from "../components/ProjectInvoicesSection";
 import { useAuth } from "../context/AuthContext";
@@ -17,9 +18,7 @@ import type { Activity } from "../types/activity";
 interface ProjectEditFormState {
   name: string;
   description: string;
-  ownerName: string;
-  ownerPhone: string;
-  ownerEmail: string;
+  clientId: string | null;
   address: string;
   sector: string;
   accessNotes: string;
@@ -33,9 +32,7 @@ function projectToFormState(project: ProjectDetail): ProjectEditFormState {
   return {
     name: project.name,
     description: project.description ?? "",
-    ownerName: project.ownerName ?? "",
-    ownerPhone: project.ownerPhone ?? "",
-    ownerEmail: project.ownerEmail ?? "",
+    clientId: project.clientId,
     address: project.address ?? "",
     sector: project.sector ?? "",
     accessNotes: project.accessNotes ?? "",
@@ -53,7 +50,7 @@ interface ActivityEditFormState {
 }
 
 export function ProjectDetailPage() {
-  const { t } = useTranslation(["projects", "activities", "common"]);
+  const { t } = useTranslation(["projects", "activities", "clients", "common"]);
   const { user } = useAuth();
   const { projectId } = useParams<{ projectId: string }>();
   const navigate = useNavigate();
@@ -169,9 +166,7 @@ export function ProjectDetailPage() {
       await apiClient.patch(`/projects/${projectId}`, {
         name: projectEditForm.name,
         description: projectEditForm.description || undefined,
-        ownerName: projectEditForm.ownerName,
-        ownerPhone: projectEditForm.ownerPhone,
-        ownerEmail: projectEditForm.ownerEmail || undefined,
+        clientId: projectEditForm.clientId,
         address: projectEditForm.address,
         sector: projectEditForm.sector || undefined,
         accessNotes: projectEditForm.accessNotes || undefined,
@@ -324,30 +319,12 @@ export function ProjectDetailPage() {
               </label>
 
               <fieldset>
-                <legend>{t("create.sections.owner", { ns: "projects" })}</legend>
+                <legend>{t("create.sections.client", { ns: "projects" })}</legend>
                 <label>
-                  {t("create.ownerName", { ns: "projects" })}
-                  <input
-                    value={projectEditForm.ownerName}
-                    onChange={(event) => setProjectEditForm({ ...projectEditForm, ownerName: event.target.value })}
-                    required
-                    minLength={2}
-                  />
-                </label>
-                <label>
-                  {t("create.ownerPhone", { ns: "projects" })}
-                  <input
-                    value={projectEditForm.ownerPhone}
-                    onChange={(event) => setProjectEditForm({ ...projectEditForm, ownerPhone: event.target.value })}
-                    required
-                  />
-                </label>
-                <label>
-                  {t("create.ownerEmail", { ns: "projects" })}
-                  <input
-                    type="email"
-                    value={projectEditForm.ownerEmail}
-                    onChange={(event) => setProjectEditForm({ ...projectEditForm, ownerEmail: event.target.value })}
+                  {t("create.client", { ns: "projects" })}
+                  <ClientPicker
+                    value={projectEditForm.clientId}
+                    onChange={(id) => setProjectEditForm({ ...projectEditForm, clientId: id })}
                   />
                 </label>
               </fieldset>
@@ -462,21 +439,30 @@ export function ProjectDetailPage() {
           )}
 
           <section>
-            <h2 className="section-label">{t("detail.ownerSection", { ns: "projects" })}</h2>
-            <dl className="info-grid">
-              <div>
-                <dt>{t("create.ownerName", { ns: "projects" })}</dt>
-                <dd>{project.ownerName ?? t("detail.notSpecified", { ns: "projects" })}</dd>
-              </div>
-              <div>
-                <dt>{t("create.ownerPhone", { ns: "projects" })}</dt>
-                <dd>{project.ownerPhone ?? t("detail.notSpecified", { ns: "projects" })}</dd>
-              </div>
-              <div>
-                <dt>{t("create.ownerEmail", { ns: "projects" })}</dt>
-                <dd>{project.ownerEmail ?? t("detail.notSpecified", { ns: "projects" })}</dd>
-              </div>
-            </dl>
+            <h2 className="section-label">{t("detail.clientSection", { ns: "projects" })}</h2>
+            {project.client ? (
+              <>
+                <dl className="info-grid">
+                  <div>
+                    <dt>{t("create.client", { ns: "projects" })}</dt>
+                    <dd>{project.client.name}</dd>
+                  </div>
+                  <div>
+                    <dt>{t("phoneLabel", { ns: "clients" })}</dt>
+                    <dd>{project.client.phone}</dd>
+                  </div>
+                  <div>
+                    <dt>{t("emailLabel", { ns: "clients" })}</dt>
+                    <dd>{project.client.email ?? t("notSpecified", { ns: "clients" })}</dd>
+                  </div>
+                </dl>
+                <Link to={`/clients/${project.client.id}`} className="button-link">
+                  {t("detail.viewClientButton", { ns: "projects" })}
+                </Link>
+              </>
+            ) : (
+              <p>{t("detail.notSpecified", { ns: "projects" })}</p>
+            )}
           </section>
 
           <section>

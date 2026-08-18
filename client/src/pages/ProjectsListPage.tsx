@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
+import { ClientPicker } from "../components/ClientPicker";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
@@ -22,9 +23,7 @@ export function ProjectsListPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [ownerName, setOwnerName] = useState("");
-  const [ownerPhone, setOwnerPhone] = useState("");
-  const [ownerEmail, setOwnerEmail] = useState("");
+  const [clientId, setClientId] = useState<string | null>(null);
   const [address, setAddress] = useState("");
   const [sector, setSector] = useState("");
   const [accessNotes, setAccessNotes] = useState("");
@@ -66,9 +65,7 @@ export function ProjectsListPage() {
   function resetForm() {
     setName("");
     setDescription("");
-    setOwnerName("");
-    setOwnerPhone("");
-    setOwnerEmail("");
+    setClientId(null);
     setAddress("");
     setSector("");
     setAccessNotes("");
@@ -80,15 +77,17 @@ export function ProjectsListPage() {
 
   async function handleCreate(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!clientId) {
+      setFormError(t("create.clientRequired", { ns: "projects" }));
+      return;
+    }
     setFormError(null);
     setIsSubmitting(true);
     try {
       await apiClient.post("/projects", {
         name,
         description: description || undefined,
-        ownerName,
-        ownerPhone,
-        ownerEmail: ownerEmail || undefined,
+        clientId,
         address,
         sector: sector || undefined,
         accessNotes: accessNotes || undefined,
@@ -149,18 +148,10 @@ export function ProjectsListPage() {
           </label>
 
           <fieldset>
-            <legend>{t("create.sections.owner", { ns: "projects" })}</legend>
+            <legend>{t("create.sections.client", { ns: "projects" })}</legend>
             <label>
-              {t("create.ownerName", { ns: "projects" })}
-              <input value={ownerName} onChange={(event) => setOwnerName(event.target.value)} required minLength={2} />
-            </label>
-            <label>
-              {t("create.ownerPhone", { ns: "projects" })}
-              <input value={ownerPhone} onChange={(event) => setOwnerPhone(event.target.value)} required />
-            </label>
-            <label>
-              {t("create.ownerEmail", { ns: "projects" })}
-              <input type="email" value={ownerEmail} onChange={(event) => setOwnerEmail(event.target.value)} />
+              {t("create.client", { ns: "projects" })}
+              <ClientPicker value={clientId} onChange={(id) => setClientId(id)} />
             </label>
           </fieldset>
 

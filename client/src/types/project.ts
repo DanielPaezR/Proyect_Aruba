@@ -29,8 +29,19 @@ export type ProjectWorkType = (typeof PROJECT_WORK_TYPES)[number];
 export const PROJECT_PRIORITIES = ["BAJA", "MEDIA", "ALTA", "URGENTE"] as const;
 export type ProjectPriority = (typeof PROJECT_PRIORITIES)[number];
 
+export interface ProjectClientSummary {
+  id: string;
+  name: string;
+  phone: string;
+  email: string | null;
+}
+
 /** Info operativa del sitio de trabajo — nullable en DB, ver server/prisma/schema.prisma. */
 interface ProjectOperationalFields {
+  clientId: string | null;
+  // Respaldo del owner en texto libre, anterior al modelo Client — ya no se
+  // editan ni se muestran en el cliente, se mantienen solo porque el backend
+  // todavia los devuelve (ver prisma/migrate-owners-to-clients.ts).
   ownerName: string | null;
   ownerPhone: string | null;
   ownerEmail: string | null;
@@ -68,5 +79,6 @@ export interface ProjectDetail extends ProjectOperationalFields {
   createdBy: { id: string; name: string };
   createdAt: string;
   updatedAt: string;
+  client: ProjectClientSummary | null;
   activities: Activity[];
 }

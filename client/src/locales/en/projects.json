@@ -8,13 +8,12 @@
     "submit": "Create",
     "submitting": "Creating...",
     "sections": {
-      "owner": "Owner",
+      "client": "Client",
       "location": "Location",
       "work": "Job details"
     },
-    "ownerName": "Owner name",
-    "ownerPhone": "Phone",
-    "ownerEmail": "Email",
+    "client": "Client",
+    "clientRequired": "Select or create a client for the project",
     "address": "Address",
     "sector": "Sector",
     "sectorPlaceholder": "Select a sector",
@@ -74,10 +73,11 @@
     "URGENTE": "Urgent"
   },
   "detail": {
-    "ownerSection": "Owner & contact",
+    "clientSection": "Client",
     "locationSection": "Location",
     "workSection": "Job details",
     "notSpecified": "Not specified",
-    "viewPlansButton": "View electrical plans"
+    "viewPlansButton": "View electrical plans",
+    "viewClientButton": "View client record"
   }
 }

@@ -8,13 +8,12 @@
     "submit": "Crear",
     "submitting": "Creando...",
     "sections": {
-      "owner": "Propietario",
+      "client": "Cliente",
       "location": "Ubicación",
       "work": "Detalles del trabajo"
     },
-    "ownerName": "Nombre del propietario",
-    "ownerPhone": "Teléfono",
-    "ownerEmail": "Correo electrónico",
+    "client": "Cliente",
+    "clientRequired": "Selecciona o crea un cliente para el proyecto",
     "address": "Dirección",
     "sector": "Sector",
     "sectorPlaceholder": "Selecciona un sector",
@@ -74,10 +73,11 @@
     "URGENTE": "Urgente"
   },
   "detail": {
-    "ownerSection": "Propietario y contacto",
+    "clientSection": "Cliente",
     "locationSection": "Ubicación",
     "workSection": "Detalles del trabajo",
     "notSpecified": "No especificado",
-    "viewPlansButton": "Ver planos eléctricos"
+    "viewPlansButton": "Ver planos eléctricos",
+    "viewClientButton": "Ver ficha del cliente"
   }
 }

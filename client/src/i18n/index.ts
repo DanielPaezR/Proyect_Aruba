@@ -5,6 +5,7 @@ import { initReactI18next } from "react-i18next";
 import esCommon from "../locales/es/common.json";
 import esAuth from "../locales/es/auth.json";
 import esDashboard from "../locales/es/dashboard.json";
+import esClients from "../locales/es/clients.json";
 import esProjects from "../locales/es/projects.json";
 import esActivities from "../locales/es/activities.json";
 import esEvidences from "../locales/es/evidences.json";
@@ -16,6 +17,7 @@ import esProfile from "../locales/es/profile.json";
 import enCommon from "../locales/en/common.json";
 import enAuth from "../locales/en/auth.json";
 import enDashboard from "../locales/en/dashboard.json";
+import enClients from "../locales/en/clients.json";
 import enProjects from "../locales/en/projects.json";
 import enActivities from "../locales/en/activities.json";
 import enEvidences from "../locales/en/evidences.json";
@@ -27,6 +29,7 @@ import enProfile from "../locales/en/profile.json";
 import papCommon from "../locales/pap/common.json";
 import papAuth from "../locales/pap/auth.json";
 import papDashboard from "../locales/pap/dashboard.json";
+import papClients from "../locales/pap/clients.json";
 import papProjects from "../locales/pap/projects.json";
 import papActivities from "../locales/pap/activities.json";
 import papEvidences from "../locales/pap/evidences.json";
@@ -51,6 +54,7 @@ void i18n
         common: esCommon,
         auth: esAuth,
         dashboard: esDashboard,
+        clients: esClients,
         projects: esProjects,
         activities: esActivities,
         evidences: esEvidences,
@@ -64,6 +68,7 @@ void i18n
         common: enCommon,
         auth: enAuth,
         dashboard: enDashboard,
+        clients: enClients,
         projects: enProjects,
         activities: enActivities,
         evidences: enEvidences,
@@ -77,6 +82,7 @@ void i18n
         common: papCommon,
         auth: papAuth,
         dashboard: papDashboard,
+        clients: papClients,
         projects: papProjects,
         activities: papActivities,
         evidences: papEvidences,
@@ -93,6 +99,7 @@ void i18n
       "common",
       "auth",
       "dashboard",
+      "clients",
       "projects",
       "activities",
       "evidences",
