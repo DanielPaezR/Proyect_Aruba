@@ -6,7 +6,19 @@
   "roleLabel": "Rol",
   "readOnlyHint": "Nòmber, email i rol ta administrá pa Hefe for di gestion di usuarionan.",
   "phoneLabel": "Telefòn",
+  "specialtiesLabel": "Especialidatnan (separá pa koma)",
+  "specialtiesPlaceholder": "Pe. Kablero residensial, Panelnan solar",
   "save": "Warda",
   "saving": "Ta warda...",
-  "saved": "Perfil actualisá"
+  "saved": "Perfil actualisá",
+  "documentsSection": "Mi dokumentonan",
+  "documentLabelLabel": "Nòmber di dokumento",
+  "documentLabelPlaceholder": "Pe. Cédula, Certificado di manehá",
+  "documentFileLabel": "Archivo (imagen òf PDF)",
+  "documentUploadButton": "Subi dokumento",
+  "documentUploading": "Ta subi...",
+  "documentsEmpty": "Ainda bo no a subi ningun dokumento",
+  "documentUploadedBy": "Subí pa {{name}}",
+  "documentDeleteTitle": "Elimina dokumento",
+  "documentDeleteMessage": "Bo ta sigur bo ke elimina \"{{label}}\"? E akshon aki no por wordu revertí."
 }

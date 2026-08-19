@@ -6,7 +6,19 @@
   "roleLabel": "Rol",
   "readOnlyHint": "El nombre, correo y rol los administra el Jefe desde gestión de usuarios.",
   "phoneLabel": "Teléfono",
+  "specialtiesLabel": "Especialidades (separadas por coma)",
+  "specialtiesPlaceholder": "Ej. Cableado residencial, Paneles solares",
   "save": "Guardar",
   "saving": "Guardando...",
-  "saved": "Perfil actualizado"
+  "saved": "Perfil actualizado",
+  "documentsSection": "Mis documentos",
+  "documentLabelLabel": "Nombre del documento",
+  "documentLabelPlaceholder": "Ej. Cédula, Certificado de manejo",
+  "documentFileLabel": "Archivo (imagen o PDF)",
+  "documentUploadButton": "Subir documento",
+  "documentUploading": "Subiendo...",
+  "documentsEmpty": "Todavía no has subido documentos",
+  "documentUploadedBy": "Subido por {{name}}",
+  "documentDeleteTitle": "Eliminar documento",
+  "documentDeleteMessage": "¿Seguro que quieres eliminar \"{{label}}\"? Esta acción no se puede deshacer."
 }

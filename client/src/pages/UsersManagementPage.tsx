@@ -175,14 +175,24 @@ export function UsersManagementPage() {
         ) : (
           <ul className="card-list">
             {users.map((listedUser) => (
-              <li key={listedUser.id} className="card worker-summary-card">
+              <li
+                key={listedUser.id}
+                className={
+                  listedUser.isActive ? "card worker-summary-card" : "card worker-summary-card worker-summary-card--inactive"
+                }
+              >
                 {listedUser.photoUrl ? (
                   <img src={listedUser.photoUrl} alt="" className="profile-photo-preview" />
                 ) : (
                   <div className="profile-photo-placeholder">{listedUser.name.charAt(0).toUpperCase()}</div>
                 )}
                 <div className="worker-summary-card-info">
-                  <span className="card-title">{listedUser.name}</span>
+                  <span className="card-title">
+                    {listedUser.name}
+                    {!listedUser.isActive && (
+                      <span className="status-badge status-badge--muted">{t("list.inactive", { ns: "users" })}</span>
+                    )}
+                  </span>
                   <span className="card-meta">{t(`roles.${listedUser.role}`, { ns: "common" })}</span>
                 </div>
                 <Link to={`/users/${listedUser.id}`} className="button-link">

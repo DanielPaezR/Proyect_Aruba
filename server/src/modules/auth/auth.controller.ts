@@ -10,8 +10,10 @@ import {
   loginSchema,
   updateHourlyRateSchema,
   updateLocaleSchema,
+  updateMeSchema,
   updateProfileSchema,
   updateUserSchema,
+  uploadWorkerDocumentSchema,
 } from "./auth.validators";
 
 const REFRESH_COOKIE = "refreshToken";
@@ -85,6 +87,49 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
   const input = updateUserSchema.parse(req.body);
   const user = await authService.updateUser(req.params.userId, input);
   res.json({ user });
+});
+
+export const deactivateUser = asyncHandler(async (req: Request, res: Response) => {
+  const user = await authService.deactivateUser(req.params.userId, req.user!.id);
+  res.json({ user });
+});
+
+export const reactivateUser = asyncHandler(async (req: Request, res: Response) => {
+  const user = await authService.reactivateUser(req.params.userId);
+  res.json({ user });
+});
+
+export const updateUserPhoto = asyncHandler(async (req: Request, res: Response) => {
+  if (!req.file) {
+    throw ApiError.badRequest(ErrorCode.IMAGE_REQUIRED, "Falta la imagen (campo 'photo')");
+  }
+  const user = await authService.updateUserPhoto(req.params.userId, req.file);
+  res.json({ user });
+});
+
+export const updateMe = asyncHandler(async (req: Request, res: Response) => {
+  const input = updateMeSchema.parse(req.body);
+  const user = await authService.updateOwnBasicInfo(req.user!.id, input);
+  res.json({ user });
+});
+
+export const uploadWorkerDocument = asyncHandler(async (req: Request, res: Response) => {
+  if (!req.file) {
+    throw ApiError.badRequest(ErrorCode.FILE_REQUIRED, "Selecciona un archivo para subir");
+  }
+  const input = uploadWorkerDocumentSchema.parse(req.body);
+  const document = await authService.uploadWorkerDocument(req.user!, req.params.userId, input, req.file);
+  res.status(201).json({ document });
+});
+
+export const listWorkerDocuments = asyncHandler(async (req: Request, res: Response) => {
+  const documents = await authService.listWorkerDocuments(req.user!, req.params.userId);
+  res.json({ documents });
+});
+
+export const deleteWorkerDocument = asyncHandler(async (req: Request, res: Response) => {
+  await authService.deleteWorkerDocument(req.user!, req.params.userId, req.params.documentId);
+  res.status(204).send();
 });
 
 export const updateLocale = asyncHandler(async (req: Request, res: Response) => {

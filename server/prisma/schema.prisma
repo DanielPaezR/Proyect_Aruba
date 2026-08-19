@@ -207,6 +207,9 @@ model User {
   toolIncidentReports      ToolIncidentReport[] @relation("ToolIncidentReportedBy")
   agendaEvents             AgendaEvent[]        @relation("AgendaEventCreatedBy")
 
+  workerDocuments         WorkerDocument[] @relation("WorkerDocumentUser")
+  uploadedWorkerDocuments WorkerDocument[] @relation("WorkerDocumentUploadedBy")
+
   @@map("users")
 }
 
@@ -754,4 +757,25 @@ model AgendaEvent {
 
   @@index([startAt])
   @@map("agenda_events")
+}
+
+// Documentos del trabajador (cedula, certificados, etc). userId es de quien
+// es el documento; uploadedById es quien lo subio (puede ser el mismo
+// trabajador o un Jefe/Supervisor en su nombre) — el borrado usa
+// uploadedById, no userId (ver auth.service.ts: JEFE siempre puede, o quien
+// subio el documento originalmente).
+model WorkerDocument {
+  id           String @id @default(cuid())
+  userId       String
+  user         User   @relation("WorkerDocumentUser", fields: [userId], references: [id])
+  label        String
+  fileUrl      String
+  filePublicId String
+
+  uploadedById String
+  uploadedBy   User   @relation("WorkerDocumentUploadedBy", fields: [uploadedById], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@map("worker_documents")
 }

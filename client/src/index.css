@@ -1377,7 +1377,8 @@ a.card-title:hover {
 }
 
 .card-actions button,
-.card-actions a {
+.card-actions a,
+.card-actions label {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -1386,6 +1387,7 @@ a.card-title:hover {
   border-radius: 6px;
   border: 1px solid var(--border);
   background: var(--bg);
+  cursor: pointer;
   /* Texto --text (mas suave) en vez de --text-h: son acciones secundarias
      (editar, ver historial...), no deben competir con los botones primarios
      (crear, aprobar) por atencion. */
@@ -1627,6 +1629,18 @@ a.card-title:hover {
   gap: 2px;
   flex: 1;
   min-width: 0;
+}
+
+.worker-summary-card-info .card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Usuario desactivado: sigue en la lista (no desaparece sin explicacion),
+   pero atenuado y con badge para distinguirlo de un vistazo. */
+.worker-summary-card--inactive {
+  opacity: 0.6;
 }
 
 .worker-profile-identity {

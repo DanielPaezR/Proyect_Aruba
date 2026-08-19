@@ -115,7 +115,13 @@
       "USER_NOT_FIELD_WORKER": "The selected user isn't a field worker",
       "TOOL_INCIDENT_REPORT_NOT_FOUND": "Report not found",
       "TOOL_INCIDENT_ALREADY_RESOLVED": "This report was already resolved",
-      "TOOL_NOT_ASSIGNED_TO_YOU": "This tool isn't assigned to you"
+      "TOOL_NOT_ASSIGNED_TO_YOU": "This tool isn't assigned to you",
+      "USER_ACCOUNT_DEACTIVATED": "This account has been deactivated. Contact the Boss.",
+      "USER_ALREADY_INACTIVE": "This user is already inactive",
+      "USER_ALREADY_ACTIVE": "This user is already active",
+      "CANNOT_DEACTIVATE_SELF": "You can't deactivate your own account",
+      "WORKER_DOCUMENT_NOT_FOUND": "Document not found",
+      "WORKER_DOCUMENT_DELETE_FORBIDDEN": "You can't delete this document"
     }
   }
 }

@@ -13,6 +13,7 @@ interface AuthContextValue {
   logout: () => Promise<void>;
   updateLocale: (locale: UserLocale) => Promise<void>;
   updateProfile: (input: { phone?: string; photo?: File }) => Promise<void>;
+  updateMe: (input: { phone?: string; specialties?: string[] }) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -100,8 +101,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(data.user);
   }
 
+  async function updateMe(input: { phone?: string; specialties?: string[] }) {
+    const { data } = await apiClient.patch<{ user: User }>("/auth/me", input);
+    setUser(data.user);
+  }
+
   const value = useMemo<AuthContextValue>(
-    () => ({ user, isLoading, login, logout, updateLocale, updateProfile }),
+    () => ({ user, isLoading, login, logout, updateLocale, updateProfile, updateMe }),
     [user, isLoading],
   );
 

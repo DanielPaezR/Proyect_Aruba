@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { Role } from "@prisma/client";
 import { authenticate, authorize } from "../../middleware/auth.middleware";
-import { imageUpload } from "../../config/storage";
+import { documentUpload, imageUpload } from "../../config/storage";
 import * as authController from "./auth.controller";
 
 export const authRouter = Router();
@@ -12,6 +12,9 @@ authRouter.post("/logout", authController.logout);
 authRouter.get("/me", authenticate, authController.me);
 authRouter.patch("/me/locale", authenticate, authController.updateLocale);
 authRouter.patch("/me/profile", authenticate, imageUpload.single("photo"), authController.updateProfile);
+// Autoservicio de telefono/especialidades — JSON plano, distinto de
+// /me/profile (multipart, telefono+foto). Ver comentario en auth.service.ts.
+authRouter.patch("/me", authenticate, authController.updateMe);
 
 // Alta de usuarios: solo el Jefe (no hay auto-registro ni gestión por Supervisor).
 authRouter.post("/users", authenticate, authorize(Role.JEFE), authController.createUser);
@@ -28,8 +31,48 @@ authRouter.get(
   authController.listUsers,
 );
 
-// Edicion general (campos de perfil laboral): solo el Jefe.
+// Edicion general (datos basicos + perfil laboral): solo el Jefe.
 authRouter.patch("/users/:userId", authenticate, authorize(Role.JEFE), authController.updateUser);
+
+// Desactivar/reactivar: solo el Jefe. Nunca borra nada (ver auth.service.ts).
+authRouter.patch(
+  "/users/:userId/deactivate",
+  authenticate,
+  authorize(Role.JEFE),
+  authController.deactivateUser,
+);
+authRouter.patch(
+  "/users/:userId/reactivate",
+  authenticate,
+  authorize(Role.JEFE),
+  authController.reactivateUser,
+);
+
+// Foto de CUALQUIER trabajador, subida por un manager — distinto de
+// /me/profile, que es la foto propia del usuario autenticado.
+authRouter.patch(
+  "/users/:userId/photo",
+  authenticate,
+  authorize(Role.JEFE, Role.SUPERVISOR),
+  imageUpload.single("photo"),
+  authController.updateUserPhoto,
+);
+
+// Documentos del trabajador: sin authorize() a nivel de ruta — el service
+// decide (el propio dueño, o Jefe/Supervisor para cualquiera; ni siquiera
+// otro TRABAJADOR_CAMPO puede ver documentos ajenos).
+authRouter.post(
+  "/users/:userId/documents",
+  authenticate,
+  documentUpload.single("file"),
+  authController.uploadWorkerDocument,
+);
+authRouter.get("/users/:userId/documents", authenticate, authController.listWorkerDocuments);
+authRouter.delete(
+  "/users/:userId/documents/:documentId",
+  authenticate,
+  authController.deleteWorkerDocument,
+);
 
 // Perfil consolidado del trabajador: Jefe y Supervisor, mismo criterio que
 // el listado (overtimeHourlyRate/hourlyRate se ocultan para Supervisor

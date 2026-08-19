@@ -115,7 +115,13 @@
       "USER_NOT_FIELD_WORKER": "E usuario skohí no ta un trahadó di kampo",
       "TOOL_INCIDENT_REPORT_NOT_FOUND": "No a haña e reporte",
       "TOOL_INCIDENT_ALREADY_RESOLVED": "E reporte aki ya a wordu resolví",
-      "TOOL_NOT_ASSIGNED_TO_YOU": "E hermenshi aki no ta na bo enkargo"
+      "TOOL_NOT_ASSIGNED_TO_YOU": "E hermenshi aki no ta na bo enkargo",
+      "USER_ACCOUNT_DEACTIVATED": "E kuenta aki a wordu desaktivá. Kontakta e Hefe.",
+      "USER_ALREADY_INACTIVE": "E usuario aki ya ta inaktivo",
+      "USER_ALREADY_ACTIVE": "E usuario aki ya ta aktivo",
+      "CANNOT_DEACTIVATE_SELF": "Bo no por desaktivá bo mes kuenta",
+      "WORKER_DOCUMENT_NOT_FOUND": "Dokumento no ta wordu hañá",
+      "WORKER_DOCUMENT_DELETE_FORBIDDEN": "Bo no por elimina e dokumento aki"
     }
   }
 }

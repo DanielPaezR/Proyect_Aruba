@@ -6,7 +6,19 @@
   "roleLabel": "Role",
   "readOnlyHint": "Name, email and role are managed by the Jefe from user management.",
   "phoneLabel": "Phone",
+  "specialtiesLabel": "Specialties (comma-separated)",
+  "specialtiesPlaceholder": "E.g. Residential wiring, Solar panels",
   "save": "Save",
   "saving": "Saving...",
-  "saved": "Profile updated"
+  "saved": "Profile updated",
+  "documentsSection": "My documents",
+  "documentLabelLabel": "Document name",
+  "documentLabelPlaceholder": "E.g. ID card, Driving certificate",
+  "documentFileLabel": "File (image or PDF)",
+  "documentUploadButton": "Upload document",
+  "documentUploading": "Uploading...",
+  "documentsEmpty": "You haven't uploaded any documents yet",
+  "documentUploadedBy": "Uploaded by {{name}}",
+  "documentDeleteTitle": "Delete document",
+  "documentDeleteMessage": "Are you sure you want to delete \"{{label}}\"? This action cannot be undone."
 }

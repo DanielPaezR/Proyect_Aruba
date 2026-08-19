@@ -26,5 +26,6 @@ export interface User {
   isActive: boolean;
   locale: UserLocale;
   photoUrl: string | null;
+  specialties: string[];
   createdAt: string;
 }

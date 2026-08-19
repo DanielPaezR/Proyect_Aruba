@@ -1,20 +1,25 @@
 import { useEffect, useState } from "react";
-import type { FormEvent } from "react";
+import type { ChangeEvent, FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { BackButton } from "../components/BackButton";
+import { ConfirmDialog } from "../components/ConfirmDialog";
 import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
 import { isManagerRole } from "../types/auth";
 import type { SalaryRaise } from "../types/salaryRaise";
+import type { WorkerDocument } from "../types/workerDocument";
 import type { MonthlyScore } from "../types/workerScore";
 import type { WorkerProfile } from "../types/workerProfile";
 import { formatHourlyRate } from "../utils/formatCurrency";
 import { timeAgo } from "../utils/timeAgo";
 
 interface EditFormState {
+  name: string;
+  email: string;
+  phone: string;
   hireDate: string;
   overtimeHourlyRate: string;
   specialties: string;
@@ -31,6 +36,9 @@ function toDateInputValue(iso: string | null): string {
 
 function profileToFormState(profile: WorkerProfile): EditFormState {
   return {
+    name: profile.user.name,
+    email: profile.user.email,
+    phone: profile.user.phone ?? "",
     hireDate: toDateInputValue(profile.user.hireDate),
     overtimeHourlyRate: profile.user.overtimeHourlyRate ?? "",
     specialties: profile.user.specialties.join(", "),
@@ -75,6 +83,26 @@ export function WorkerProfilePage() {
   const [isSubmittingScore, setIsSubmittingScore] = useState(false);
   const [scoreFormError, setScoreFormError] = useState<string | null>(null);
 
+  const [isDeactivateConfirmOpen, setIsDeactivateConfirmOpen] = useState(false);
+  const [isDeactivating, setIsDeactivating] = useState(false);
+  const [deactivateError, setDeactivateError] = useState<string | null>(null);
+  const [isReactivating, setIsReactivating] = useState(false);
+  const [reactivateError, setReactivateError] = useState<string | null>(null);
+
+  const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
+  const [photoError, setPhotoError] = useState<string | null>(null);
+
+  const [documents, setDocuments] = useState<WorkerDocument[] | null>(null);
+  const [documentsError, setDocumentsError] = useState<string | null>(null);
+  const [isLoadingDocuments, setIsLoadingDocuments] = useState(true);
+  const [docLabel, setDocLabel] = useState("");
+  const [docFile, setDocFile] = useState<File | null>(null);
+  const [isUploadingDoc, setIsUploadingDoc] = useState(false);
+  const [uploadDocError, setUploadDocError] = useState<string | null>(null);
+  const [docToDelete, setDocToDelete] = useState<WorkerDocument | null>(null);
+  const [isDeletingDoc, setIsDeletingDoc] = useState(false);
+  const [deleteDocError, setDeleteDocError] = useState<string | null>(null);
+
   async function loadProfile(id: string) {
     setIsLoading(true);
     setErrorMessage(null);
@@ -88,9 +116,23 @@ export function WorkerProfilePage() {
     }
   }
 
+  async function loadDocuments(id: string) {
+    setIsLoadingDocuments(true);
+    setDocumentsError(null);
+    try {
+      const response = await apiClient.get<{ documents: WorkerDocument[] }>(`/auth/users/${id}/documents`);
+      setDocuments(response.data.documents);
+    } catch (error) {
+      setDocumentsError(translateApiError(t, error));
+    } finally {
+      setIsLoadingDocuments(false);
+    }
+  }
+
   useEffect(() => {
     if (userId) {
       void loadProfile(userId);
+      void loadDocuments(userId);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
@@ -120,6 +162,9 @@ export function WorkerProfilePage() {
     setIsSaving(true);
     try {
       await apiClient.patch(`/auth/users/${userId}`, {
+        name: editForm.name,
+        email: editForm.email,
+        phone: editForm.phone,
         hireDate: editForm.hireDate ? new Date(editForm.hireDate).toISOString() : null,
         overtimeHourlyRate: editForm.overtimeHourlyRate ? Number(editForm.overtimeHourlyRate) : null,
         specialties: editForm.specialties
@@ -135,6 +180,98 @@ export function WorkerProfilePage() {
       setEditError(translateApiError(t, error));
     } finally {
       setIsSaving(false);
+    }
+  }
+
+  async function handleDeactivate() {
+    if (!userId) {
+      return;
+    }
+    setDeactivateError(null);
+    setIsDeactivating(true);
+    try {
+      await apiClient.patch(`/auth/users/${userId}/deactivate`);
+      setIsDeactivateConfirmOpen(false);
+      await loadProfile(userId);
+    } catch (error) {
+      setDeactivateError(translateApiError(t, error));
+    } finally {
+      setIsDeactivating(false);
+    }
+  }
+
+  async function handleReactivate() {
+    if (!userId) {
+      return;
+    }
+    setReactivateError(null);
+    setIsReactivating(true);
+    try {
+      await apiClient.patch(`/auth/users/${userId}/reactivate`);
+      await loadProfile(userId);
+    } catch (error) {
+      setReactivateError(translateApiError(t, error));
+    } finally {
+      setIsReactivating(false);
+    }
+  }
+
+  async function handlePhotoChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file || !userId) {
+      return;
+    }
+    setPhotoError(null);
+    setIsUploadingPhoto(true);
+    try {
+      const formData = new FormData();
+      formData.append("photo", file);
+      await apiClient.patch(`/auth/users/${userId}/photo`, formData);
+      await loadProfile(userId);
+    } catch (error) {
+      setPhotoError(translateApiError(t, error));
+    } finally {
+      setIsUploadingPhoto(false);
+    }
+  }
+
+  async function handleUploadDocument(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!docFile || !userId) {
+      return;
+    }
+    setUploadDocError(null);
+    setIsUploadingDoc(true);
+    try {
+      const formData = new FormData();
+      formData.append("label", docLabel);
+      formData.append("file", docFile);
+      await apiClient.post(`/auth/users/${userId}/documents`, formData);
+      setDocLabel("");
+      setDocFile(null);
+      await loadDocuments(userId);
+    } catch (error) {
+      setUploadDocError(translateApiError(t, error));
+    } finally {
+      setIsUploadingDoc(false);
+    }
+  }
+
+  async function handleDeleteDocument() {
+    if (!docToDelete || !userId) {
+      return;
+    }
+    setDeleteDocError(null);
+    setIsDeletingDoc(true);
+    try {
+      await apiClient.delete(`/auth/users/${userId}/documents/${docToDelete.id}`);
+      setDocToDelete(null);
+      await loadDocuments(userId);
+    } catch (error) {
+      setDeleteDocError(translateApiError(t, error));
+    } finally {
+      setIsDeletingDoc(false);
     }
   }
 
@@ -264,23 +401,80 @@ export function WorkerProfilePage() {
               <div>
                 <h1>{profile.user.name}</h1>
                 <span className="status-badge">{t(`roles.${profile.user.role}`, { ns: "common" })}</span>{" "}
-                <span className="status-badge">
+                <span className={profile.user.isActive ? "status-badge" : "status-badge status-badge--muted"}>
                   {profile.user.isActive ? t("list.active", { ns: "users" }) : t("list.inactive", { ns: "users" })}
                 </span>
               </div>
             </div>
             {isJefe && (
               <div className="card-actions">
+                <label>
+                  {isUploadingPhoto ? t("profile.uploadingPhoto", { ns: "users" }) : t("profile.changePhotoButton", { ns: "users" })}
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    onChange={(event) => void handlePhotoChange(event)}
+                    disabled={isUploadingPhoto}
+                    hidden
+                  />
+                </label>
                 <button type="button" onClick={openEdit}>
                   {t("actions.edit", { ns: "common" })}
                 </button>
+                {profile.user.isActive ? (
+                  <button type="button" className="danger-button" onClick={() => setIsDeactivateConfirmOpen(true)}>
+                    {t("profile.deactivateButton", { ns: "users" })}
+                  </button>
+                ) : (
+                  <button type="button" onClick={() => void handleReactivate()} disabled={isReactivating}>
+                    {isReactivating
+                      ? t("profile.reactivating", { ns: "users" })
+                      : t("profile.reactivateButton", { ns: "users" })}
+                  </button>
+                )}
               </div>
             )}
           </div>
 
+          {isJefe && photoError && (
+            <p className="form-error" role="alert">
+              {photoError}
+            </p>
+          )}
+          {isJefe && reactivateError && (
+            <p className="form-error" role="alert">
+              {reactivateError}
+            </p>
+          )}
+
           {isJefe && isEditOpen && editForm && (
             <form className="inline-form" onSubmit={(event) => void handleUpdate(event)}>
               <h2>{t("profile.editFormTitle", { ns: "users" })}</h2>
+              <label>
+                {t("create.name", { ns: "users" })}
+                <input
+                  value={editForm.name}
+                  onChange={(event) => setEditForm({ ...editForm, name: event.target.value })}
+                  required
+                  minLength={2}
+                />
+              </label>
+              <label>
+                {t("create.email", { ns: "users" })}
+                <input
+                  type="email"
+                  value={editForm.email}
+                  onChange={(event) => setEditForm({ ...editForm, email: event.target.value })}
+                  required
+                />
+              </label>
+              <label>
+                {t("create.phone", { ns: "users" })}
+                <input
+                  value={editForm.phone}
+                  onChange={(event) => setEditForm({ ...editForm, phone: event.target.value })}
+                />
+              </label>
               <label>
                 {t("profile.hireDateLabel", { ns: "users" })}
                 <input
@@ -640,7 +834,112 @@ export function WorkerProfilePage() {
               )}
             </section>
           )}
+
+          <section>
+            <h2 className="section-label">{t("profile.documentsSection", { ns: "users" })}</h2>
+
+            <form className="inline-form" onSubmit={(event) => void handleUploadDocument(event)}>
+              <label>
+                {t("profile.documentLabelLabel", { ns: "users" })}
+                <input
+                  value={docLabel}
+                  onChange={(event) => setDocLabel(event.target.value)}
+                  placeholder={t("profile.documentLabelPlaceholder", { ns: "users" })}
+                  required
+                  minLength={1}
+                />
+              </label>
+              <label>
+                {t("profile.documentFileLabel", { ns: "users" })}
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,application/pdf"
+                  onChange={(event) => setDocFile(event.target.files?.[0] ?? null)}
+                  required
+                />
+              </label>
+              {uploadDocError && (
+                <p className="form-error" role="alert">
+                  {uploadDocError}
+                </p>
+              )}
+              <div className="form-actions">
+                <button type="submit" disabled={isUploadingDoc}>
+                  {isUploadingDoc
+                    ? t("profile.documentUploading", { ns: "users" })
+                    : t("profile.documentUploadButton", { ns: "users" })}
+                </button>
+              </div>
+            </form>
+
+            {isLoadingDocuments && <p className="page-loading">{t("loading", { ns: "common" })}</p>}
+
+            {!isLoadingDocuments && documentsError && (
+              <p className="form-error" role="alert">
+                {documentsError}
+              </p>
+            )}
+
+            {!isLoadingDocuments &&
+              !documentsError &&
+              documents &&
+              (documents.length === 0 ? (
+                <p>{t("profile.documentsEmpty", { ns: "users" })}</p>
+              ) : (
+                <ul className="card-list">
+                  {documents.map((document) => (
+                    <li key={document.id} className="card">
+                      <div className="card-header">
+                        <a href={document.fileUrl} target="_blank" rel="noreferrer" className="card-title">
+                          {document.label}
+                        </a>
+                      </div>
+                      <span className="card-meta">
+                        {t("profile.documentUploadedBy", { ns: "users", name: document.uploadedBy.name })}
+                      </span>
+                      {(isJefe || document.uploadedById === currentUser.id) && (
+                        <div className="card-actions">
+                          <button type="button" className="danger-button" onClick={() => setDocToDelete(document)}>
+                            {t("actions.delete", { ns: "common" })}
+                          </button>
+                        </div>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              ))}
+          </section>
         </>
+      )}
+
+      {isDeactivateConfirmOpen && (
+        <ConfirmDialog
+          title={t("profile.deactivateTitle", { ns: "users" })}
+          message={t("profile.deactivateMessage", { ns: "users", name: profile?.user.name ?? "" })}
+          confirmLabel={t("profile.deactivateButton", { ns: "users" })}
+          isConfirming={isDeactivating}
+          error={deactivateError}
+          onConfirm={() => void handleDeactivate()}
+          onCancel={() => {
+            setIsDeactivateConfirmOpen(false);
+            setDeactivateError(null);
+          }}
+        />
+      )}
+
+      {docToDelete && (
+        <ConfirmDialog
+          title={t("profile.documentDeleteTitle", { ns: "users" })}
+          message={t("profile.documentDeleteMessage", { ns: "users", label: docToDelete.label })}
+          confirmLabel={t("actions.delete", { ns: "common" })}
+          isConfirming={isDeletingDoc}
+          error={deleteDocError}
+          onConfirm={() => void handleDeleteDocument()}
+          onCancel={() => {
+            setDocToDelete(null);
+            setDeleteDocError(null);
+          }}
+        />
       )}
     </div>
   );

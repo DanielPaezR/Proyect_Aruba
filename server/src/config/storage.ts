@@ -122,3 +122,44 @@ export function uploadInvoiceFile(buffer: Buffer): Promise<UploadedImage> {
 export async function deleteInvoiceFile(publicId: string): Promise<void> {
   await cloudinary.uploader.destroy(publicId, { resource_type: "raw", invalidate: true });
 }
+
+export const WORKER_DOCUMENTS_FOLDER = "decs/worker-documents";
+
+const ALLOWED_DOCUMENT_MIME_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "application/pdf"]);
+
+/** Documentos del trabajador (cedula, certificados...): imagen escaneada O
+ * PDF, a diferencia de imageUpload (solo imagen) e invoiceUpload (solo PDF). */
+export const documentUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 15 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (!ALLOWED_DOCUMENT_MIME_TYPES.has(file.mimetype)) {
+      cb(new ApiError(400, ErrorCode.UNSUPPORTED_FILE_TYPE, "Formato de archivo no soportado (usa JPEG, PNG, WEBP o PDF)"));
+      return;
+    }
+    cb(null, true);
+  },
+});
+
+/** Sube como resource_type "raw" (igual que las facturas): no es una imagen
+ * que Cloudinary deba transformar, solo un archivo que se sirve tal cual —
+ * mismo tratamiento para la foto escaneada de una cedula que para un PDF. */
+export function uploadDocumentFile(buffer: Buffer): Promise<UploadedImage> {
+  return new Promise((resolve, reject) => {
+    const uploadStream = cloudinary.uploader.upload_stream(
+      { folder: WORKER_DOCUMENTS_FOLDER, resource_type: "raw" },
+      (error?: UploadApiErrorResponse, result?: UploadApiResponse) => {
+        if (error || !result) {
+          reject(error ?? new Error("Cloudinary no devolvió resultado al subir el documento"));
+          return;
+        }
+        resolve({ url: result.secure_url, publicId: result.public_id });
+      },
+    );
+    uploadStream.end(buffer);
+  });
+}
+
+export async function deleteDocumentFile(publicId: string): Promise<void> {
+  await cloudinary.uploader.destroy(publicId, { resource_type: "raw", invalidate: true });
+}

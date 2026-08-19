@@ -115,7 +115,13 @@
       "USER_NOT_FIELD_WORKER": "El usuario elegido no es un trabajador de campo",
       "TOOL_INCIDENT_REPORT_NOT_FOUND": "Reporte no encontrado",
       "TOOL_INCIDENT_ALREADY_RESOLVED": "Este reporte ya fue resuelto",
-      "TOOL_NOT_ASSIGNED_TO_YOU": "Esta herramienta no está a tu cargo"
+      "TOOL_NOT_ASSIGNED_TO_YOU": "Esta herramienta no está a tu cargo",
+      "USER_ACCOUNT_DEACTIVATED": "Esta cuenta fue desactivada. Contacta al Jefe.",
+      "USER_ALREADY_INACTIVE": "El usuario ya está inactivo",
+      "USER_ALREADY_ACTIVE": "El usuario ya está activo",
+      "CANNOT_DEACTIVATE_SELF": "No puedes desactivar tu propia cuenta",
+      "WORKER_DOCUMENT_NOT_FOUND": "Documento no encontrado",
+      "WORKER_DOCUMENT_DELETE_FORBIDDEN": "No puedes eliminar este documento"
     }
   }
 }
