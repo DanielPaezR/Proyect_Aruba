@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { Role } from "@prisma/client";
+import { Feature, Role } from "@prisma/client";
 import { authenticate, authorize } from "../../middleware/auth.middleware";
+import { requireFeature } from "../../middleware/requireFeature.middleware";
 import { documentUpload, imageUpload } from "../../config/storage";
 import * as authController from "./auth.controller";
 
@@ -14,10 +15,22 @@ authRouter.patch("/me/locale", authenticate, authController.updateLocale);
 authRouter.patch("/me/profile", authenticate, imageUpload.single("photo"), authController.updateProfile);
 // Autoservicio de telefono/especialidades — JSON plano, distinto de
 // /me/profile (multipart, telefono+foto). Ver comentario en auth.service.ts.
+// Nada de /me* lleva requireFeature: es autoservicio basico que cualquier
+// usuario autenticado necesita sin importar el estado de la seccion USUARIOS.
 authRouter.patch("/me", authenticate, authController.updateMe);
 
+// A partir de aca, todo lo que vive bajo /users (mas /users/locations en
+// users.routes.ts) es la seccion "USUARIOS" del sistema de permisos — ver
+// requireFeature.middleware.ts. Los /me* de arriba quedan fuera a proposito.
+
 // Alta de usuarios: solo Administrador/Gerente (no hay auto-registro ni gestión por Supervisor).
-authRouter.post("/users", authenticate, authorize(Role.ADMINISTRADOR, Role.GERENTE), authController.createUser);
+authRouter.post(
+  "/users",
+  authenticate,
+  requireFeature(Feature.USUARIOS),
+  authorize(Role.ADMINISTRADOR, Role.GERENTE),
+  authController.createUser,
+);
 // Listado: tambien el Supervisor — lo necesita de solo-lectura para asignar
 // trabajadores a actividades (ProjectDetailPage), mismo criterio que
 // /users/locations (lectura de equipo compartida, gestion sigue siendo de
@@ -28,6 +41,7 @@ authRouter.post("/users", authenticate, authorize(Role.ADMINISTRADOR, Role.GEREN
 authRouter.get(
   "/users",
   authenticate,
+  requireFeature(Feature.USUARIOS),
   authorize(Role.ADMINISTRADOR, Role.GERENTE, Role.SUPERVISOR, Role.MERCADERISTA),
   authController.listUsers,
 );
@@ -36,6 +50,7 @@ authRouter.get(
 authRouter.patch(
   "/users/:userId",
   authenticate,
+  requireFeature(Feature.USUARIOS),
   authorize(Role.ADMINISTRADOR, Role.GERENTE),
   authController.updateUser,
 );
@@ -44,12 +59,14 @@ authRouter.patch(
 authRouter.patch(
   "/users/:userId/deactivate",
   authenticate,
+  requireFeature(Feature.USUARIOS),
   authorize(Role.ADMINISTRADOR, Role.GERENTE),
   authController.deactivateUser,
 );
 authRouter.patch(
   "/users/:userId/reactivate",
   authenticate,
+  requireFeature(Feature.USUARIOS),
   authorize(Role.ADMINISTRADOR, Role.GERENTE),
   authController.reactivateUser,
 );
@@ -59,6 +76,7 @@ authRouter.patch(
 authRouter.patch(
   "/users/:userId/photo",
   authenticate,
+  requireFeature(Feature.USUARIOS),
   authorize(Role.ADMINISTRADOR, Role.GERENTE, Role.SUPERVISOR),
   imageUpload.single("photo"),
   authController.updateUserPhoto,
@@ -67,16 +85,26 @@ authRouter.patch(
 // Documentos del trabajador: sin authorize() a nivel de ruta — el service
 // decide (el propio dueño, o Administrador/Gerente/Supervisor para
 // cualquiera; ni siquiera otro TRABAJADOR_CAMPO puede ver documentos ajenos).
+// requireFeature igual va aca: no bloquea nunca a TRABAJADOR_CAMPO viendo
+// sus propios documentos (ver requireFeature.middleware.ts), solo afecta a
+// un manager gestionando documentos ajenos.
 authRouter.post(
   "/users/:userId/documents",
   authenticate,
+  requireFeature(Feature.USUARIOS),
   documentUpload.single("file"),
   authController.uploadWorkerDocument,
 );
-authRouter.get("/users/:userId/documents", authenticate, authController.listWorkerDocuments);
+authRouter.get(
+  "/users/:userId/documents",
+  authenticate,
+  requireFeature(Feature.USUARIOS),
+  authController.listWorkerDocuments,
+);
 authRouter.delete(
   "/users/:userId/documents/:documentId",
   authenticate,
+  requireFeature(Feature.USUARIOS),
   authController.deleteWorkerDocument,
 );
 
@@ -86,6 +114,7 @@ authRouter.delete(
 authRouter.get(
   "/users/:userId/profile",
   authenticate,
+  requireFeature(Feature.USUARIOS),
   authorize(Role.ADMINISTRADOR, Role.GERENTE, Role.SUPERVISOR),
   authController.getWorkerProfile,
 );
@@ -94,12 +123,14 @@ authRouter.get(
 authRouter.patch(
   "/users/:userId/hourly-rate",
   authenticate,
+  requireFeature(Feature.USUARIOS),
   authorize(Role.ADMINISTRADOR, Role.GERENTE),
   authController.updateHourlyRate,
 );
 authRouter.get(
   "/users/:userId/salary-history",
   authenticate,
+  requireFeature(Feature.USUARIOS),
   authorize(Role.ADMINISTRADOR, Role.GERENTE),
   authController.salaryHistory,
 );
@@ -108,12 +139,14 @@ authRouter.get(
 authRouter.post(
   "/users/:userId/score-events",
   authenticate,
+  requireFeature(Feature.USUARIOS),
   authorize(Role.ADMINISTRADOR, Role.GERENTE),
   authController.createScoreEvent,
 );
 authRouter.get(
   "/users/:userId/score",
   authenticate,
+  requireFeature(Feature.USUARIOS),
   authorize(Role.ADMINISTRADOR, Role.GERENTE),
   authController.monthlyScore,
 );

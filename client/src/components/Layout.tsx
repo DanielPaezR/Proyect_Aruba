@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import { useGeofenceCheck } from "../hooks/useGeofenceCheck";
 import { isInventoryRole, isManagerRole, isTimeTrackingRole, isTopManagerRole } from "../types/auth";
+import type { Feature } from "../types/permissions";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 
 function navLinkClassName({ isActive }: { isActive: boolean }) {
@@ -13,13 +14,22 @@ function navLinkClassName({ isActive }: { isActive: boolean }) {
 
 export function Layout() {
   const { t } = useTranslation();
-  const { user, logout } = useAuth();
+  const { user, permissions, logout } = useAuth();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   useGeofenceCheck();
 
   function closeDrawer() {
     setIsDrawerOpen(false);
+  }
+
+  // null (todavia no cargo, o fallo la carga) nunca oculta nada — solo
+  // ocultamos una seccion cuando SABEMOS que esta desactivada para este
+  // usuario (ver AuthContext.tsx). No aplica a TRABAJADOR_CAMPO: esta capa
+  // de permisos no lo gatea nunca (ver requireFeature.middleware.ts en el
+  // backend), asi que sus links no llaman a esta funcion.
+  function hasFeature(feature: Feature): boolean {
+    return permissions === null || permissions[feature];
   }
 
   return (
@@ -83,20 +93,22 @@ export function Layout() {
                   {t("nav.requestMaterials", { ns: "common" })}
                 </NavLink>
               )}
-              <NavLink to="/projects" className={navLinkClassName}>
-                {t("nav.projects", { ns: "common" })}
-              </NavLink>
-              {isManagerRole(user.role) && (
+              {(user.role === "TRABAJADOR_CAMPO" || hasFeature("PROYECTOS")) && (
+                <NavLink to="/projects" className={navLinkClassName}>
+                  {t("nav.projects", { ns: "common" })}
+                </NavLink>
+              )}
+              {isManagerRole(user.role) && hasFeature("CLIENTES") && (
                 <NavLink to="/clients" className={navLinkClassName}>
                   {t("nav.clients", { ns: "common" })}
                 </NavLink>
               )}
-              {isManagerRole(user.role) && (
+              {isManagerRole(user.role) && hasFeature("EVIDENCIAS") && (
                 <NavLink to="/evidences" className={navLinkClassName}>
                   {t("nav.evidences", { ns: "common" })}
                 </NavLink>
               )}
-              {isManagerRole(user.role) && (
+              {isManagerRole(user.role) && hasFeature("USUARIOS") && (
                 <NavLink to="/team-map" className={navLinkClassName}>
                   {t("nav.teamMap", { ns: "common" })}
                 </NavLink>
@@ -106,32 +118,32 @@ export function Layout() {
                   {t("nav.agenda", { ns: "common" })}
                 </NavLink>
               )}
-              {isInventoryRole(user.role) && (
+              {isInventoryRole(user.role) && hasFeature("INVENTARIO") && (
                 <NavLink to="/inventory" className={navLinkClassName}>
                   {t("nav.inventory", { ns: "common" })}
                 </NavLink>
               )}
-              {isInventoryRole(user.role) && (
+              {isInventoryRole(user.role) && hasFeature("INVENTARIO") && (
                 <NavLink to="/material-requests" className={navLinkClassName}>
                   {t("nav.materialRequests", { ns: "common" })}
                 </NavLink>
               )}
-              {isInventoryRole(user.role) && (
+              {isInventoryRole(user.role) && hasFeature("INVENTARIO") && (
                 <NavLink to="/tool-assignments" className={navLinkClassName}>
                   {t("nav.toolAssignments", { ns: "common" })}
                 </NavLink>
               )}
-              {isInventoryRole(user.role) && (
+              {isInventoryRole(user.role) && hasFeature("INVENTARIO") && (
                 <NavLink to="/tool-incidents" className={navLinkClassName}>
                   {t("nav.toolIncidents", { ns: "common" })}
                 </NavLink>
               )}
-              {isTopManagerRole(user.role) && (
+              {isTopManagerRole(user.role) && hasFeature("FACTURAS") && (
                 <NavLink to="/invoices" className={navLinkClassName}>
                   {t("nav.invoices", { ns: "common" })}
                 </NavLink>
               )}
-              {isTopManagerRole(user.role) && (
+              {isTopManagerRole(user.role) && hasFeature("USUARIOS") && (
                 <NavLink to="/users" className={navLinkClassName}>
                   {t("nav.users", { ns: "common" })}
                 </NavLink>
@@ -139,6 +151,11 @@ export function Layout() {
               {isTopManagerRole(user.role) && (
                 <NavLink to="/settings" className={navLinkClassName}>
                   {t("nav.settings", { ns: "common" })}
+                </NavLink>
+              )}
+              {user.role === "GERENTE" && (
+                <NavLink to="/permissions" className={navLinkClassName}>
+                  {t("nav.permissions", { ns: "common" })}
                 </NavLink>
               )}
             </div>

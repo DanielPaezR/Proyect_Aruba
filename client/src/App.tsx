@@ -14,6 +14,7 @@ import { MaterialRequestsPage } from "./pages/MaterialRequestsPage";
 import { MyActivitiesPage } from "./pages/MyActivitiesPage";
 import { MyHoursPage } from "./pages/MyHoursPage";
 import { MyToolsPage } from "./pages/MyToolsPage";
+import { PermissionsPage } from "./pages/PermissionsPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { ProjectChatPage } from "./pages/ProjectChatPage";
 import { ProjectDetailPage } from "./pages/ProjectDetailPage";
@@ -58,6 +59,7 @@ function App() {
               <Route path="/tool-incidents" element={<ToolIncidentsPage />} />
               <Route path="/my-tools" element={<MyToolsPage />} />
               <Route path="/request-materials" element={<RequestMaterialsPage />} />
+              <Route path="/permissions" element={<PermissionsPage />} />
             </Route>
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

@@ -1,10 +1,14 @@
 import { Router } from "express";
+import { Feature } from "@prisma/client";
 import { authenticate, authorize, INVENTORY_ROLES } from "../../middleware/auth.middleware";
+import { requireFeature } from "../../middleware/requireFeature.middleware";
 import * as toolAssignmentsController from "./tool-assignments.controller";
 
 export const toolAssignmentsRouter = Router();
 
-toolAssignmentsRouter.use(authenticate);
+// requireFeature no bloquea nunca a TRABAJADOR_CAMPO, asi que /mine (abajo)
+// sigue funcionando igual sin importar el estado de esta Feature.
+toolAssignmentsRouter.use(authenticate, requireFeature(Feature.INVENTARIO));
 
 // "Mis herramientas": el propio Trabajador de Campo, sobre sus asignaciones
 // activas — antes el router entero estaba gateado a INVENTORY_ROLES, lo que

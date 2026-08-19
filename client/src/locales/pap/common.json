@@ -41,6 +41,7 @@
     "invoices": "Facturanan",
     "users": "Usuarionan",
     "settings": "Konfigurashon",
+    "permissions": "Permisonan",
     "teamMap": "Mapa di ekipo",
     "agenda": "Agenda",
     "inventory": "Inventario",
@@ -127,7 +128,8 @@
       "ALREADY_ON_LUNCH": "Bo ta na bo almuerzo kaba",
       "NO_OPEN_LUNCH": "Bo no tin un almuerzo habrí pa finalisá",
       "NO_OPEN_ENTRY_FOR_LUNCH": "Bo no tin un entrada habrí pa marka almuerzo",
-      "CANNOT_EXIT_DURING_LUNCH": "Bo mester finalisá bo almuerzo promé bo marka salida"
+      "CANNOT_EXIT_DURING_LUNCH": "Bo mester finalisá bo almuerzo promé bo marka salida",
+      "FEATURE_ACCESS_DENIED": "Bo no tin akseso na e sekshon aki. Kontakta e Gerente."
     }
   }
 }

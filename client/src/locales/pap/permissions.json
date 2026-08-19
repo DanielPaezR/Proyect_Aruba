@@ -1,0 +1,13 @@
+{
+  "title": "Permisonan",
+  "hint": "Kontrolá na kua sekshonnan kada persona tin akseso. Esaki ta un \"portón\" pa kada sekshon, separá di loke kada un por hasi ora e ta paden — esei no ta kambia aki.",
+  "empty": "No tin usuario pa gestioná",
+  "features": {
+    "USUARIOS": "Usuarionan",
+    "PROYECTOS": "Proyektonan",
+    "CLIENTES": "Klientenan",
+    "INVENTARIO": "Inventario",
+    "EVIDENCIAS": "Evidensianan",
+    "FACTURAS": "Facturanan"
+  }
+}

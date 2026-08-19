@@ -41,6 +41,7 @@
     "invoices": "Facturas",
     "users": "Usuarios",
     "settings": "Configuración",
+    "permissions": "Permisos",
     "teamMap": "Mapa del equipo",
     "agenda": "Agenda",
     "inventory": "Inventario",
@@ -127,7 +128,8 @@
       "ALREADY_ON_LUNCH": "Ya estás en tu almuerzo",
       "NO_OPEN_LUNCH": "No tienes un almuerzo abierto para finalizar",
       "NO_OPEN_ENTRY_FOR_LUNCH": "No tienes una entrada abierta para marcar almuerzo",
-      "CANNOT_EXIT_DURING_LUNCH": "Debes finalizar tu almuerzo antes de marcar salida"
+      "CANNOT_EXIT_DURING_LUNCH": "Debes finalizar tu almuerzo antes de marcar salida",
+      "FEATURE_ACCESS_DENIED": "No tienes acceso a esta sección. Contacta al Gerente."
     }
   }
 }

@@ -1,0 +1,13 @@
+{
+  "title": "Permissions",
+  "hint": "Control which sections each person can access. This is a \"gate\" per section, separate from what each person can do once inside — that doesn't change here.",
+  "empty": "No users to manage",
+  "features": {
+    "USUARIOS": "Users",
+    "PROYECTOS": "Projects",
+    "CLIENTES": "Clients",
+    "INVENTARIO": "Inventory",
+    "EVIDENCIAS": "Evidence",
+    "FACTURAS": "Invoices"
+  }
+}

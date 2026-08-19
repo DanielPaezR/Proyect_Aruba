@@ -1,10 +1,15 @@
 import { Router } from "express";
+import { Feature } from "@prisma/client";
 import { authenticate, authorize, INVENTORY_ROLES } from "../../middleware/auth.middleware";
+import { requireFeature } from "../../middleware/requireFeature.middleware";
 import * as materialRequestsController from "./material-requests.controller";
 
 export const materialRequestsRouter = Router();
 
-materialRequestsRouter.use(authenticate);
+// requireFeature no bloquea nunca a TRABAJADOR_CAMPO, asi que crear/ver la
+// propia solicitud (abajo) sigue funcionando igual sin importar el estado
+// de esta Feature.
+materialRequestsRouter.use(authenticate, requireFeature(Feature.INVENTARIO));
 
 // Cola de trabajo de Mercaderista/Administrador/Gerente.
 materialRequestsRouter.get("/", authorize(...INVENTORY_ROLES), materialRequestsController.list);

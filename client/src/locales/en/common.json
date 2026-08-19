@@ -41,6 +41,7 @@
     "invoices": "Invoices",
     "users": "Users",
     "settings": "Settings",
+    "permissions": "Permissions",
     "teamMap": "Team map",
     "agenda": "Agenda",
     "inventory": "Inventory",
@@ -127,7 +128,8 @@
       "ALREADY_ON_LUNCH": "You're already on your lunch break",
       "NO_OPEN_LUNCH": "You don't have an open lunch break to end",
       "NO_OPEN_ENTRY_FOR_LUNCH": "You don't have an open clock-in to start a lunch break",
-      "CANNOT_EXIT_DURING_LUNCH": "You must end your lunch break before clocking out"
+      "CANNOT_EXIT_DURING_LUNCH": "You must end your lunch break before clocking out",
+      "FEATURE_ACCESS_DENIED": "You don't have access to this section. Contact the General Manager."
     }
   }
 }

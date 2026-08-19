@@ -1141,6 +1141,28 @@ a.card-title:hover {
   font-weight: 500;
 }
 
+/* Toggles de acceso por seccion (Feature), pagina /permissions */
+
+.feature-toggle-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px 16px;
+  margin-top: 12px;
+}
+
+.feature-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+
+.feature-toggle input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent);
+}
+
 /* Agenda compartida (Jefe/Supervisor) */
 
 .agenda-shared-note {

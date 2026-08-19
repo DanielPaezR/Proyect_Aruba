@@ -1,6 +1,7 @@
 import { Router } from "express";
-import { Role } from "@prisma/client";
+import { Feature, Role } from "@prisma/client";
 import { authenticate, authorize } from "../../middleware/auth.middleware";
+import { requireFeature } from "../../middleware/requireFeature.middleware";
 import { invoiceUpload } from "../../config/storage";
 import * as invoicesController from "./invoices.controller";
 
@@ -10,10 +11,12 @@ const MANAGERS = [Role.ADMINISTRADOR, Role.GERENTE, Role.SUPERVISOR];
 // Administrador/Gerente (igual que aprobar/devolver, que ya era asi).
 const ADMIN_ROLES = [Role.ADMINISTRADOR, Role.GERENTE];
 
-/** Se monta anidado en /api/projects/:projectId/invoices */
+/** Se monta anidado en /api/projects/:projectId/invoices — ya hereda el
+ * "portón" de Feature.PROYECTOS del router padre, este es el propio de
+ * facturas (alguien puede tener PROYECTOS si pero FACTURAS no). */
 export const projectInvoicesRouter = Router({ mergeParams: true });
 
-projectInvoicesRouter.use(authenticate);
+projectInvoicesRouter.use(authenticate, requireFeature(Feature.FACTURAS));
 projectInvoicesRouter.get("/", authorize(...MANAGERS), invoicesController.listForProject);
 projectInvoicesRouter.post(
   "/",
@@ -25,7 +28,7 @@ projectInvoicesRouter.post(
 /** Se monta en /api/invoices */
 export const invoicesRouter = Router();
 
-invoicesRouter.use(authenticate);
+invoicesRouter.use(authenticate, requireFeature(Feature.FACTURAS));
 
 // Cola de revision: solo Administrador/Gerente.
 invoicesRouter.get("/", authorize(...ADMIN_ROLES), invoicesController.listAll);

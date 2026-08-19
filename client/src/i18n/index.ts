@@ -24,6 +24,7 @@ import esMyTools from "../locales/es/myTools.json";
 import esRequestMaterials from "../locales/es/requestMaterials.json";
 import esAgenda from "../locales/es/agenda.json";
 import esHours from "../locales/es/hours.json";
+import esPermissions from "../locales/es/permissions.json";
 import enCommon from "../locales/en/common.json";
 import enAuth from "../locales/en/auth.json";
 import enChat from "../locales/en/chat.json";
@@ -46,6 +47,7 @@ import enMyTools from "../locales/en/myTools.json";
 import enRequestMaterials from "../locales/en/requestMaterials.json";
 import enAgenda from "../locales/en/agenda.json";
 import enHours from "../locales/en/hours.json";
+import enPermissions from "../locales/en/permissions.json";
 import papCommon from "../locales/pap/common.json";
 import papAuth from "../locales/pap/auth.json";
 import papChat from "../locales/pap/chat.json";
@@ -68,6 +70,7 @@ import papMyTools from "../locales/pap/myTools.json";
 import papRequestMaterials from "../locales/pap/requestMaterials.json";
 import papAgenda from "../locales/pap/agenda.json";
 import papHours from "../locales/pap/hours.json";
+import papPermissions from "../locales/pap/permissions.json";
 
 export const SUPPORTED_LANGUAGES = ["es", "en", "pap"] as const;
 export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
@@ -103,6 +106,7 @@ void i18n
         requestMaterials: esRequestMaterials,
         agenda: esAgenda,
         hours: esHours,
+        permissions: esPermissions,
       },
       en: {
         common: enCommon,
@@ -127,6 +131,7 @@ void i18n
         requestMaterials: enRequestMaterials,
         agenda: enAgenda,
         hours: enHours,
+        permissions: enPermissions,
       },
       pap: {
         common: papCommon,
@@ -151,6 +156,7 @@ void i18n
         requestMaterials: papRequestMaterials,
         agenda: papAgenda,
         hours: papHours,
+        permissions: papPermissions,
       },
     },
     fallbackLng: "es",
@@ -178,6 +184,7 @@ void i18n
       "requestMaterials",
       "agenda",
       "hours",
+      "permissions",
     ],
     defaultNS: "common",
     interpolation: { escapeValue: false },

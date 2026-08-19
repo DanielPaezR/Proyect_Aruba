@@ -95,6 +95,9 @@ export const ErrorCode = {
   AGENDA_EVENT_NOT_FOUND: "AGENDA_EVENT_NOT_FOUND",
   AGENDA_EVENT_EDIT_FORBIDDEN: "AGENDA_EVENT_EDIT_FORBIDDEN",
   AGENDA_EVENT_END_BEFORE_START: "AGENDA_EVENT_END_BEFORE_START",
+
+  // Acceso por seccion (Feature)
+  FEATURE_ACCESS_DENIED: "FEATURE_ACCESS_DENIED",
 } as const;
 
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];

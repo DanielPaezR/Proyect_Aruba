@@ -1,10 +1,15 @@
 import { Router } from "express";
+import { Feature } from "@prisma/client";
 import { authenticate, authorize, INVENTORY_ROLES } from "../../middleware/auth.middleware";
+import { requireFeature } from "../../middleware/requireFeature.middleware";
 import * as toolIncidentReportsController from "./tool-incident-reports.controller";
 
 export const toolIncidentReportsRouter = Router();
 
-toolIncidentReportsRouter.use(authenticate);
+// requireFeature no bloquea nunca a TRABAJADOR_CAMPO, asi que reportar un
+// daño/perdida propio (abajo) sigue funcionando igual sin importar el
+// estado de esta Feature.
+toolIncidentReportsRouter.use(authenticate, requireFeature(Feature.INVENTARIO));
 
 toolIncidentReportsRouter.get("/", authorize(...INVENTORY_ROLES), toolIncidentReportsController.list);
 

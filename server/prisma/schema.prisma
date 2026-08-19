@@ -148,6 +148,19 @@ enum AgendaEventType {
   OTRO
 }
 
+// Secciones de la app que se pueden habilitar/deshabilitar por persona (ver
+// UserFeatureAccess) — un "portón" por seccion, separado de los permisos
+// finos que ya existen dentro de cada una (esos no se tocan). USUARIOS
+// incluye CRUD de usuarios + mapa de equipo + horas/pago de trabajadores.
+enum Feature {
+  USUARIOS
+  PROYECTOS
+  CLIENTES
+  INVENTARIO
+  EVIDENCIAS
+  FACTURAS
+}
+
 // ---------- Modelos ----------
 
 model User {
@@ -220,6 +233,9 @@ model User {
 
   workerDocuments         WorkerDocument[] @relation("WorkerDocumentUser")
   uploadedWorkerDocuments WorkerDocument[] @relation("WorkerDocumentUploadedBy")
+
+  featureAccess        UserFeatureAccess[] @relation("UserFeatureAccessUser")
+  grantedFeatureAccess UserFeatureAccess[] @relation("UserFeatureAccessGrantedBy")
 
   @@map("users")
 }
@@ -810,4 +826,28 @@ model WorkerDocument {
   createdAt DateTime @default(now())
 
   @@map("worker_documents")
+}
+
+// Override explicito de acceso a una seccion (Feature) para un usuario
+// puntual — un "portón" por seccion, separado de los permisos finos que ya
+// existen dentro de cada una (esos no se tocan). Si no hay fila para
+// (userId, feature), se usa el default por rol (ver
+// permissions.service.ts ROLE_FEATURE_DEFAULTS). GERENTE ignora cualquier
+// override y siempre tiene acceso (ver requireFeature.middleware.ts), para
+// que nunca pueda quedar bloqueado a si mismo sin nadie que pueda
+// revertirlo — es deliberado, no un bug.
+model UserFeatureAccess {
+  id      String  @id @default(cuid())
+  userId  String
+  user    User    @relation("UserFeatureAccessUser", fields: [userId], references: [id], onDelete: Cascade)
+  feature Feature
+  granted Boolean
+
+  grantedById String
+  grantedBy   User   @relation("UserFeatureAccessGrantedBy", fields: [grantedById], references: [id])
+
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, feature])
+  @@map("user_feature_access")
 }

@@ -1,0 +1,13 @@
+{
+  "title": "Permisos",
+  "hint": "Controla a qué secciones tiene acceso cada persona. Esto es un \"portón\" por sección, separado de lo que cada quien puede hacer una vez adentro — eso no cambia acá.",
+  "empty": "No hay usuarios para gestionar",
+  "features": {
+    "USUARIOS": "Usuarios",
+    "PROYECTOS": "Proyectos",
+    "CLIENTES": "Clientes",
+    "INVENTARIO": "Inventario",
+    "EVIDENCIAS": "Evidencias",
+    "FACTURAS": "Facturas"
+  }
+}

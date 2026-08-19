@@ -4,10 +4,15 @@ import { useTranslation } from "react-i18next";
 import { apiClient } from "../api/client";
 import { onUnauthorized, setAccessToken } from "../api/tokenStore";
 import type { User, UserLocale } from "../types/auth";
+import type { FeaturePermissions } from "../types/permissions";
 import { subscribeToPushIfPossible } from "../utils/pushSubscription";
 
 interface AuthContextValue {
   user: User | null;
+  // null = todavia no se cargo (o fallo la carga) — la nav trata esto como
+  // "no ocultar nada" para no parpadear ni esconder secciones por un error
+  // de red, no como "sin acceso a nada". Ver Layout.tsx.
+  permissions: FeaturePermissions | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -18,13 +23,28 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
+async function fetchOwnPermissions(): Promise<FeaturePermissions | null> {
+  try {
+    const { data } = await apiClient.get<{ permissions: FeaturePermissions }>("/permissions/mine");
+    return data.permissions;
+  } catch {
+    // Seccion secundaria (solo afecta que la nav oculte o no un link): un
+    // fallo aca no debe tumbar el login ni el bootstrap de sesion.
+    return null;
+  }
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { i18n } = useTranslation();
   const [user, setUser] = useState<User | null>(null);
+  const [permissions, setPermissions] = useState<FeaturePermissions | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    onUnauthorized(() => setUser(null));
+    onUnauthorized(() => {
+      setUser(null);
+      setPermissions(null);
+    });
   }, []);
 
   useEffect(() => {
@@ -39,10 +59,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setUser(me.data.user);
           void i18n.changeLanguage(me.data.user.locale.toLowerCase());
         }
+        const perms = await fetchOwnPermissions();
+        if (!cancelled) {
+          setPermissions(perms);
+        }
       } catch {
         setAccessToken(null);
         if (!cancelled) {
           setUser(null);
+          setPermissions(null);
         }
       } finally {
         if (!cancelled) {
@@ -72,6 +97,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (data.user.role === "TRABAJADOR_CAMPO") {
       void subscribeToPushIfPossible();
     }
+
+    setPermissions(await fetchOwnPermissions());
   }
 
   async function logout() {
@@ -80,6 +107,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setAccessToken(null);
       setUser(null);
+      setPermissions(null);
     }
   }
 
@@ -107,8 +135,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   const value = useMemo<AuthContextValue>(
-    () => ({ user, isLoading, login, logout, updateLocale, updateProfile, updateMe }),
-    [user, isLoading],
+    () => ({ user, permissions, isLoading, login, logout, updateLocale, updateProfile, updateMe }),
+    [user, permissions, isLoading],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
