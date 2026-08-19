@@ -57,7 +57,6 @@ export function LoginPage() {
 
       <div className="login-form-panel">
         <div className="login-form-panel-topbar">
-          <img src={logoUrl} alt="DECS" className="login-mobile-logo" />
           <LanguageSwitcher />
         </div>
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
+import { MessageCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
@@ -327,6 +328,10 @@ export function ProjectDetailPage() {
               <span className="status-badge">{translateStatus(t, "projects", "status", project.status)}</span>
             </div>
             <div className="card-actions">
+              <Link to={`/projects/${projectId}/chat`} state={{ projectName: project.name }}>
+                <MessageCircle size={16} aria-hidden="true" />
+                {t("detail.chatButton", { ns: "projects" })}
+              </Link>
               {canManage && (
                 <button type="button" onClick={openProjectEdit}>
                   {t("actions.edit", { ns: "common" })}
@@ -632,6 +637,10 @@ export function ProjectDetailPage() {
                 {t("referenceImageLabel", { ns: "activities" })}
                 <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleReferenceImageChange} />
               </label>
+              {/* PENDIENTE: campo de materiales necesarios para esta actividad
+                  (items del catálogo de inventario + cantidad estimada) — depende
+                  del modulo de inventario, que se esta construyendo aparte.
+                  No implementar todavia. */}
               {formError && (
                 <p className="form-error" role="alert">
                   {formError}
@@ -763,6 +772,8 @@ export function ProjectDetailPage() {
                           onChange={handleActivityEditImageChange}
                         />
                       </label>
+                      {/* PENDIENTE: mismo campo de materiales necesarios que falta
+                          en el form de creacion, ver comentario mas arriba. */}
                       {activityEditError && (
                         <p className="form-error" role="alert">
                           {activityEditError}

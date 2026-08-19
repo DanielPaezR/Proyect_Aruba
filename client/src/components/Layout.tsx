@@ -41,9 +41,6 @@ export function Layout() {
             <span className="app-name">{t("app.name", { ns: "common" })}</span>
           </div>
         </div>
-        <div className="topbar-actions">
-          <LanguageSwitcher />
-        </div>
       </header>
 
       {user && isDrawerOpen && (
@@ -140,9 +137,12 @@ export function Layout() {
               <NavLink to="/profile" className="drawer-profile-link" onClick={closeDrawer}>
                 {user.name} · {t(`roles.${user.role}`, { ns: "common" })}
               </NavLink>
-              <button type="button" className="drawer-logout-button" onClick={() => void logout()}>
-                {t("actions.logout", { ns: "common" })}
-              </button>
+              <div className="drawer-footer-actions">
+                <LanguageSwitcher />
+                <button type="button" className="drawer-logout-button" onClick={() => void logout()}>
+                  {t("actions.logout", { ns: "common" })}
+                </button>
+              </div>
             </div>
           </nav>
         </div>

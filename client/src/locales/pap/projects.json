@@ -39,6 +39,7 @@
     "message": "Bo ta sigur bo ke elimina \"{{name}}\"? E akshon aki no por wordu revertí."
   },
   "empty": "Ainda no tin proyekto",
+  "chatButton": "Chat",
   "searchPlaceholder": "Buska proyekto pa nòmber...",
   "noResults": "Ningun proyekto ta koinsidi ku e búsqueda",
   "activitiesCount_one": "{{count}} aktividat",
@@ -85,6 +86,7 @@
     "notSpecified": "No spesifiká",
     "viewPlansButton": "Wak plano elektriko",
     "viewClientButton": "Wak fichi di kliente",
-    "viewOnMapsButton": "Wak den Google Maps"
+    "viewOnMapsButton": "Wak den Google Maps",
+    "chatButton": "Chat di proyekto"
   }
 }

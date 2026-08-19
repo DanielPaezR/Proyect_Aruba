@@ -39,6 +39,7 @@
     "message": "¿Estás seguro de que quieres eliminar \"{{name}}\"? Esta acción no se puede deshacer."
   },
   "empty": "Todavía no hay proyectos",
+  "chatButton": "Chat",
   "searchPlaceholder": "Buscar proyecto por nombre...",
   "noResults": "Ningún proyecto coincide con la búsqueda",
   "activitiesCount_one": "{{count}} actividad",
@@ -85,6 +86,7 @@
     "notSpecified": "No especificado",
     "viewPlansButton": "Ver planos eléctricos",
     "viewClientButton": "Ver ficha del cliente",
-    "viewOnMapsButton": "Ver en Google Maps"
+    "viewOnMapsButton": "Ver en Google Maps",
+    "chatButton": "Chat del proyecto"
   }
 }

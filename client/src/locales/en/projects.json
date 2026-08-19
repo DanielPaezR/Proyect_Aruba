@@ -39,6 +39,7 @@
     "message": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone."
   },
   "empty": "No projects yet",
+  "chatButton": "Chat",
   "searchPlaceholder": "Search project by name...",
   "noResults": "No projects match your search",
   "activitiesCount_one": "{{count}} activity",
@@ -85,6 +86,7 @@
     "notSpecified": "Not specified",
     "viewPlansButton": "View electrical plans",
     "viewClientButton": "View client record",
-    "viewOnMapsButton": "View on Google Maps"
+    "viewOnMapsButton": "View on Google Maps",
+    "chatButton": "Project chat"
   }
 }

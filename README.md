@@ -218,3 +218,16 @@ celular Android — debería aparecer el ícono de instalar en la barra de
 direcciones (desktop) o el banner "Agregar a pantalla de inicio" (Android).
 En iOS Safari no hay prompt automático: se instala manual desde Compartir →
 "Agregar a inicio".
+
+## Pendiente
+
+- **Campo de materiales necesarios en el formulario de actividad**
+  (`ProjectDetailPage.tsx`, forms de crear/editar actividad): elegir ítems
+  del catálogo de inventario + cantidad estimada para esa actividad. Depende
+  de un vínculo Activity ↔ InventoryItem que todavía no existe en el schema
+  — el módulo de inventario (`InventoryItem`, `MaterialRequest`,
+  `ToolAssignment`, `ToolIncidentReport`) ya está construido y en uso
+  (`/inventory`, `/material-requests`, `/tool-assignments`,
+  `/tool-incidents`, más `/my-tools` y `/request-materials` del lado del
+  trabajador), pero ninguno de esos modelos referencia todavía una
+  actividad puntual.

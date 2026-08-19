@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
+import { MessageCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
@@ -304,13 +305,17 @@ export function ProjectsListPage() {
                     {t("activitiesCount", { ns: "projects", count: project._count?.activities ?? 0 })}
                   </span>
                 </Link>
-                {user.role === "JEFE" && (
-                  <div className="card-actions">
+                <div className="card-actions">
+                  <Link to={`/projects/${project.id}/chat`} state={{ projectName: project.name }}>
+                    <MessageCircle size={16} aria-hidden="true" />
+                    {t("chatButton", { ns: "projects" })}
+                  </Link>
+                  {user.role === "JEFE" && (
                     <button type="button" className="danger-button" onClick={() => setProjectToDelete(project)}>
                       {t("actions.delete", { ns: "common" })}
                     </button>
-                  </div>
-                )}
+                  )}
+                </div>
               </li>
             ))}
           </ul>
