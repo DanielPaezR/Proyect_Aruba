@@ -1,8 +1,16 @@
+import http from "node:http";
 import { app } from "./app";
 import { env } from "./config/env";
 import { startPunchReminderJob } from "./jobs/punchReminders";
+import { attachChatGateway } from "./realtime/chat.gateway";
 
-app.listen(env.port, () => {
+// http.createServer(app) en vez de app.listen(): Socket.IO necesita el mismo
+// servidor HTTP subyacente para hacer el upgrade a WebSocket sobre el puerto
+// que ya expone Express.
+const httpServer = http.createServer(app);
+attachChatGateway(httpServer);
+
+httpServer.listen(env.port, () => {
   console.log(`Servidor escuchando en http://localhost:${env.port}`);
 });
 

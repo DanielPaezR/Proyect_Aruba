@@ -7,11 +7,23 @@ import type { CreateProjectInput, UpdateProjectInput } from "./projects.validato
 type AuthUser = { id: string; role: Role };
 
 /** Un Trabajador de Campo solo ve proyectos donde tiene alguna actividad asignada. */
-function visibilityWhere(user: AuthUser) {
+export function visibilityWhere(user: AuthUser) {
   if (user.role === Role.TRABAJADOR_CAMPO) {
     return { activities: { some: { assignments: { some: { userId: user.id } } } } };
   }
   return {};
+}
+
+/** Mismo criterio que visibilityWhere, para lugares que solo necesitan un booleano
+ * (ej. autorizar unirse a la sala de chat de un proyecto). Jefe/Supervisor siempre
+ * pueden; Trabajador de Campo solo si tiene alguna actividad asignada en el proyecto —
+ * se valida contra la DB, nunca confiando en lo que mande el cliente. */
+export async function canAccessProject(user: AuthUser, projectId: string): Promise<boolean> {
+  const project = await prisma.project.findFirst({
+    where: { id: projectId, ...visibilityWhere(user) },
+    select: { id: true },
+  });
+  return project !== null;
 }
 
 export async function listProjects(user: AuthUser, filters: { status?: ProjectStatus }) {

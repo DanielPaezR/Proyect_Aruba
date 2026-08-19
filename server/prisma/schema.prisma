@@ -165,6 +165,7 @@ model User {
   reviewedInvoices    Invoice[]            @relation("InvoiceReviewedBy")
   recordedPayments    Payment[]            @relation("PaymentRecordedBy")
   skippedActivities   Activity[]           @relation("ActivitySkippedBy")
+  chatMessages        ChatMessage[]
   refreshTokens       RefreshToken[]
   pushSubscriptions   PushSubscription[]
   punchReminderLogs   PunchReminderLog[]
@@ -247,9 +248,10 @@ model Project {
   createdById String
   createdBy   User   @relation("ProjectCreatedBy", fields: [createdById], references: [id])
 
-  activities Activity[]
-  invoices   Invoice[]
-  payments   Payment[]
+  activities   Activity[]
+  invoices     Invoice[]
+  payments     Payment[]
+  chatMessages ChatMessage[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -497,6 +499,28 @@ model Payment {
   @@index([projectId])
   @@index([paymentDate])
   @@map("payments")
+}
+
+// Chat en tiempo real por proyecto (Socket.IO), visible para Jefe/Supervisor
+// y los trabajadores asignados a alguna actividad de ese proyecto (mismo
+// criterio de visibilidad que Project.visibilityWhere). Sin edicion/borrado
+// de mensajes por ahora — es un canal de comunicacion, no un registro
+// auditable como Payment.
+model ChatMessage {
+  id String @id @default(cuid())
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  senderId String
+  sender   User   @relation(fields: [senderId], references: [id])
+
+  content String
+
+  createdAt DateTime @default(now())
+
+  @@index([projectId, createdAt])
+  @@map("chat_messages")
 }
 
 // Fila unica (singleton, id fijo = 1) con la configuracion de la empresa para
