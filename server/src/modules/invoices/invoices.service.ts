@@ -34,7 +34,7 @@ export async function listForProject(projectId: string) {
   });
 }
 
-/** Cola de trabajo del Jefe: todas las facturas (filtrables por status) de todos los proyectos. */
+/** Cola de trabajo de Administrador/Gerente: todas las facturas (filtrables por status) de todos los proyectos. */
 export async function listAll(filters: { status?: InvoiceStatus }) {
   return prisma.invoice.findMany({
     where: {

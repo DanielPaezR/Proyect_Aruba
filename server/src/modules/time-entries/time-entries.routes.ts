@@ -3,7 +3,7 @@ import { Role } from "@prisma/client";
 import { authenticate, authorize } from "../../middleware/auth.middleware";
 import * as timeEntriesController from "./time-entries.controller";
 
-const MANAGERS = [Role.JEFE, Role.SUPERVISOR];
+const MANAGERS = [Role.ADMINISTRADOR, Role.GERENTE, Role.SUPERVISOR];
 
 export const timeEntriesRouter = Router();
 

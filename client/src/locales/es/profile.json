@@ -4,7 +4,7 @@
   "nameLabel": "Nombre",
   "emailLabel": "Correo electrónico",
   "roleLabel": "Rol",
-  "readOnlyHint": "El nombre, correo y rol los administra el Jefe desde gestión de usuarios.",
+  "readOnlyHint": "El nombre, correo y rol los administra el Administrador/Gerente desde gestión de usuarios.",
   "phoneLabel": "Teléfono",
   "specialtiesLabel": "Especialidades (separadas por coma)",
   "specialtiesPlaceholder": "Ej. Cableado residencial, Paneles solares",

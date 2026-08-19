@@ -80,9 +80,9 @@ async function handleJoin(
   }
 
   try {
-    // Valida contra la DB, nunca confiando en lo que mande el cliente: Jefe/
-    // Supervisor siempre pueden, Trabajador de Campo solo si tiene alguna
-    // actividad asignada en ese proyecto.
+    // Valida contra la DB, nunca confiando en lo que mande el cliente:
+    // Administrador/Gerente/Supervisor siempre pueden, Trabajador de Campo
+    // solo si tiene alguna actividad asignada en ese proyecto.
     const allowed = await canAccessProject(socket.data.user, projectId);
     if (!allowed) {
       ack?.({ ok: false, error: ErrorCode.FORBIDDEN_ROLE });

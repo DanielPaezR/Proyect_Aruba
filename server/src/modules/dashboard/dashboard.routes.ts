@@ -8,7 +8,7 @@ export const dashboardRouter = Router();
 dashboardRouter.use(authenticate);
 dashboardRouter.get(
   "/supervisor",
-  authorize(Role.JEFE, Role.SUPERVISOR),
+  authorize(Role.ADMINISTRADOR, Role.GERENTE, Role.SUPERVISOR),
   dashboardController.supervisorDashboard,
 );
 dashboardRouter.get("/worker", dashboardController.workerDashboard);

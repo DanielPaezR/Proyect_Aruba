@@ -1,6 +1,6 @@
 {
   "title": "Agenda",
-  "sharedNote": "Agenda compartida del equipo de gestión: todos los eventos son visibles para Jefe y Supervisor, no es una agenda personal.",
+  "sharedNote": "Agenda compartida del equipo de gestión: todos los eventos son visibles para Administrador, Gerente y Supervisor, no es una agenda personal.",
   "createButton": "Nuevo evento",
   "createFormTitle": "Nuevo evento",
   "editFormTitle": "Editar evento",

@@ -6,13 +6,18 @@ import type { CreateAgendaEventInput, UpdateAgendaEventInput } from "./agenda-ev
 
 type AuthUser = { id: string; role: Role };
 
+// GERENTE tiene el mismo acceso que ADMINISTRADOR (antiguo JEFE) en todo lo
+// existente, incluida la edicion/borrado de un evento ajeno.
+const ADMIN_ROLES: Role[] = [Role.ADMINISTRADOR, Role.GERENTE];
+
 const agendaEventInclude = {
   createdBy: { select: { id: true, name: true } },
 } as const;
 
 /**
- * Agenda compartida: cualquier Jefe/Supervisor autenticado ve TODOS los
- * eventos del rango, no solo los suyos — no es una agenda personal.
+ * Agenda compartida: cualquier Administrador/Gerente/Supervisor autenticado
+ * ve TODOS los eventos del rango, no solo los suyos — no es una agenda
+ * personal.
  */
 export async function listAgendaEvents(from: Date, to: Date) {
   return prisma.agendaEvent.findMany({
@@ -45,7 +50,7 @@ async function ensureEditAccess(user: AuthUser, eventId: string) {
     throw ApiError.notFound(ErrorCode.AGENDA_EVENT_NOT_FOUND, "Evento no encontrado");
   }
 
-  if (user.role !== Role.JEFE && event.createdById !== user.id) {
+  if (!ADMIN_ROLES.includes(user.role) && event.createdById !== user.id) {
     throw ApiError.forbidden(ErrorCode.AGENDA_EVENT_EDIT_FORBIDDEN, "No puedes editar este evento");
   }
 

@@ -10,6 +10,7 @@ import { ClientPicker } from "./ClientPicker";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { PAYMENT_METHODS } from "../types/payment";
 import type { Payment, PaymentsListResponse } from "../types/payment";
+import { isTopManagerRole } from "../types/auth";
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
@@ -139,7 +140,7 @@ export function ProjectPaymentsSection({ projectId, hasClient, onClientLinked }:
     <section className="project-payments-section">
       <div className="page-header">
         <h2 className="section-label">{t("sectionTitle", { ns: "payments" })}</h2>
-        {hasClient && (
+        {hasClient && user && isTopManagerRole(user.role) && (
           <button type="button" onClick={() => setIsFormOpen((open) => !open)}>
             {t("addButton", { ns: "payments" })}
           </button>
@@ -172,7 +173,7 @@ export function ProjectPaymentsSection({ projectId, hasClient, onClientLinked }:
         </div>
       )}
 
-      {hasClient && isFormOpen && (
+      {hasClient && isFormOpen && user && isTopManagerRole(user.role) && (
         <form className="inline-form" onSubmit={(event) => void handleCreate(event)}>
           <h2>{t("addFormTitle", { ns: "payments" })}</h2>
           <label>
@@ -263,7 +264,7 @@ export function ProjectPaymentsSection({ projectId, hasClient, onClientLinked }:
                 )}
                 {payment.notes && <p className="card-description">{payment.notes}</p>}
 
-                {user?.role === "JEFE" && (
+                {user && isTopManagerRole(user.role) && (
                   <div className="card-actions">
                     <button type="button" className="danger-button" onClick={() => setPaymentToDelete(payment)}>
                       {t("actions.delete", { ns: "common" })}

@@ -9,7 +9,7 @@ import { ClientPicker } from "../components/ClientPicker";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
-import { isManagerRole } from "../types/auth";
+import { isManagerRole, isTopManagerRole } from "../types/auth";
 import { PROJECT_PRIORITIES, PROJECT_PROPERTY_TYPES, PROJECT_SECTORS, PROJECT_WORK_TYPES } from "../types/project";
 import type { Project } from "../types/project";
 import { isValidGoogleMapsUrl } from "../utils/mapsUrl";
@@ -310,7 +310,7 @@ export function ProjectsListPage() {
                     <MessageCircle size={16} aria-hidden="true" />
                     {t("chatButton", { ns: "projects" })}
                   </Link>
-                  {user.role === "JEFE" && (
+                  {isTopManagerRole(user.role) && (
                     <button type="button" className="danger-button" onClick={() => setProjectToDelete(project)}>
                       {t("actions.delete", { ns: "common" })}
                     </button>

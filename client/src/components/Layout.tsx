@@ -4,7 +4,7 @@ import { Menu, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import { useGeofenceCheck } from "../hooks/useGeofenceCheck";
-import { isInventoryRole, isManagerRole, isTimeTrackingRole } from "../types/auth";
+import { isInventoryRole, isManagerRole, isTimeTrackingRole, isTopManagerRole } from "../types/auth";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 
 function navLinkClassName({ isActive }: { isActive: boolean }) {
@@ -126,17 +126,17 @@ export function Layout() {
                   {t("nav.toolIncidents", { ns: "common" })}
                 </NavLink>
               )}
-              {user.role === "JEFE" && (
+              {isTopManagerRole(user.role) && (
                 <NavLink to="/invoices" className={navLinkClassName}>
                   {t("nav.invoices", { ns: "common" })}
                 </NavLink>
               )}
-              {user.role === "JEFE" && (
+              {isTopManagerRole(user.role) && (
                 <NavLink to="/users" className={navLinkClassName}>
                   {t("nav.users", { ns: "common" })}
                 </NavLink>
               )}
-              {user.role === "JEFE" && (
+              {isTopManagerRole(user.role) && (
                 <NavLink to="/settings" className={navLinkClassName}>
                   {t("nav.settings", { ns: "common" })}
                 </NavLink>

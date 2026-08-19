@@ -6,4 +6,8 @@ import * as usersController from "./users.controller";
 export const usersRouter = Router();
 
 usersRouter.use(authenticate);
-usersRouter.get("/locations", authorize(Role.JEFE, Role.SUPERVISOR), usersController.locations);
+usersRouter.get(
+  "/locations",
+  authorize(Role.ADMINISTRADOR, Role.GERENTE, Role.SUPERVISOR),
+  usersController.locations,
+);

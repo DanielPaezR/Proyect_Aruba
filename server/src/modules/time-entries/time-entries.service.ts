@@ -12,7 +12,7 @@ type LastEntry = { type: PunchType } | null;
 // Ver comentario equivalente en activities.service.ts: ensureActivityAccessible
 // no tiene authorize() a nivel de ruta, asi que el chequeo de rol tiene que
 // ser explicito aca para no dejar pasar por descarte a un rol nuevo.
-const MANAGERS: Role[] = [Role.JEFE, Role.SUPERVISOR];
+const MANAGERS: Role[] = [Role.ADMINISTRADOR, Role.GERENTE, Role.SUPERVISOR];
 
 const timeEntryInclude = {
   user: { select: { id: true, name: true } },

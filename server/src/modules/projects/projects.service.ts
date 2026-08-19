@@ -15,9 +15,10 @@ export function visibilityWhere(user: AuthUser) {
 }
 
 /** Mismo criterio que visibilityWhere, para lugares que solo necesitan un booleano
- * (ej. autorizar unirse a la sala de chat de un proyecto). Jefe/Supervisor siempre
- * pueden; Trabajador de Campo solo si tiene alguna actividad asignada en el proyecto —
- * se valida contra la DB, nunca confiando en lo que mande el cliente. */
+ * (ej. autorizar unirse a la sala de chat de un proyecto). Administrador/Gerente/
+ * Supervisor siempre pueden; Trabajador de Campo solo si tiene alguna actividad
+ * asignada en el proyecto — se valida contra la DB, nunca confiando en lo que
+ * mande el cliente. */
 export async function canAccessProject(user: AuthUser, projectId: string): Promise<boolean> {
   const project = await prisma.project.findFirst({
     where: { id: projectId, ...visibilityWhere(user) },

@@ -13,7 +13,7 @@ type AuthUser = { id: string; role: Role };
 // Quien puede reportar a nombre de otro (ademas del propio trabajador que
 // tiene la herramienta a cargo) — mismo criterio que "omitir actividad":
 // el dueño del recurso, o gestion.
-const OVERRIDE_ROLES: Role[] = [Role.JEFE, Role.SUPERVISOR, Role.MERCADERISTA];
+const OVERRIDE_ROLES: Role[] = [Role.ADMINISTRADOR, Role.GERENTE, Role.SUPERVISOR, Role.MERCADERISTA];
 
 const toolIncidentReportInclude = {
   reportedBy: { select: { id: true, name: true } },

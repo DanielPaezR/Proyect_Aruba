@@ -8,7 +8,7 @@ import { BackButton } from "../components/BackButton";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
-import { isManagerRole } from "../types/auth";
+import { isManagerRole, isTopManagerRole } from "../types/auth";
 import type { SalaryRaise } from "../types/salaryRaise";
 import type { WorkerDocument } from "../types/workerDocument";
 import type { MonthlyScore } from "../types/workerScore";
@@ -52,7 +52,7 @@ export function WorkerProfilePage() {
   const { user: currentUser } = useAuth();
   const { userId } = useParams<{ userId: string }>();
 
-  const isJefe = currentUser?.role === "JEFE";
+  const isTopManager = Boolean(currentUser && isTopManagerRole(currentUser.role));
 
   const [profile, setProfile] = useState<WorkerProfile | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -409,7 +409,7 @@ export function WorkerProfilePage() {
                 </span>
               </div>
             </div>
-            {isJefe && (
+            {isTopManager && (
               <div className="card-actions">
                 <label>
                   {isUploadingPhoto ? t("profile.uploadingPhoto", { ns: "users" }) : t("profile.changePhotoButton", { ns: "users" })}
@@ -439,18 +439,18 @@ export function WorkerProfilePage() {
             )}
           </div>
 
-          {isJefe && photoError && (
+          {isTopManager && photoError && (
             <p className="form-error" role="alert">
               {photoError}
             </p>
           )}
-          {isJefe && reactivateError && (
+          {isTopManager && reactivateError && (
             <p className="form-error" role="alert">
               {reactivateError}
             </p>
           )}
 
-          {isJefe && isEditOpen && editForm && (
+          {isTopManager && isEditOpen && editForm && (
             <form className="inline-form" onSubmit={(event) => void handleUpdate(event)}>
               <h2>{t("profile.editFormTitle", { ns: "users" })}</h2>
               <label>
@@ -637,7 +637,7 @@ export function WorkerProfilePage() {
             </dl>
           </section>
 
-          {isJefe && (
+          {isTopManager && (
             <section>
               <div className="page-header">
                 <h2 className="section-label">{t("salary.historyTitle", { ns: "users" })}</h2>
@@ -752,7 +752,7 @@ export function WorkerProfilePage() {
             </section>
           )}
 
-          {isJefe && (
+          {isTopManager && (
             <section>
               <div className="page-header">
                 <h2 className="section-label">{t("score.historyTitle", { ns: "users" })}</h2>
@@ -920,7 +920,7 @@ export function WorkerProfilePage() {
                       <span className="card-meta">
                         {t("profile.documentUploadedBy", { ns: "users", name: document.uploadedBy.name })}
                       </span>
-                      {(isJefe || document.uploadedById === currentUser.id) && (
+                      {(isTopManager || document.uploadedById === currentUser.id) && (
                         <div className="card-actions">
                           <button type="button" className="danger-button" onClick={() => setDocToDelete(document)}>
                             {t("actions.delete", { ns: "common" })}

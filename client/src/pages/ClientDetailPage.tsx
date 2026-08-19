@@ -8,7 +8,7 @@ import { BackButton } from "../components/BackButton";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
-import { isManagerRole } from "../types/auth";
+import { isManagerRole, isTopManagerRole } from "../types/auth";
 import type { ClientDetail } from "../types/client";
 import type { ClientPaymentsListResponse } from "../types/payment";
 import { formatCurrency } from "../utils/formatCurrency";
@@ -166,7 +166,7 @@ export function ClientDetailPage() {
               <button type="button" onClick={openEdit}>
                 {t("actions.edit", { ns: "common" })}
               </button>
-              {user.role === "JEFE" && (
+              {isTopManagerRole(user.role) && (
                 <button type="button" className="danger-button" onClick={() => setIsDeleteOpen(true)}>
                   {t("actions.delete", { ns: "common" })}
                 </button>

@@ -4,7 +4,7 @@ import { authenticate, authorize } from "../../middleware/auth.middleware";
 import { imageUpload } from "../../config/storage";
 import * as evidencesController from "./evidences.controller";
 
-const MANAGERS = [Role.JEFE, Role.SUPERVISOR];
+const MANAGERS = [Role.ADMINISTRADOR, Role.GERENTE, Role.SUPERVISOR];
 
 /** Se monta anidado en /api/activities/:activityId/evidences */
 export const activityEvidencesRouter = Router({ mergeParams: true });
@@ -19,5 +19,5 @@ export const evidencesRouter = Router();
 evidencesRouter.use(authenticate);
 evidencesRouter.get("/", authorize(...MANAGERS), evidencesController.list);
 evidencesRouter.patch("/:evidenceId/review", authorize(...MANAGERS), evidencesController.review);
-// Sin authorize a nivel de ruta: el service decide (dueño con evidencia PENDIENTE, o Jefe).
+// Sin authorize a nivel de ruta: el service decide (dueño con evidencia PENDIENTE, o Administrador/Gerente).
 evidencesRouter.delete("/:evidenceId", evidencesController.remove);

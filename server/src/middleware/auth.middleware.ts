@@ -52,14 +52,14 @@ export function authorize(...roles: Role[]) {
 
 /**
  * Gestión de inventario (herramientas/materiales) — separado a propósito de
- * MANAGERS/isManagerRole: JEFE/SUPERVISOR gestionan proyectos, MERCADERISTA
- * gestiona inventario; JEFE tiene acceso de escritura ademas por su rol de
- * autoridad general (mismo patron que evidencias/facturas), SUPERVISOR no.
- * SUPERVISOR y TRABAJADOR_CAMPO igual pueden LEER el catálogo (para saber
- * qué existe al pedir materiales) — eso se gatea aparte con authenticate a
- * secas, sin este guard.
+ * MANAGERS/isManagerRole: ADMINISTRADOR/GERENTE/SUPERVISOR gestionan
+ * proyectos, MERCADERISTA gestiona inventario; ADMINISTRADOR/GERENTE tienen
+ * acceso de escritura ademas por su rol de autoridad general (mismo patron
+ * que evidencias/facturas), SUPERVISOR no. SUPERVISOR y TRABAJADOR_CAMPO
+ * igual pueden LEER el catálogo (para saber qué existe al pedir materiales)
+ * — eso se gatea aparte con authenticate a secas, sin este guard.
  */
-export const INVENTORY_ROLES: Role[] = [Role.MERCADERISTA, Role.JEFE];
+export const INVENTORY_ROLES: Role[] = [Role.MERCADERISTA, Role.ADMINISTRADOR, Role.GERENTE];
 
 export function isInventoryRole(role: Role): boolean {
   return INVENTORY_ROLES.includes(role);

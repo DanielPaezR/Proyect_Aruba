@@ -23,7 +23,8 @@
     "pap": "Papiamento"
   },
   "roles": {
-    "JEFE": "Hefe",
+    "GERENTE": "Gerente",
+    "ADMINISTRADOR": "Administradó",
     "SUPERVISOR": "Supervisor",
     "TRABAJADOR_CAMPO": "Trahadó di kampo",
     "MERCADERISTA": "Merkaderista"
@@ -117,7 +118,7 @@
       "TOOL_INCIDENT_REPORT_NOT_FOUND": "No a haña e reporte",
       "TOOL_INCIDENT_ALREADY_RESOLVED": "E reporte aki ya a wordu resolví",
       "TOOL_NOT_ASSIGNED_TO_YOU": "E hermenshi aki no ta na bo enkargo",
-      "USER_ACCOUNT_DEACTIVATED": "E kuenta aki a wordu desaktivá. Kontakta e Hefe.",
+      "USER_ACCOUNT_DEACTIVATED": "E kuenta aki a wordu desaktivá. Kontakta e Administradó.",
       "USER_ALREADY_INACTIVE": "E usuario aki ya ta inaktivo",
       "USER_ALREADY_ACTIVE": "E usuario aki ya ta aktivo",
       "CANNOT_DEACTIVATE_SELF": "Bo no por desaktivá bo mes kuenta",

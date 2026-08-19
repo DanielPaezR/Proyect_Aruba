@@ -28,6 +28,12 @@ import type {
 
 type AuthUser = { id: string; role: Role };
 
+// Acceso equivalente al antiguo JEFE (ahora ADMINISTRADOR) mas GERENTE, que
+// tiene el mismo acceso en todo lo existente por diseno de la
+// reestructuracion de roles — ver auditoria en cada punto de este archivo
+// que compara contra este conjunto.
+const ADMIN_ROLES: Role[] = [Role.ADMINISTRADOR, Role.GERENTE];
+
 // Puntaje con el que arranca cada trabajador al inicio del mes; los eventos
 // (siempre negativos por ahora, ver createScoreEventSchema) se suman sobre
 // esta base para calcular el puntaje del mes — nunca se decrementa un
@@ -42,7 +48,7 @@ const PUBLIC_USER_FIELDS = {
   phone: true,
   hourlyRate: true,
   // Igual de sensible que hourlyRate (mismo criterio que en
-  // JEFE_PROFILE_FIELDS/SUPERVISOR_PROFILE_FIELDS), pero hace falta en el
+  // ADMIN_PROFILE_FIELDS/SUPERVISOR_PROFILE_FIELDS), pero hace falta en el
   // propio GET /me: el trabajador necesita ver su propia tarifa extra para
   // el estimado de ganancia en vivo (ver time-entries.service.ts
   // getTodayStatus) — no es informacion sensible respecto de si mismo.
@@ -58,8 +64,9 @@ const PUBLIC_USER_FIELDS = {
 } as const;
 
 // Listado para SUPERVISOR (p.ej. panel de asignación de trabajadores en
-// ProjectDetailPage): sin hourlyRate, que es exclusivo de vistas del JEFE
-// (sueldo/puntaje) aunque el propio GET /users ya sea de lectura compartida.
+// ProjectDetailPage): sin hourlyRate, que es exclusivo de vistas de
+// ADMINISTRADOR/GERENTE (sueldo/puntaje) aunque el propio GET /users ya sea
+// de lectura compartida.
 const SUPERVISOR_USER_FIELDS = {
   id: true,
   name: true,
@@ -72,10 +79,10 @@ const SUPERVISOR_USER_FIELDS = {
 } as const;
 
 // Perfil consolidado del trabajador: mismos campos por rol de arriba, mas los
-// datos de perfil laboral — overtimeHourlyRate solo para JEFE (mismo criterio
-// que hourlyRate, ya incluido en PUBLIC_USER_FIELDS), el resto (hireDate,
-// specialties, etc) es visible para ambos.
-const JEFE_PROFILE_FIELDS = {
+// datos de perfil laboral — overtimeHourlyRate solo para ADMINISTRADOR/
+// GERENTE (mismo criterio que hourlyRate, ya incluido en PUBLIC_USER_FIELDS),
+// el resto (hireDate, specialties, etc) es visible para ambos.
+const ADMIN_PROFILE_FIELDS = {
   ...PUBLIC_USER_FIELDS,
   overtimeHourlyRate: true,
   hireDate: true,
@@ -125,8 +132,8 @@ export async function login(input: LoginInput) {
   }
 
   // Chequeo separado de "no existe"/"contraseña incorrecta": una cuenta
-  // desactivada necesita un mensaje claro ("contacta al Jefe"), no el mismo
-  // generico de credenciales invalidas que confundiria al trabajador.
+  // desactivada necesita un mensaje claro ("contacta al Administrador"), no
+  // el mismo generico de credenciales invalidas que confundiria al trabajador.
   if (!user.isActive) {
     throw ApiError.unauthorized(ErrorCode.USER_ACCOUNT_DEACTIVATED, "Esta cuenta fue desactivada");
   }
@@ -198,7 +205,7 @@ export async function getCurrentUser(userId: string) {
   return user;
 }
 
-/** Solo el JEFE puede dar de alta usuarios (no hay auto-registro). */
+/** Solo Administrador/Gerente pueden dar de alta usuarios (no hay auto-registro). */
 export async function createUser(input: CreateUserInput) {
   const existing = await prisma.user.findUnique({ where: { email: input.email } });
   if (existing) {
@@ -224,7 +231,7 @@ export async function createUser(input: CreateUserInput) {
 
 export async function listUsers(requesterRole: Role) {
   return prisma.user.findMany({
-    select: requesterRole === "JEFE" ? PUBLIC_USER_FIELDS : SUPERVISOR_USER_FIELDS,
+    select: ADMIN_ROLES.includes(requesterRole) ? PUBLIC_USER_FIELDS : SUPERVISOR_USER_FIELDS,
     orderBy: { name: "asc" },
   });
 }
@@ -239,7 +246,7 @@ export async function listUsers(requesterRole: Role) {
 export async function getWorkerProfile(userId: string, requesterRole: Role) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: requesterRole === "JEFE" ? JEFE_PROFILE_FIELDS : SUPERVISOR_PROFILE_FIELDS,
+    select: ADMIN_ROLES.includes(requesterRole) ? ADMIN_PROFILE_FIELDS : SUPERVISOR_PROFILE_FIELDS,
   });
 
   if (!user) {
@@ -259,8 +266,9 @@ export async function getWorkerProfile(userId: string, requesterRole: Role) {
 }
 
 /**
- * Edicion general de usuario (JEFE-only): datos basicos + perfil laboral
- * (ver updateUserSchema). hourlyRate queda fuera, ver comentario ahi.
+ * Edicion general de usuario (ADMINISTRADOR/GERENTE-only): datos basicos +
+ * perfil laboral (ver updateUserSchema). hourlyRate queda fuera, ver
+ * comentario ahi.
  */
 export async function updateUser(userId: string, input: UpdateUserInput) {
   const existing = await prisma.user.findUnique({ where: { id: userId } });
@@ -287,20 +295,21 @@ export async function updateUser(userId: string, input: UpdateUserInput) {
       ...(input.workDaysPerWeek !== undefined ? { workDaysPerWeek: input.workDaysPerWeek } : {}),
       ...(input.workScheduleNote !== undefined ? { workScheduleNote: input.workScheduleNote } : {}),
     },
-    select: JEFE_PROFILE_FIELDS,
+    select: ADMIN_PROFILE_FIELDS,
   });
 }
 
 /**
- * Desactivar (JEFE-only): nunca borra nada, solo isActive=false — el
- * historial financiero/laboral (TimeEntry, Payment, SalaryRaise...) sigue
- * intacto, y login() ya bloquea a los usuarios inactivos con un mensaje
- * propio (ver ErrorCode.USER_ACCOUNT_DEACTIVATED).
+ * Desactivar (ADMINISTRADOR/GERENTE-only): nunca borra nada, solo
+ * isActive=false — el historial financiero/laboral (TimeEntry, Payment,
+ * SalaryRaise...) sigue intacto, y login() ya bloquea a los usuarios
+ * inactivos con un mensaje propio (ver ErrorCode.USER_ACCOUNT_DEACTIVATED).
  */
 export async function deactivateUser(userId: string, requesterId: string) {
   if (userId === requesterId) {
-    // Si el unico Jefe se desactiva a si mismo, nadie mas puede reactivarlo
-    // (reactivar tambien es JEFE-only) — un candado sin llave.
+    // Si el unico Administrador/Gerente se desactiva a si mismo, nadie mas
+    // puede reactivarlo (reactivar tambien es ADMINISTRADOR/GERENTE-only) —
+    // un candado sin llave.
     throw ApiError.badRequest(ErrorCode.CANNOT_DEACTIVATE_SELF, "No puedes desactivar tu propia cuenta");
   }
 
@@ -312,10 +321,10 @@ export async function deactivateUser(userId: string, requesterId: string) {
     throw ApiError.conflict(ErrorCode.USER_ALREADY_INACTIVE, "El usuario ya está inactivo");
   }
 
-  return prisma.user.update({ where: { id: userId }, data: { isActive: false }, select: JEFE_PROFILE_FIELDS });
+  return prisma.user.update({ where: { id: userId }, data: { isActive: false }, select: ADMIN_PROFILE_FIELDS });
 }
 
-/** Reactivar (JEFE-only): por si Don Daniel se equivoca, o alguien vuelve a trabajar. */
+/** Reactivar (ADMINISTRADOR/GERENTE-only): por si Don Daniel se equivoca, o alguien vuelve a trabajar. */
 export async function reactivateUser(userId: string) {
   const existing = await prisma.user.findUnique({ where: { id: userId }, select: { id: true, isActive: true } });
   if (!existing) {
@@ -325,14 +334,14 @@ export async function reactivateUser(userId: string) {
     throw ApiError.conflict(ErrorCode.USER_ALREADY_ACTIVE, "El usuario ya está activo");
   }
 
-  return prisma.user.update({ where: { id: userId }, data: { isActive: true }, select: JEFE_PROFILE_FIELDS });
+  return prisma.user.update({ where: { id: userId }, data: { isActive: true }, select: ADMIN_PROFILE_FIELDS });
 }
 
-/** Equivalente a updateProfile (foto propia) pero para que un Jefe/Supervisor
- * suba/reemplace la foto de CUALQUIER trabajador — mismo patron Cloudinary.
- * requesterRole decide el select de vuelta: un Supervisor no debe ver el
- * hourlyRate/overtimeHourlyRate de otro trabajador solo por subirle una foto
- * (mismo criterio que listUsers). */
+/** Equivalente a updateProfile (foto propia) pero para que un Administrador/
+ * Gerente/Supervisor suba/reemplace la foto de CUALQUIER trabajador — mismo
+ * patron Cloudinary. requesterRole decide el select de vuelta: un Supervisor
+ * no debe ver el hourlyRate/overtimeHourlyRate de otro trabajador solo por
+ * subirle una foto (mismo criterio que listUsers). */
 export async function updateUserPhoto(userId: string, photo: Express.Multer.File, requesterRole: Role) {
   const existing = await prisma.user.findUnique({ where: { id: userId } });
   if (!existing) {
@@ -352,7 +361,7 @@ export async function updateUserPhoto(userId: string, photo: Express.Multer.File
   return prisma.user.update({
     where: { id: userId },
     data: { photoUrl: uploaded.url, photoPublicId: uploaded.publicId },
-    select: requesterRole === Role.JEFE ? PUBLIC_USER_FIELDS : SUPERVISOR_USER_FIELDS,
+    select: ADMIN_ROLES.includes(requesterRole) ? PUBLIC_USER_FIELDS : SUPERVISOR_USER_FIELDS,
   });
 }
 
@@ -361,7 +370,7 @@ export async function updateUserPhoto(userId: string, photo: Express.Multer.File
  * Separado de updateProfile (telefono + foto, multipart) porque este es
  * JSON plano — mezclar un array con un upload de archivo es mas incomodo
  * que tener dos endpoints chicos. name/email/hireDate/workSchedule* quedan
- * exclusivos de updateUser (JEFE-only).
+ * exclusivos de updateUser (ADMINISTRADOR/GERENTE-only).
  */
 export async function updateOwnBasicInfo(userId: string, input: UpdateMeInput) {
   const exists = await prisma.user.findUnique({ where: { id: userId }, select: { id: true } });
@@ -389,8 +398,8 @@ export async function updateLocale(userId: string, locale: Locale) {
 
 /**
  * Autoservicio: cualquier usuario edita su propio telefono y foto. El
- * nombre/email quedan fuera a proposito — eso lo controla el JEFE desde
- * gestión de usuarios, no el propio usuario.
+ * nombre/email quedan fuera a proposito — eso lo controla el Administrador/
+ * Gerente desde gestión de usuarios, no el propio usuario.
  */
 export async function updateProfile(userId: string, input: UpdateProfileInput, photo?: Express.Multer.File) {
   const existing = await prisma.user.findUnique({ where: { id: userId } });
@@ -529,11 +538,11 @@ const workerDocumentInclude = {
 } as const;
 
 /** Documentos del trabajador: nunca otro TRABAJADOR_CAMPO, ni siquiera de
- * solo lectura — el propio dueño, o Jefe/Supervisor viendo/gestionando a
- * cualquiera. Chequeo real aca, no solo en el cliente. */
+ * solo lectura — el propio dueño, o Administrador/Gerente/Supervisor
+ * viendo/gestionando a cualquiera. Chequeo real aca, no solo en el cliente. */
 function ensureDocumentAccess(requester: AuthUser, targetUserId: string) {
   const isSelf = requester.id === targetUserId;
-  const isManager = requester.role === Role.JEFE || requester.role === Role.SUPERVISOR;
+  const isManager = ADMIN_ROLES.includes(requester.role) || requester.role === Role.SUPERVISOR;
   if (!isSelf && !isManager) {
     throw ApiError.forbidden();
   }
@@ -576,16 +585,17 @@ export async function listWorkerDocuments(requester: AuthUser, targetUserId: str
   });
 }
 
-/** Borrar: el Jefe siempre puede (cualquier documento), o quien lo subio
- * originalmente (uploadedById) — no necesariamente el dueño del documento,
- * ya que un Jefe/Supervisor puede haberlo subido en nombre de otro. */
+/** Borrar: Administrador/Gerente siempre pueden (cualquier documento), o
+ * quien lo subio originalmente (uploadedById) — no necesariamente el dueño
+ * del documento, ya que un Administrador/Gerente/Supervisor puede haberlo
+ * subido en nombre de otro. */
 export async function deleteWorkerDocument(requester: AuthUser, targetUserId: string, documentId: string) {
   const document = await prisma.workerDocument.findUnique({ where: { id: documentId } });
   if (!document || document.userId !== targetUserId) {
     throw ApiError.notFound(ErrorCode.WORKER_DOCUMENT_NOT_FOUND, "Documento no encontrado");
   }
 
-  if (requester.role !== Role.JEFE && document.uploadedById !== requester.id) {
+  if (!ADMIN_ROLES.includes(requester.role) && document.uploadedById !== requester.id) {
     throw ApiError.forbidden(ErrorCode.WORKER_DOCUMENT_DELETE_FORBIDDEN, "No puedes eliminar este documento");
   }
 

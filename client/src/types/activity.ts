@@ -22,8 +22,8 @@ export interface Activity {
   skippedAt: string | null;
   skippedById: string | null;
   skippedBy: { id: string; name: string } | null;
-  /** Imagen de referencia opcional subida por JEFE/SUPERVISOR (que hay que
-   * hacer) — distinta de las evidencias que sube el trabajador (que se hizo). */
+  /** Imagen de referencia opcional subida por ADMINISTRADOR/GERENTE/SUPERVISOR
+   * (que hay que hacer) — distinta de las evidencias que sube el trabajador (que se hizo). */
   referenceImageUrl: string | null;
   referenceImagePublicId: string | null;
   projectId: string;

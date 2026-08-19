@@ -15,7 +15,7 @@ export const createUserSchema = z.object({
   hourlyRate: z.number().positive().optional(),
 });
 
-// Edicion general de usuario (JEFE-only): datos basicos + perfil laboral.
+// Edicion general de usuario (ADMINISTRADOR/GERENTE-only): datos basicos + perfil laboral.
 // hourlyRate NO esta aca: sigue exclusivamente en PATCH /hourly-rate, que
 // lleva su propio historial auditado (SalaryRaise) — no hay dos caminos
 // distintos para tocar el mismo campo auditado. overtimeHourlyRate si esta
@@ -32,9 +32,9 @@ export const updateUserSchema = z.object({
 });
 
 // Autoservicio (cualquier usuario autenticado): los unicos campos que el
-// propio trabajador puede tocar sin pasar por el Jefe. name/email/hireDate/
-// workSchedule* quedan exclusivos de updateUserSchema (JEFE-only) — no se
-// duplican aca a proposito.
+// propio trabajador puede tocar sin pasar por Administrador/Gerente.
+// name/email/hireDate/workSchedule* quedan exclusivos de updateUserSchema
+// (ADMINISTRADOR/GERENTE-only) — no se duplican aca a proposito.
 export const updateMeSchema = z.object({
   phone: z.string().optional(),
   specialties: z.array(z.string()).optional(),
@@ -46,7 +46,7 @@ export const updateLocaleSchema = z.object({
 
 // "phone" vacío borra el telefono (se guarda como null); si no se manda el
 // campo, el telefono actual no se toca. El email y el nombre no son
-// autoeditables aca — eso lo controla el JEFE desde gestión de usuarios.
+// autoeditables aca — eso lo controla Administrador/Gerente desde gestión de usuarios.
 export const updateProfileSchema = z.object({
   phone: z.string().optional(),
 });
@@ -73,7 +73,7 @@ export const getMonthlyScoreQuerySchema = z.object({
 });
 
 // "label" identifica el documento (ej. "Cedula", "Certificado de manejo"),
-// no hay una lista cerrada de tipos — el Jefe/trabajador lo escribe libre.
+// no hay una lista cerrada de tipos — el Administrador/Gerente/trabajador lo escribe libre.
 export const uploadWorkerDocumentSchema = z.object({
   label: z.string().min(1).max(100),
 });

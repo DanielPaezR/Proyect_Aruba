@@ -6,6 +6,7 @@ import { apiClient } from "../api/client";
 import { InvoiceQueueItem } from "../components/InvoiceQueueItem";
 import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
+import { isTopManagerRole } from "../types/auth";
 import { INVOICE_STATUSES } from "../types/invoice";
 import type { InvoiceStatus, InvoiceWithProject } from "../types/invoice";
 
@@ -54,7 +55,7 @@ export function InvoicesQueuePage() {
     return null;
   }
 
-  if (user.role !== "JEFE") {
+  if (!isTopManagerRole(user.role)) {
     return <Navigate to="/" replace />;
   }
 

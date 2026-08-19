@@ -8,4 +8,4 @@ export const settingsRouter = Router();
 settingsRouter.use(authenticate);
 
 settingsRouter.get("/", settingsController.getSettings);
-settingsRouter.patch("/", authorize(Role.JEFE), settingsController.updateSettings);
+settingsRouter.patch("/", authorize(Role.ADMINISTRADOR, Role.GERENTE), settingsController.updateSettings);

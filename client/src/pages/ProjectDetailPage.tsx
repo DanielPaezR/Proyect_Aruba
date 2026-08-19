@@ -14,7 +14,7 @@ import { ProjectInvoicesSection } from "../components/ProjectInvoicesSection";
 import { ProjectPaymentsSection } from "../components/ProjectPaymentsSection";
 import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
-import { isManagerRole } from "../types/auth";
+import { isManagerRole, isTopManagerRole } from "../types/auth";
 import { PROJECT_PRIORITIES, PROJECT_PROPERTY_TYPES, PROJECT_SECTORS, PROJECT_WORK_TYPES } from "../types/project";
 import type { ProjectDetail } from "../types/project";
 import type { Activity } from "../types/activity";
@@ -146,7 +146,7 @@ export function ProjectDetailPage() {
   }
 
   const canManage = isManagerRole(user.role);
-  const canDeleteProject = user.role === "JEFE";
+  const canDeleteProject = isTopManagerRole(user.role);
 
   function handleReferenceImageChange(event: ChangeEvent<HTMLInputElement>) {
     setReferenceImage(event.target.files?.[0] ?? null);

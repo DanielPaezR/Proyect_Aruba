@@ -9,7 +9,10 @@ type AuthUser = { id: string; role: Role };
 // Ver comentario equivalente en activities.service.ts: ensureActivityAccess
 // no tiene authorize() a nivel de ruta, asi que el chequeo de rol tiene que
 // ser explicito aca para no dejar pasar por descarte a un rol nuevo.
-const MANAGERS: Role[] = [Role.JEFE, Role.SUPERVISOR];
+const MANAGERS: Role[] = [Role.ADMINISTRADOR, Role.GERENTE, Role.SUPERVISOR];
+// GERENTE tiene el mismo acceso que ADMINISTRADOR (antiguo JEFE) en todo lo
+// existente, incluido borrar la evidencia de cualquiera.
+const ADMIN_ROLES: Role[] = [Role.ADMINISTRADOR, Role.GERENTE];
 
 const evidenceInclude = {
   uploadedBy: { select: { id: true, name: true } },
@@ -48,7 +51,7 @@ export async function listForActivity(user: AuthUser, activityId: string) {
   });
 }
 
-/** Listado global para Jefe/Supervisor: base de la cola de revisión y del dashboard. */
+/** Listado global para Administrador/Gerente/Supervisor: base de la cola de revisión y del dashboard. */
 export async function listEvidences(filters: {
   status?: EvidenceStatus;
   projectId?: string;
@@ -115,7 +118,7 @@ export async function reviewEvidence(
   });
 }
 
-/** El autor puede borrar su evidencia solo mientras siga PENDIENTE; el Jefe puede borrar cualquiera. */
+/** El autor puede borrar su evidencia solo mientras siga PENDIENTE; Administrador/Gerente pueden borrar cualquiera. */
 export async function deleteEvidence(user: AuthUser, evidenceId: string) {
   const evidence = await prisma.evidence.findUnique({ where: { id: evidenceId } });
   if (!evidence) {
@@ -123,7 +126,7 @@ export async function deleteEvidence(user: AuthUser, evidenceId: string) {
   }
 
   const isOwnPending = evidence.uploadedById === user.id && evidence.status === EvidenceStatus.PENDIENTE;
-  if (user.role !== Role.JEFE && !isOwnPending) {
+  if (!ADMIN_ROLES.includes(user.role) && !isOwnPending) {
     throw ApiError.forbidden(ErrorCode.EVIDENCE_DELETE_FORBIDDEN, "No puedes eliminar esta evidencia");
   }
 

@@ -5,6 +5,7 @@ import { Navigate } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { useAuth } from "../context/AuthContext";
+import { isTopManagerRole } from "../types/auth";
 import type { CompanySettings } from "../types/settings";
 
 export function SettingsPage() {
@@ -58,7 +59,7 @@ export function SettingsPage() {
     return null;
   }
 
-  if (user.role !== "JEFE") {
+  if (!isTopManagerRole(user.role)) {
     return <Navigate to="/" replace />;
   }
 

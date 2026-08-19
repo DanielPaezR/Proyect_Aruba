@@ -12,7 +12,7 @@ toolIncidentReportsRouter.get("/", authorize(...INVENTORY_ROLES), toolIncidentRe
 // sin esto no hay forma de que exista un reporte que resolver — el modelo ya
 // preveía que "el trabajador reporta que se dañó o perdió algo que tiene a
 // cargo" (ver schema.prisma). Sin authorize a nivel de ruta: el service
-// decide (dueño de la herramienta, o Jefe/Supervisor/Mercaderista).
+// decide (dueño de la herramienta, o Administrador/Gerente/Supervisor/Mercaderista).
 toolIncidentReportsRouter.post("/", toolIncidentReportsController.create);
 
 toolIncidentReportsRouter.patch(

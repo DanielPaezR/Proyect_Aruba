@@ -35,7 +35,7 @@ export const assignWorkerSchema = z.object({
 });
 
 // El motivo es obligatorio: nunca se omite una actividad sin explicar por
-// que, es lo que le llega a Jefe/Supervisor para poder reprogramarla.
+// que, es lo que le llega a Administrador/Gerente/Supervisor para poder reprogramarla.
 export const skipActivitySchema = z.object({
   reason: z.string().min(1, "El motivo es obligatorio"),
 });

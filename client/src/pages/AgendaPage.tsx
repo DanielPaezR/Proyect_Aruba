@@ -7,7 +7,7 @@ import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { useAuth } from "../context/AuthContext";
-import { isManagerRole } from "../types/auth";
+import { isManagerRole, isTopManagerRole } from "../types/auth";
 import { AGENDA_EVENT_TYPES } from "../types/agenda";
 import type { AgendaEvent, AgendaEventType, ScheduledActivity } from "../types/agenda";
 
@@ -136,7 +136,7 @@ export function AgendaPage() {
   }
 
   function canEditEvent(event: AgendaEvent): boolean {
-    return Boolean(user && (user.role === "JEFE" || event.createdById === user.id));
+    return Boolean(user && (isTopManagerRole(user.role) || event.createdById === user.id));
   }
 
   function openCreateForm() {

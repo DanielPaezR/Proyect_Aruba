@@ -6,7 +6,7 @@ export const materialRequestsRouter = Router();
 
 materialRequestsRouter.use(authenticate);
 
-// Cola de trabajo de Mercaderista/Jefe.
+// Cola de trabajo de Mercaderista/Administrador/Gerente.
 materialRequestsRouter.get("/", authorize(...INVENTORY_ROLES), materialRequestsController.list);
 
 // Historial propio: cualquier autenticado ve solo lo que el mismo pidio (el

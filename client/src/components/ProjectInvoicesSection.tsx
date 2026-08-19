@@ -3,7 +3,9 @@ import type { ChangeEvent, FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
+import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
+import { isTopManagerRole } from "../types/auth";
 import type { Invoice } from "../types/invoice";
 
 function statusBadgeClassName(status: Invoice["status"]): string {
@@ -26,6 +28,10 @@ interface ProjectInvoicesSectionProps {
 
 export function ProjectInvoicesSection({ projectId }: ProjectInvoicesSectionProps) {
   const { t } = useTranslation(["invoices", "common"]);
+  const { user } = useAuth();
+  // Restriccion de dinero: Supervisor conserva solo lectura (ver el
+  // historial y el PDF), nunca sube ni resube una factura.
+  const canManageInvoices = Boolean(user && isTopManagerRole(user.role));
 
   const [invoices, setInvoices] = useState<Invoice[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -116,12 +122,14 @@ export function ProjectInvoicesSection({ projectId }: ProjectInvoicesSectionProp
     <section className="project-invoices-section">
       <div className="page-header">
         <h2 className="section-label">{t("sectionTitle", { ns: "invoices" })}</h2>
-        <button type="button" onClick={() => setIsUploadFormOpen((open) => !open)}>
-          {t("uploadButton", { ns: "invoices" })}
-        </button>
+        {canManageInvoices && (
+          <button type="button" onClick={() => setIsUploadFormOpen((open) => !open)}>
+            {t("uploadButton", { ns: "invoices" })}
+          </button>
+        )}
       </div>
 
-      {isUploadFormOpen && (
+      {canManageInvoices && isUploadFormOpen && (
         <form className="inline-form" onSubmit={(event) => void handleUpload(event)}>
           <h2>{t("uploadFormTitle", { ns: "invoices" })}</h2>
           <label>
@@ -186,15 +194,17 @@ export function ProjectInvoicesSection({ projectId }: ProjectInvoicesSectionProp
                     <p className="card-description">
                       {t("reviewCommentLabel", { ns: "invoices" })}: {invoice.reviewComment}
                     </p>
-                    <div className="card-actions">
-                      <button type="button" onClick={() => openResubmit(invoice.id)}>
-                        {t("resubmitButton", { ns: "invoices" })}
-                      </button>
-                    </div>
+                    {canManageInvoices && (
+                      <div className="card-actions">
+                        <button type="button" onClick={() => openResubmit(invoice.id)}>
+                          {t("resubmitButton", { ns: "invoices" })}
+                        </button>
+                      </div>
+                    )}
                   </>
                 )}
 
-                {resubmittingInvoiceId === invoice.id && (
+                {canManageInvoices && resubmittingInvoiceId === invoice.id && (
                   <form className="inline-form" onSubmit={(event) => void handleResubmit(event)}>
                     <h2>{t("resubmitFormTitle", { ns: "invoices" })}</h2>
                     <label>

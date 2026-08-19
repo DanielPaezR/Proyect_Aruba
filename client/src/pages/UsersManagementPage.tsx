@@ -5,7 +5,7 @@ import { Link, Navigate } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { useAuth } from "../context/AuthContext";
-import { ROLES } from "../types/auth";
+import { ROLES, isTopManagerRole } from "../types/auth";
 import type { User, UserRole } from "../types/auth";
 
 export function UsersManagementPage() {
@@ -48,9 +48,9 @@ export function UsersManagementPage() {
     return null;
   }
 
-  // El endpoint solo lo puede usar el JEFE (ver auth.routes.ts); si un
-  // SUPERVISOR llega aca por URL directa, lo mandamos de vuelta.
-  if (user.role !== "JEFE") {
+  // El endpoint solo lo pueden usar Administrador/Gerente (ver auth.routes.ts);
+  // si un SUPERVISOR llega aca por URL directa, lo mandamos de vuelta.
+  if (!isTopManagerRole(user.role)) {
     return <Navigate to="/" replace />;
   }
 

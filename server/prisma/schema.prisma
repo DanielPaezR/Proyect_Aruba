@@ -13,7 +13,16 @@ datasource db {
 // ---------- Enums ----------
 
 enum Role {
-  JEFE
+  // Por encima de todos: mismo acceso que ADMINISTRADOR en todo lo
+  // existente, mas la seccion de gestion de permisos (ver docs del modulo
+  // correspondiente). No existia hasta la reestructuracion de roles.
+  GERENTE
+  // @map("JEFE") a proposito: el valor ya guardado en la base de datos de
+  // produccion sigue siendo literalmente "JEFE" (evita una migracion de
+  // datos), solo el nombre visible en el codigo/TypeScript cambia a
+  // ADMINISTRADOR. Mismos permisos de siempre, ahora tambien compartidos
+  // por GERENTE en todo lo existente (ver auditoria en cada modulo).
+  ADMINISTRADOR    @map("JEFE")
   SUPERVISOR
   TRABAJADOR_CAMPO
   // Administra inventario (herramientas/materiales) — no es un rol de
@@ -151,9 +160,9 @@ model User {
   isActive     Boolean @default(true)
   locale       Locale  @default(ES)
 
-  // Precio por hora del trabajador. Nullable: no todos los usuarios (ej. JEFE)
-  // tienen uno, y todavía no existe el modulo de nomina que lo consuma (Fase 2) —
-  // por ahora solo se captura el dato.
+  // Precio por hora del trabajador. Nullable: no todos los usuarios (ej.
+  // ADMINISTRADOR/GERENTE) tienen uno, y todavía no existe el modulo de
+  // nomina que lo consuma (Fase 2) — por ahora solo se captura el dato.
   hourlyRate Decimal? @db.Decimal(10, 2)
 
   // Tarifa de hora extra, distinta de hourlyRate. Nullable: no todos los
@@ -161,7 +170,7 @@ model User {
   overtimeHourlyRate Decimal? @db.Decimal(10, 2)
 
   // Datos de perfil laboral, para el perfil consolidado del trabajador —
-  // todo nullable/opcional, se carga a mano por el JEFE cuando corresponda,
+  // todo nullable/opcional, se carga a mano por el ADMINISTRADOR/GERENTE cuando corresponda,
   // no hay valor por defecto sensato para ninguno de estos.
   hireDate         DateTime?
   specialties      String[]  @default([])
@@ -306,7 +315,7 @@ model Activity {
   scheduledDate DateTime?
   completedAt   DateTime?
 
-  // Imagen de referencia opcional que sube JEFE/SUPERVISOR al crear/editar la
+  // Imagen de referencia opcional que sube ADMINISTRADOR/GERENTE/SUPERVISOR al crear/editar la
   // actividad (que hay que hacer) — distinta de las evidencias fotograficas
   // que sube el trabajador (que se hizo). Nullable: la mayoria de actividades
   // no la van a tener.
@@ -570,7 +579,7 @@ model ChatMessage {
 
 // Fila unica (singleton, id fijo = 1) con la configuracion de la empresa para
 // marcado automatico por geocerca. officeLatitude/officeLongitude quedan null
-// hasta que el JEFE configure la ubicacion real desde /api/settings — no hay
+// hasta que el ADMINISTRADOR/GERENTE configure la ubicacion real desde /api/settings — no hay
 // un default sensato para coordenadas de un sitio especifico, a diferencia
 // del radio y las ventanas horarias.
 model CompanySettings {
@@ -784,9 +793,9 @@ model AgendaEvent {
 
 // Documentos del trabajador (cedula, certificados, etc). userId es de quien
 // es el documento; uploadedById es quien lo subio (puede ser el mismo
-// trabajador o un Jefe/Supervisor en su nombre) — el borrado usa
-// uploadedById, no userId (ver auth.service.ts: JEFE siempre puede, o quien
-// subio el documento originalmente).
+// trabajador o un Administrador/Gerente/Supervisor en su nombre) — el
+// borrado usa uploadedById, no userId (ver auth.service.ts: ADMINISTRADOR/
+// GERENTE siempre pueden, o quien subio el documento originalmente).
 model WorkerDocument {
   id           String @id @default(cuid())
   userId       String

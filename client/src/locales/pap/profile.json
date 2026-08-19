@@ -4,7 +4,7 @@
   "nameLabel": "Nòmber",
   "emailLabel": "Email",
   "roleLabel": "Rol",
-  "readOnlyHint": "Nòmber, email i rol ta administrá pa Hefe for di gestion di usuarionan.",
+  "readOnlyHint": "Nòmber, email i rol ta administrá pa Administradó/Gerente for di gestion di usuarionan.",
   "phoneLabel": "Telefòn",
   "specialtiesLabel": "Especialidatnan (separá pa koma)",
   "specialtiesPlaceholder": "Pe. Kablero residensial, Panelnan solar",

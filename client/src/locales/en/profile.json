@@ -4,7 +4,7 @@
   "nameLabel": "Name",
   "emailLabel": "Email",
   "roleLabel": "Role",
-  "readOnlyHint": "Name, email and role are managed by the Jefe from user management.",
+  "readOnlyHint": "Name, email and role are managed by the Administrator/General Manager from user management.",
   "phoneLabel": "Phone",
   "specialtiesLabel": "Specialties (comma-separated)",
   "specialtiesPlaceholder": "E.g. Residential wiring, Solar panels",

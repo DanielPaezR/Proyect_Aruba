@@ -25,7 +25,11 @@ interface SeedUser {
   password: string;
 }
 
+// El email/env var siguen llamandose JEFE por compatibilidad (no hace falta
+// tocar la config de Railway) — el rol real ahora es Role.ADMINISTRADOR, ver
+// la reestructuracion de roles (JEFE -> ADMINISTRADOR + nuevo GERENTE).
 const JEFE_EMAIL = process.env.SEED_JEFE_EMAIL ?? "jefe@empresa.com";
+const GERENTE_EMAIL = process.env.SEED_GERENTE_EMAIL ?? "gerente@empresa.com";
 const SUPERVISOR_EMAIL = process.env.SEED_SUPERVISOR_EMAIL ?? "supervisor@empresa.com";
 const WORKER_EMAIL = process.env.SEED_WORKER_EMAIL ?? "trabajador@empresa.com";
 const WORKER2_EMAIL = process.env.SEED_WORKER2_EMAIL ?? "trabajador2@empresa.com";
@@ -34,9 +38,15 @@ const MERCADERISTA_EMAIL = process.env.SEED_MERCADERISTA_EMAIL ?? "mercaderista@
 const SEED_USERS: SeedUser[] = [
   {
     name: "Administrador",
-    role: Role.JEFE,
+    role: Role.ADMINISTRADOR,
     email: JEFE_EMAIL,
     password: process.env.SEED_JEFE_PASSWORD ?? "CambiarEsta123!",
+  },
+  {
+    name: "Gerente de Prueba",
+    role: Role.GERENTE,
+    email: GERENTE_EMAIL,
+    password: process.env.SEED_GERENTE_PASSWORD ?? "CambiarEsta123!",
   },
   {
     name: "Supervisor de Prueba",
@@ -106,7 +116,7 @@ async function seedUsers(): Promise<Record<string, { id: string }>> {
 }
 
 async function seedDemoProject(usersByEmail: Record<string, { id: string }>) {
-  const jefe = usersByEmail[JEFE_EMAIL];
+  const administrador = usersByEmail[JEFE_EMAIL];
   const worker1 = usersByEmail[WORKER_EMAIL];
   const worker2 = usersByEmail[WORKER2_EMAIL];
 
@@ -128,7 +138,7 @@ async function seedDemoProject(usersByEmail: Record<string, { id: string }>) {
       workType: ProjectWorkType.INSTALACION_NUEVA,
       priority: ProjectPriority.ALTA,
       electricalPlansUrl: "https://drive.google.com/drive/folders/1SeedDemoPlanosParadera",
-      createdById: jefe.id,
+      createdById: administrador.id,
     },
   });
   console.log(`Proyecto de prueba listo: ${project.name}`);

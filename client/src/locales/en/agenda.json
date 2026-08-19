@@ -1,6 +1,6 @@
 {
   "title": "Agenda",
-  "sharedNote": "Shared agenda for the management team: every event is visible to both Jefe and Supervisor, it's not a private personal agenda.",
+  "sharedNote": "Shared agenda for the management team: every event is visible to Administrator, General Manager and Supervisor, it's not a private personal agenda.",
   "createButton": "New event",
   "createFormTitle": "New event",
   "editFormTitle": "Edit event",
