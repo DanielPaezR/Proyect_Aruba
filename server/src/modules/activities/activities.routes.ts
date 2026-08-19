@@ -37,6 +37,10 @@ activitiesRouter.delete("/:activityId", authorize(...MANAGERS), activitiesContro
 // asignado solo para pasar a EN_PROGRESO/COMPLETADA (verificado en el service).
 activitiesRouter.patch("/:activityId/status", activitiesController.updateStatus);
 
+// Omitir: igual que /status, sin authorize a nivel de ruta — el service
+// permite Jefe/Supervisor siempre, y al trabajador solo si esta asignado.
+activitiesRouter.patch("/:activityId/skip", activitiesController.skipActivity);
+
 activitiesRouter.post(
   "/:activityId/assignments",
   authorize(...MANAGERS),

@@ -10,6 +10,7 @@ import {
   ImageIcon,
   MapPin,
   Play,
+  SkipForward,
   Wrench,
   Zap,
 } from "lucide-react";
@@ -22,9 +23,15 @@ import { translateStatus } from "../i18n/statusLabel";
 import type { Activity, ActivityStatus } from "../types/activity";
 import type { Evidence } from "../types/evidence";
 import type { ProjectWorkType } from "../types/project";
+import { resolveMapsUrl } from "../utils/mapsUrl";
 
-function googleMapsUrl(address: string): string {
-  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
+function formatScheduledDate(iso: string): string {
+  return new Date(iso).toLocaleString(undefined, {
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 // Sin imagen de referencia: icono segun el tipo de trabajo del proyecto, para
@@ -53,12 +60,27 @@ function nextStatusFor(status: ActivityStatus): ActivityStatus | null {
   return null;
 }
 
+// Solo se puede omitir una actividad todavia activa (mismo criterio que el backend).
+const SKIPPABLE_STATUSES: ActivityStatus[] = ["PENDIENTE", "EN_PROGRESO"];
+
+function activityStatusBadgeClassName(status: ActivityStatus): string {
+  // OMITIDA reusa el mismo tono de "atencion" que otros estados que
+  // requieren accion (pago devuelto, factura devuelta) — para no confundirla
+  // con CANCELADA, que es neutra.
+  return status === "OMITIDA" ? "status-badge status-badge--warning" : "status-badge";
+}
+
 export function MyActivityCard({ activity, onActivityUpdated }: MyActivityCardProps) {
   const { t } = useTranslation(["activities", "common"]);
   const { user } = useAuth();
 
   const [isChangingStatus, setIsChangingStatus] = useState(false);
   const [statusError, setStatusError] = useState<string | null>(null);
+
+  const [isSkipFormOpen, setIsSkipFormOpen] = useState(false);
+  const [skipReason, setSkipReason] = useState("");
+  const [isSkipping, setIsSkipping] = useState(false);
+  const [skipError, setSkipError] = useState<string | null>(null);
 
   const [removingEvidenceId, setRemovingEvidenceId] = useState<string | null>(null);
   const [removeEvidenceError, setRemoveEvidenceError] = useState<string | null>(null);
@@ -75,7 +97,9 @@ export function MyActivityCard({ activity, onActivityUpdated }: MyActivityCardPr
   const [evidencesError, setEvidencesError] = useState<string | null>(null);
 
   const nextStatus = nextStatusFor(activity.status);
+  const isSkippable = SKIPPABLE_STATUSES.includes(activity.status);
   const ReferencePlaceholderIcon = activity.project?.workType ? WORK_TYPE_ICONS[activity.project.workType] : ImageIcon;
+  const directionsUrl = resolveMapsUrl(activity.project?.mapsUrl, activity.project?.address);
 
   async function handleStatusChange() {
     if (!nextStatus) {
@@ -92,6 +116,24 @@ export function MyActivityCard({ activity, onActivityUpdated }: MyActivityCardPr
       setStatusError(translateApiError(t, error));
     } finally {
       setIsChangingStatus(false);
+    }
+  }
+
+  async function handleSkip(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSkipError(null);
+    setIsSkipping(true);
+    try {
+      const response = await apiClient.patch<{ activity: Activity }>(`/activities/${activity.id}/skip`, {
+        reason: skipReason,
+      });
+      setSkipReason("");
+      setIsSkipFormOpen(false);
+      onActivityUpdated(response.data.activity);
+    } catch (error) {
+      setSkipError(translateApiError(t, error));
+    } finally {
+      setIsSkipping(false);
     }
   }
 
@@ -186,7 +228,9 @@ export function MyActivityCard({ activity, onActivityUpdated }: MyActivityCardPr
 
       <div className="card-header">
         <span className="card-title">{activity.title}</span>
-        <span className="status-badge">{translateStatus(t, "common", "activityStatus", activity.status)}</span>
+        <span className={activityStatusBadgeClassName(activity.status)}>
+          {translateStatus(t, "common", "activityStatus", activity.status)}
+        </span>
       </div>
 
       {activity.project && (
@@ -195,12 +239,24 @@ export function MyActivityCard({ activity, onActivityUpdated }: MyActivityCardPr
         </span>
       )}
 
+      {activity.scheduledDate && (
+        <span className="card-meta">
+          {t("scheduledDateMeta", { ns: "activities", date: formatScheduledDate(activity.scheduledDate) })}
+        </span>
+      )}
+
+      {activity.status === "OMITIDA" && activity.skipReason && (
+        <p className="card-description">
+          {t("skipReasonLabel", { ns: "activities" })}: {activity.skipReason}
+        </p>
+      )}
+
       {activity.description && <p className="card-description">{activity.description}</p>}
 
       <div className="activity-actions">
-        {activity.project?.address && (
+        {directionsUrl && (
           <a
-            href={googleMapsUrl(activity.project.address)}
+            href={directionsUrl}
             target="_blank"
             rel="noreferrer"
             className="activity-action-button activity-action-button--secondary"
@@ -248,12 +304,51 @@ export function MyActivityCard({ activity, onActivityUpdated }: MyActivityCardPr
               : t("mine.viewEvidencesButton", { ns: "activities", count: activity._count?.evidences ?? 0 })}
           </span>
         </button>
+        {isSkippable && (
+          <button
+            type="button"
+            className="activity-action-button activity-action-button--secondary"
+            onClick={() => setIsSkipFormOpen((open) => !open)}
+          >
+            <SkipForward size={18} aria-hidden="true" />
+            <span>{t("mine.skipButton", { ns: "activities" })}</span>
+          </button>
+        )}
       </div>
 
       {statusError && (
         <p className="form-error" role="alert">
           {statusError}
         </p>
+      )}
+
+      {isSkipFormOpen && (
+        <form className="inline-form" onSubmit={(event) => void handleSkip(event)}>
+          <h2>{t("mine.skipFormTitle", { ns: "activities" })}</h2>
+          <label>
+            {t("mine.skipReasonInputLabel", { ns: "activities" })}
+            <textarea
+              value={skipReason}
+              onChange={(event) => setSkipReason(event.target.value)}
+              maxLength={500}
+              required
+              minLength={1}
+            />
+          </label>
+          {skipError && (
+            <p className="form-error" role="alert">
+              {skipError}
+            </p>
+          )}
+          <div className="form-actions">
+            <button type="submit" disabled={isSkipping}>
+              {isSkipping ? t("mine.skipSubmitting", { ns: "activities" }) : t("mine.skipSubmit", { ns: "activities" })}
+            </button>
+            <button type="button" onClick={() => setIsSkipFormOpen(false)}>
+              {t("actions.cancel", { ns: "common" })}
+            </button>
+          </div>
+        </form>
       )}
 
       {isUploadFormOpen && (

@@ -1,14 +1,16 @@
-import { ActivityStatus, Role } from "@prisma/client";
+import { ActivityStatus, EvidenceStatus, Role } from "@prisma/client";
 import { prisma } from "../../config/prisma";
 import { ACTIVITY_REFERENCE_IMAGES_FOLDER, deleteImage, uploadImage } from "../../config/storage";
 import { ApiError } from "../../utils/ApiError";
 import { ErrorCode } from "../../utils/errorCodes";
-import type { CreateActivityInput, UpdateActivityInput } from "./activities.validators";
+import { sendPushToUser } from "../../utils/push";
+import type { CreateActivityInput, SkipActivityInput, UpdateActivityInput } from "./activities.validators";
 
 type AuthUser = { id: string; role: Role };
 
 const activityInclude = {
   assignments: { include: { user: { select: { id: true, name: true } } } },
+  skippedBy: { select: { id: true, name: true } },
   _count: { select: { evidences: true } },
 } as const;
 
@@ -35,7 +37,8 @@ export async function listActivitiesForProject(
       ...(filters.assignedToId ? { assignments: { some: { userId: filters.assignedToId } } } : {}),
     },
     include: activityInclude,
-    orderBy: { createdAt: "desc" },
+    // Programadas primero (mas cercana primero), sin fecha al final.
+    orderBy: { scheduledDate: { sort: "asc", nulls: "last" } },
   });
 }
 
@@ -45,8 +48,11 @@ export async function listMyActivities(userId: string, filters: { status?: Activ
       assignments: { some: { userId } },
       ...(filters.status ? { status: filters.status } : {}),
     },
-    include: { ...activityInclude, project: { select: { id: true, name: true, address: true, workType: true } } },
-    orderBy: { scheduledDate: "asc" },
+    include: {
+      ...activityInclude,
+      project: { select: { id: true, name: true, address: true, mapsUrl: true, workType: true } },
+    },
+    orderBy: { scheduledDate: { sort: "asc", nulls: "last" } },
   });
 }
 
@@ -132,9 +138,15 @@ export async function updateActivity(
     }
   }
 
+  // Reprogramar una actividad OMITIDA (darle una fecha nueva) la vuelve a
+  // PENDIENTE automaticamente — es la unica forma de "reprogramar" que pide
+  // el flujo, no hace falta un cambio de estado aparte.
+  const unskipFields =
+    existing.status === ActivityStatus.OMITIDA && input.scheduledDate ? { status: ActivityStatus.PENDIENTE } : {};
+
   return prisma.activity.update({
     where: { id: activityId },
-    data: { ...input, ...imageFields },
+    data: { ...input, ...imageFields, ...unskipFields },
     include: activityInclude,
   });
 }
@@ -169,6 +181,21 @@ export async function updateActivityStatus(user: AuthUser, activityId: string, s
     }
   }
 
+  // Regla de integridad de datos, no de permisos: aplica a todos los roles
+  // por igual, incluido Jefe/Supervisor — no se puede dar por completada una
+  // actividad sin evidencia que respalde que efectivamente se hizo.
+  if (status === ActivityStatus.COMPLETADA) {
+    const approvedEvidenceCount = await prisma.evidence.count({
+      where: { activityId, status: EvidenceStatus.APROBADA },
+    });
+    if (approvedEvidenceCount === 0) {
+      throw ApiError.badRequest(
+        ErrorCode.ACTIVITY_MISSING_APPROVED_EVIDENCE,
+        "No se puede marcar como completada: necesita al menos una evidencia aprobada",
+      );
+    }
+  }
+
   return prisma.activity.update({
     where: { id: activityId },
     data: {
@@ -177,6 +204,73 @@ export async function updateActivityStatus(user: AuthUser, activityId: string, s
     },
     include: activityInclude,
   });
+}
+
+const SKIPPABLE_STATUSES: ActivityStatus[] = [ActivityStatus.PENDIENTE, ActivityStatus.EN_PROGRESO];
+
+/**
+ * Omitir: el trabajador asignado (o Jefe/Supervisor) marca que una actividad
+ * no se pudo hacer y por que, para que se reprograme — distinto de
+ * cancelarla, que implica que ya no hace falta. Notifica por push a todo
+ * Jefe/Supervisor (no hay un "supervisor a cargo" de un proyecto puntual en
+ * el modelo actual, la gestion es compartida entre todos).
+ */
+export async function skipActivity(user: AuthUser, activityId: string, input: SkipActivityInput) {
+  const activity = await prisma.activity.findUnique({
+    where: { id: activityId },
+    include: { assignments: true, project: { select: { id: true, name: true } } },
+  });
+
+  if (!activity) {
+    throw ApiError.notFound(ErrorCode.ACTIVITY_NOT_FOUND, "Actividad no encontrada");
+  }
+
+  if (user.role === Role.TRABAJADOR_CAMPO) {
+    const isAssigned = activity.assignments.some((a) => a.userId === user.id);
+    if (!isAssigned) {
+      throw ApiError.forbidden(ErrorCode.ACTIVITY_NOT_ASSIGNED, "No tienes esta actividad asignada");
+    }
+  }
+
+  if (!SKIPPABLE_STATUSES.includes(activity.status)) {
+    throw ApiError.forbidden(
+      ErrorCode.INVALID_STATUS_TRANSITION,
+      "Solo se puede omitir una actividad pendiente o en progreso",
+    );
+  }
+
+  const updated = await prisma.activity.update({
+    where: { id: activityId },
+    data: {
+      status: ActivityStatus.OMITIDA,
+      skipReason: input.reason,
+      skippedAt: new Date(),
+      skippedById: user.id,
+    },
+    include: activityInclude,
+  });
+
+  await notifyManagersOfSkippedActivity(activity.title, activity.project.name, input.reason);
+
+  return updated;
+}
+
+async function notifyManagersOfSkippedActivity(activityTitle: string, projectName: string, reason: string) {
+  const managers = await prisma.user.findMany({
+    where: { role: { in: [Role.JEFE, Role.SUPERVISOR] }, isActive: true },
+    select: { id: true },
+  });
+
+  await Promise.all(
+    managers.map((manager) =>
+      sendPushToUser(manager.id, {
+        title: "Actividad omitida",
+        body: `"${activityTitle}" (${projectName}) fue omitida: ${reason}`,
+      }).catch((error) => {
+        console.error(`No se pudo notificar al usuario ${manager.id} de la actividad omitida:`, error);
+      }),
+    ),
+  );
 }
 
 export async function assignWorker(activityId: string, userId: string) {

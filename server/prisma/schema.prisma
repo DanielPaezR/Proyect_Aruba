@@ -31,6 +31,9 @@ enum ActivityStatus {
   EN_PROGRESO
   COMPLETADA
   CANCELADA
+  // Distinta de CANCELADA: OMITIDA implica que hay que reprogramarla (sigue
+  // haciendo falta), CANCELADA implica que ya no se necesita.
+  OMITIDA
 }
 
 enum EvidenceStatus {
@@ -161,6 +164,7 @@ model User {
   uploadedInvoices    Invoice[]            @relation("InvoiceUploadedBy")
   reviewedInvoices    Invoice[]            @relation("InvoiceReviewedBy")
   recordedPayments    Payment[]            @relation("PaymentRecordedBy")
+  skippedActivities   Activity[]           @relation("ActivitySkippedBy")
   refreshTokens       RefreshToken[]
   pushSubscriptions   PushSubscription[]
   punchReminderLogs   PunchReminderLog[]
@@ -268,6 +272,15 @@ model Activity {
   // no la van a tener.
   referenceImageUrl      String?
   referenceImagePublicId String?
+
+  // Se completan solo cuando status pasa a OMITIDA (ver PATCH /skip). No se
+  // limpian automaticamente si despues se reprograma (vuelve a PENDIENTE) —
+  // quedan como rastro de que ya se omitio una vez, aunque la UI solo los
+  // muestra mientras status siga siendo OMITIDA.
+  skipReason  String?
+  skippedAt   DateTime?
+  skippedById String?
+  skippedBy   User?     @relation("ActivitySkippedBy", fields: [skippedById], references: [id])
 
   projectId String
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)

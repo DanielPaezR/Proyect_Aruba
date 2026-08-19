@@ -1,47 +1,14 @@
 import cron from "node-cron";
 import { PunchType, Role, type ReminderWindow } from "@prisma/client";
-import { WebPushError } from "web-push";
 import { prisma } from "../config/prisma";
-import { webpush } from "../config/webpush";
 import * as settingsService from "../modules/settings/settings.service";
 import { arubaStartOfTodayUtc, arubaToday, currentArubaMinutes, isWithinWindow } from "../utils/geo";
+import { sendPushToUser } from "../utils/push";
 
 const REMINDER_MESSAGES: Record<ReminderWindow, { title: string; body: string }> = {
   MORNING: { title: "DECS", body: "Recuerda marcar tu entrada." },
   AFTERNOON: { title: "DECS", body: "Recuerda marcar tu salida." },
 };
-
-async function sendReminderToUser(userId: string, window: ReminderWindow) {
-  const subscriptions = await prisma.pushSubscription.findMany({ where: { userId } });
-  if (subscriptions.length === 0) {
-    return;
-  }
-
-  const payload = JSON.stringify(REMINDER_MESSAGES[window]);
-
-  await Promise.all(
-    subscriptions.map(async (subscription) => {
-      try {
-        await webpush.sendNotification(
-          {
-            endpoint: subscription.endpoint,
-            keys: { p256dh: subscription.p256dh, auth: subscription.auth },
-          },
-          payload,
-        );
-      } catch (error) {
-        // 404/410 = el navegador invalido la suscripcion (desinstalo la app,
-        // revoco el permiso, etc.) — ya no sirve, se borra en vez de
-        // reintentar para siempre contra un endpoint muerto.
-        if (error instanceof WebPushError && (error.statusCode === 404 || error.statusCode === 410)) {
-          await prisma.pushSubscription.delete({ where: { id: subscription.id } }).catch(() => undefined);
-        } else {
-          console.error(`[punch-reminders] Fallo al enviar push (subscription ${subscription.id}):`, error);
-        }
-      }
-    }),
-  );
-}
 
 /**
  * Corre cada 5 minutos: si la hora actual (Aruba) cae en la ventana matutina
@@ -99,7 +66,7 @@ export async function runPunchReminderTick() {
       continue;
     }
 
-    await sendReminderToUser(worker.id, window);
+    await sendPushToUser(worker.id, REMINDER_MESSAGES[window]);
     // Se registra el intento aunque no tenga ninguna suscripcion activa:
     // reintentar cada 5 min a alguien sin push configurado no logra nada.
     await prisma.punchReminderLog.create({ data: { userId: worker.id, window, date: today } });

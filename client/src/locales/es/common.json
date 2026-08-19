@@ -12,7 +12,9 @@
     "logout": "Cerrar sesión",
     "edit": "Editar",
     "delete": "Eliminar",
-    "deleting": "Eliminando..."
+    "deleting": "Eliminando...",
+    "close": "Cerrar",
+    "back": "Atrás"
   },
   "language": {
     "label": "Idioma",
@@ -26,6 +28,8 @@
     "TRABAJADOR_CAMPO": "Trabajador de campo"
   },
   "nav": {
+    "openMenu": "Abrir menú",
+    "menuLabel": "Menú de navegación",
     "dashboard": "Panel",
     "projects": "Proyectos",
     "clients": "Clientes",
@@ -40,7 +44,8 @@
     "PENDIENTE": "Pendiente",
     "EN_PROGRESO": "En progreso",
     "COMPLETADA": "Completada",
-    "CANCELADA": "Cancelada"
+    "CANCELADA": "Cancelada",
+    "OMITIDA": "Omitida"
   },
   "evidenceStatus": {
     "PENDIENTE": "Pendiente de revisión",
@@ -64,6 +69,7 @@
       "ACTIVITY_NOT_FOUND": "Actividad no encontrada",
       "ACTIVITY_NOT_ASSIGNED": "No tienes esta actividad asignada",
       "INVALID_STATUS_TRANSITION": "Ese cambio de estado no está permitido",
+      "ACTIVITY_MISSING_APPROVED_EVIDENCE": "No se puede marcar como completada: falta al menos una evidencia aprobada por un supervisor",
       "EVIDENCE_DELETE_FORBIDDEN": "No puedes eliminar esta evidencia",
       "IMAGE_REQUIRED": "Selecciona una imagen para subir",
       "UNSUPPORTED_IMAGE_TYPE": "Formato de imagen no soportado (usa JPEG, PNG o WEBP)",

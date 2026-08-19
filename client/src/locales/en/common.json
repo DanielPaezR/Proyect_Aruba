@@ -12,7 +12,9 @@
     "logout": "Log out",
     "edit": "Edit",
     "delete": "Delete",
-    "deleting": "Deleting..."
+    "deleting": "Deleting...",
+    "close": "Close",
+    "back": "Back"
   },
   "language": {
     "label": "Language",
@@ -26,6 +28,8 @@
     "TRABAJADOR_CAMPO": "Field worker"
   },
   "nav": {
+    "openMenu": "Open menu",
+    "menuLabel": "Navigation menu",
     "dashboard": "Dashboard",
     "projects": "Projects",
     "clients": "Clients",
@@ -40,7 +44,8 @@
     "PENDIENTE": "Pending",
     "EN_PROGRESO": "In progress",
     "COMPLETADA": "Completed",
-    "CANCELADA": "Cancelled"
+    "CANCELADA": "Cancelled",
+    "OMITIDA": "Skipped"
   },
   "evidenceStatus": {
     "PENDIENTE": "Pending review",
@@ -64,6 +69,7 @@
       "ACTIVITY_NOT_FOUND": "Activity not found",
       "ACTIVITY_NOT_ASSIGNED": "You don't have this activity assigned",
       "INVALID_STATUS_TRANSITION": "That status change isn't allowed",
+      "ACTIVITY_MISSING_APPROVED_EVIDENCE": "Can't mark as completed: it needs at least one evidence item approved by a supervisor",
       "EVIDENCE_DELETE_FORBIDDEN": "You can't delete this evidence",
       "IMAGE_REQUIRED": "Select an image to upload",
       "UNSUPPORTED_IMAGE_TYPE": "Unsupported image format (use JPEG, PNG or WEBP)",

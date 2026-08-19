@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { AssignWorkersPanel } from "../components/AssignWorkersPanel";
+import { BackButton } from "../components/BackButton";
 import { ClientPicker } from "../components/ClientPicker";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { ProjectInvoicesSection } from "../components/ProjectInvoicesSection";
@@ -15,12 +16,14 @@ import { isManagerRole } from "../types/auth";
 import { PROJECT_PRIORITIES, PROJECT_PROPERTY_TYPES, PROJECT_SECTORS, PROJECT_WORK_TYPES } from "../types/project";
 import type { ProjectDetail } from "../types/project";
 import type { Activity } from "../types/activity";
+import { isValidGoogleMapsUrl, resolveMapsUrl } from "../utils/mapsUrl";
 
 interface ProjectEditFormState {
   name: string;
   description: string;
   clientId: string | null;
   address: string;
+  mapsUrl: string;
   sector: string;
   accessNotes: string;
   propertyType: string;
@@ -35,6 +38,7 @@ function projectToFormState(project: ProjectDetail): ProjectEditFormState {
     description: project.description ?? "",
     clientId: project.clientId,
     address: project.address ?? "",
+    mapsUrl: project.mapsUrl ?? "",
     sector: project.sector ?? "",
     accessNotes: project.accessNotes ?? "",
     propertyType: project.propertyType ?? "",
@@ -47,7 +51,34 @@ function projectToFormState(project: ProjectDetail): ProjectEditFormState {
 interface ActivityEditFormState {
   title: string;
   description: string;
+  scheduledDate: string;
   referenceImage: File | null;
+}
+
+/** Valor para <input type="datetime-local">, en hora local del navegador. */
+function toDatetimeLocalValue(iso: string | null): string {
+  if (!iso) {
+    return "";
+  }
+  const date = new Date(iso);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+function formatScheduledDate(iso: string): string {
+  return new Date(iso).toLocaleString(undefined, {
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+// OMITIDA reusa el tono de "atencion" (gold-500) de otros estados que
+// requieren accion (pago/factura devuelta) — para no confundirla con
+// CANCELADA, que es un badge neutro.
+function activityStatusBadgeClassName(status: Activity["status"]): string {
+  return status === "OMITIDA" ? "status-badge status-badge--warning" : "status-badge";
 }
 
 export function ProjectDetailPage() {
@@ -63,6 +94,7 @@ export function ProjectDetailPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [scheduledDate, setScheduledDate] = useState("");
   const [referenceImage, setReferenceImage] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -131,12 +163,16 @@ export function ProjectDetailPage() {
       if (description) {
         formData.append("description", description);
       }
+      if (scheduledDate) {
+        formData.append("scheduledDate", new Date(scheduledDate).toISOString());
+      }
       if (referenceImage) {
         formData.append("referenceImage", referenceImage);
       }
       await apiClient.post(`/projects/${projectId}/activities`, formData);
       setTitle("");
       setDescription("");
+      setScheduledDate("");
       setReferenceImage(null);
       setIsFormOpen(false);
       await loadProject(projectId);
@@ -161,6 +197,10 @@ export function ProjectDetailPage() {
     if (!projectEditForm || !projectId) {
       return;
     }
+    if (projectEditForm.mapsUrl && !isValidGoogleMapsUrl(projectEditForm.mapsUrl)) {
+      setProjectEditError(t("create.mapsUrlInvalid", { ns: "projects" }));
+      return;
+    }
     setProjectEditError(null);
     setIsSavingProject(true);
     try {
@@ -169,6 +209,7 @@ export function ProjectDetailPage() {
         description: projectEditForm.description || undefined,
         clientId: projectEditForm.clientId,
         address: projectEditForm.address,
+        mapsUrl: projectEditForm.mapsUrl || null,
         sector: projectEditForm.sector || undefined,
         accessNotes: projectEditForm.accessNotes || undefined,
         propertyType: projectEditForm.propertyType,
@@ -206,6 +247,7 @@ export function ProjectDetailPage() {
     setActivityEditForm({
       title: activity.title,
       description: activity.description ?? "",
+      scheduledDate: toDatetimeLocalValue(activity.scheduledDate),
       referenceImage: null,
     });
     setEditingActivityId(activity.id);
@@ -229,6 +271,9 @@ export function ProjectDetailPage() {
       formData.append("title", activityEditForm.title);
       if (activityEditForm.description) {
         formData.append("description", activityEditForm.description);
+      }
+      if (activityEditForm.scheduledDate) {
+        formData.append("scheduledDate", new Date(activityEditForm.scheduledDate).toISOString());
       }
       if (activityEditForm.referenceImage) {
         formData.append("referenceImage", activityEditForm.referenceImage);
@@ -263,9 +308,7 @@ export function ProjectDetailPage() {
 
   return (
     <div className="project-detail-page">
-      <p className="breadcrumb">
-        <Link to="/projects">{t("title", { ns: "projects" })}</Link>
-      </p>
+      <BackButton to="/projects" label={t("title", { ns: "projects" })} />
 
       {isLoading && <p className="page-loading">{t("loading", { ns: "common" })}</p>}
 
@@ -338,6 +381,15 @@ export function ProjectDetailPage() {
                     value={projectEditForm.address}
                     onChange={(event) => setProjectEditForm({ ...projectEditForm, address: event.target.value })}
                     required
+                  />
+                </label>
+                <label>
+                  {t("create.mapsUrl", { ns: "projects" })}
+                  <input
+                    type="url"
+                    value={projectEditForm.mapsUrl}
+                    onChange={(event) => setProjectEditForm({ ...projectEditForm, mapsUrl: event.target.value })}
+                    placeholder={t("create.mapsUrlPlaceholder", { ns: "projects" })}
                   />
                 </label>
                 <label>
@@ -439,99 +491,113 @@ export function ProjectDetailPage() {
             </form>
           )}
 
-          <section>
-            <h2 className="section-label">{t("detail.clientSection", { ns: "projects" })}</h2>
-            {project.client ? (
-              <>
-                <dl className="info-grid">
-                  <div>
-                    <dt>{t("create.client", { ns: "projects" })}</dt>
-                    <dd>{project.client.name}</dd>
-                  </div>
-                  <div>
-                    <dt>{t("phoneLabel", { ns: "clients" })}</dt>
-                    <dd>{project.client.phone}</dd>
-                  </div>
-                  <div>
-                    <dt>{t("emailLabel", { ns: "clients" })}</dt>
-                    <dd>{project.client.email ?? t("notSpecified", { ns: "clients" })}</dd>
-                  </div>
-                </dl>
-                <Link to={`/clients/${project.client.id}`} className="button-link">
-                  {t("detail.viewClientButton", { ns: "projects" })}
-                </Link>
-              </>
-            ) : (
-              <p>{t("detail.notSpecified", { ns: "projects" })}</p>
-            )}
-          </section>
+          <details className="project-detail-accordion">
+            <summary>{t("detail.showDetails", { ns: "projects" })}</summary>
 
-          <section>
-            <h2 className="section-label">{t("detail.locationSection", { ns: "projects" })}</h2>
-            <dl className="info-grid">
-              <div>
-                <dt>{t("create.address", { ns: "projects" })}</dt>
-                <dd>{project.address ?? t("detail.notSpecified", { ns: "projects" })}</dd>
-              </div>
-              <div>
-                <dt>{t("create.sector", { ns: "projects" })}</dt>
-                <dd>
-                  {project.sector
-                    ? translateStatus(t, "projects", "sector", project.sector)
-                    : t("detail.notSpecified", { ns: "projects" })}
-                </dd>
-              </div>
-              <div>
-                <dt>{t("create.accessNotes", { ns: "projects" })}</dt>
-                <dd>{project.accessNotes ?? t("detail.notSpecified", { ns: "projects" })}</dd>
-              </div>
-            </dl>
-          </section>
+            <section>
+              <h2 className="section-label">{t("detail.clientSection", { ns: "projects" })}</h2>
+              {project.client ? (
+                <>
+                  <dl className="info-grid">
+                    <div>
+                      <dt>{t("create.client", { ns: "projects" })}</dt>
+                      <dd>{project.client.name}</dd>
+                    </div>
+                    <div>
+                      <dt>{t("phoneLabel", { ns: "clients" })}</dt>
+                      <dd>{project.client.phone}</dd>
+                    </div>
+                    <div>
+                      <dt>{t("emailLabel", { ns: "clients" })}</dt>
+                      <dd>{project.client.email ?? t("notSpecified", { ns: "clients" })}</dd>
+                    </div>
+                  </dl>
+                  <Link to={`/clients/${project.client.id}`} className="button-link">
+                    {t("detail.viewClientButton", { ns: "projects" })}
+                  </Link>
+                </>
+              ) : (
+                <p>{t("detail.notSpecified", { ns: "projects" })}</p>
+              )}
+            </section>
 
-          <section>
-            <h2 className="section-label">{t("detail.workSection", { ns: "projects" })}</h2>
-            <dl className="info-grid">
-              <div>
-                <dt>{t("create.propertyType", { ns: "projects" })}</dt>
-                <dd>
-                  {project.propertyType
-                    ? translateStatus(t, "projects", "propertyType", project.propertyType)
-                    : t("detail.notSpecified", { ns: "projects" })}
-                </dd>
-              </div>
-              <div>
-                <dt>{t("create.workType", { ns: "projects" })}</dt>
-                <dd>
-                  {project.workType
-                    ? translateStatus(t, "projects", "workType", project.workType)
-                    : t("detail.notSpecified", { ns: "projects" })}
-                </dd>
-              </div>
-              <div>
-                <dt>{t("create.priority", { ns: "projects" })}</dt>
-                <dd>
-                  {project.priority ? (
-                    <span
-                      className={
-                        project.priority === "ALTA" || project.priority === "URGENTE"
-                          ? "status-badge status-badge--priority-high"
-                          : "status-badge"
-                      }
-                    >
-                      {translateStatus(t, "projects", "priority", project.priority)}
-                    </span>
-                  ) : (
-                    t("detail.notSpecified", { ns: "projects" })
-                  )}
-                </dd>
-              </div>
-            </dl>
-            {project.electricalPlansUrl && (
-              <a href={project.electricalPlansUrl} target="_blank" rel="noreferrer" className="button-link">
-                {t("detail.viewPlansButton", { ns: "projects" })}
-              </a>
-            )}
-          </section>
+            <section>
+              <h2 className="section-label">{t("detail.locationSection", { ns: "projects" })}</h2>
+              <dl className="info-grid">
+                <div>
+                  <dt>{t("create.address", { ns: "projects" })}</dt>
+                  <dd>{project.address ?? t("detail.notSpecified", { ns: "projects" })}</dd>
+                </div>
+                <div>
+                  <dt>{t("create.sector", { ns: "projects" })}</dt>
+                  <dd>
+                    {project.sector
+                      ? translateStatus(t, "projects", "sector", project.sector)
+                      : t("detail.notSpecified", { ns: "projects" })}
+                  </dd>
+                </div>
+                <div>
+                  <dt>{t("create.accessNotes", { ns: "projects" })}</dt>
+                  <dd>{project.accessNotes ?? t("detail.notSpecified", { ns: "projects" })}</dd>
+                </div>
+              </dl>
+              {resolveMapsUrl(project.mapsUrl, project.address) && (
+                <a
+                  href={resolveMapsUrl(project.mapsUrl, project.address)!}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="button-link"
+                >
+                  {t("detail.viewOnMapsButton", { ns: "projects" })}
+                </a>
+              )}
+            </section>
+
+            <section>
+              <h2 className="section-label">{t("detail.workSection", { ns: "projects" })}</h2>
+              <dl className="info-grid">
+                <div>
+                  <dt>{t("create.propertyType", { ns: "projects" })}</dt>
+                  <dd>
+                    {project.propertyType
+                      ? translateStatus(t, "projects", "propertyType", project.propertyType)
+                      : t("detail.notSpecified", { ns: "projects" })}
+                  </dd>
+                </div>
+                <div>
+                  <dt>{t("create.workType", { ns: "projects" })}</dt>
+                  <dd>
+                    {project.workType
+                      ? translateStatus(t, "projects", "workType", project.workType)
+                      : t("detail.notSpecified", { ns: "projects" })}
+                  </dd>
+                </div>
+                <div>
+                  <dt>{t("create.priority", { ns: "projects" })}</dt>
+                  <dd>
+                    {project.priority ? (
+                      <span
+                        className={
+                          project.priority === "ALTA" || project.priority === "URGENTE"
+                            ? "status-badge status-badge--priority-high"
+                            : "status-badge"
+                        }
+                      >
+                        {translateStatus(t, "projects", "priority", project.priority)}
+                      </span>
+                    ) : (
+                      t("detail.notSpecified", { ns: "projects" })
+                    )}
+                  </dd>
+                </div>
+              </dl>
+              {project.electricalPlansUrl && (
+                <a href={project.electricalPlansUrl} target="_blank" rel="noreferrer" className="button-link">
+                  {t("detail.viewPlansButton", { ns: "projects" })}
+                </a>
+              )}
+            </section>
+          </details>
 
           <div className="page-header">
             <h2>{t("listTitle", { ns: "activities" })}</h2>
@@ -552,6 +618,14 @@ export function ProjectDetailPage() {
               <label>
                 {t("descriptionLabel", { ns: "activities" })}
                 <textarea value={description} onChange={(event) => setDescription(event.target.value)} />
+              </label>
+              <label>
+                {t("scheduledDateLabel", { ns: "activities" })}
+                <input
+                  type="datetime-local"
+                  value={scheduledDate}
+                  onChange={(event) => setScheduledDate(event.target.value)}
+                />
               </label>
               <label>
                 {t("referenceImageLabel", { ns: "activities" })}
@@ -581,11 +655,22 @@ export function ProjectDetailPage() {
                 <li key={activity.id} className="card">
                   <div className="card-header">
                     <span className="card-title">{activity.title}</span>
-                    <span className="status-badge">
+                    <span className={activityStatusBadgeClassName(activity.status)}>
                       {translateStatus(t, "common", "activityStatus", activity.status)}
                     </span>
                   </div>
                   {activity.description && <p className="card-description">{activity.description}</p>}
+                  {activity.scheduledDate && (
+                    <span className="card-meta">
+                      {t("scheduledDateMeta", { ns: "activities", date: formatScheduledDate(activity.scheduledDate) })}
+                    </span>
+                  )}
+                  {activity.status === "OMITIDA" && activity.skipReason && (
+                    <p className="card-description">
+                      {t("skipReasonLabel", { ns: "activities" })}
+                      {activity.skippedBy ? ` (${activity.skippedBy.name})` : ""}: {activity.skipReason}
+                    </p>
+                  )}
                   {activity.referenceImageUrl && (
                     <a href={activity.referenceImageUrl} target="_blank" rel="noreferrer">
                       <img
@@ -656,6 +741,16 @@ export function ProjectDetailPage() {
                           value={activityEditForm.description}
                           onChange={(event) =>
                             setActivityEditForm({ ...activityEditForm, description: event.target.value })
+                          }
+                        />
+                      </label>
+                      <label>
+                        {t("scheduledDateLabel", { ns: "activities" })}
+                        <input
+                          type="datetime-local"
+                          value={activityEditForm.scheduledDate}
+                          onChange={(event) =>
+                            setActivityEditForm({ ...activityEditForm, scheduledDate: event.target.value })
                           }
                         />
                       </label>

@@ -1,6 +1,6 @@
 import type { ProjectWorkType } from "./project";
 
-export const ACTIVITY_STATUSES = ["PENDIENTE", "EN_PROGRESO", "COMPLETADA", "CANCELADA"] as const;
+export const ACTIVITY_STATUSES = ["PENDIENTE", "EN_PROGRESO", "COMPLETADA", "CANCELADA", "OMITIDA"] as const;
 export type ActivityStatus = (typeof ACTIVITY_STATUSES)[number];
 
 export interface ActivityAssignment {
@@ -18,6 +18,10 @@ export interface Activity {
   status: ActivityStatus;
   scheduledDate: string | null;
   completedAt: string | null;
+  skipReason: string | null;
+  skippedAt: string | null;
+  skippedById: string | null;
+  skippedBy: { id: string; name: string } | null;
   /** Imagen de referencia opcional subida por JEFE/SUPERVISOR (que hay que
    * hacer) — distinta de las evidencias que sube el trabajador (que se hizo). */
   referenceImageUrl: string | null;

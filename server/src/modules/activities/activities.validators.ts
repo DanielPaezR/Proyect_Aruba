@@ -11,7 +11,9 @@ export const createActivitySchema = z.object({
 export const updateActivitySchema = z.object({
   title: z.string().min(2).optional(),
   description: z.string().optional(),
-  scheduledDate: z.coerce.date().optional(),
+  // Nullable ademas de opcional: hace falta poder mandar null explicito para
+  // desprogramar una actividad ya programada, no solo dejarla sin fecha al crear.
+  scheduledDate: z.coerce.date().nullable().optional(),
 });
 
 export const updateActivityStatusSchema = z.object({
@@ -27,5 +29,12 @@ export const assignWorkerSchema = z.object({
   userId: z.string(),
 });
 
+// El motivo es obligatorio: nunca se omite una actividad sin explicar por
+// que, es lo que le llega a Jefe/Supervisor para poder reprogramarla.
+export const skipActivitySchema = z.object({
+  reason: z.string().min(1, "El motivo es obligatorio"),
+});
+
 export type CreateActivityInput = z.infer<typeof createActivitySchema>;
 export type UpdateActivityInput = z.infer<typeof updateActivitySchema>;
+export type SkipActivityInput = z.infer<typeof skipActivitySchema>;

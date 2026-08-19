@@ -5,6 +5,7 @@ import {
   assignWorkerSchema,
   createActivitySchema,
   listActivitiesQuerySchema,
+  skipActivitySchema,
   updateActivitySchema,
   updateActivityStatusSchema,
 } from "./activities.validators";
@@ -46,6 +47,12 @@ export const remove = asyncHandler(async (req: Request, res: Response) => {
 export const updateStatus = asyncHandler(async (req: Request, res: Response) => {
   const { status } = updateActivityStatusSchema.parse(req.body);
   const activity = await activitiesService.updateActivityStatus(req.user!, req.params.activityId, status);
+  res.json({ activity });
+});
+
+export const skipActivity = asyncHandler(async (req: Request, res: Response) => {
+  const input = skipActivitySchema.parse(req.body);
+  const activity = await activitiesService.skipActivity(req.user!, req.params.activityId, input);
   res.json({ activity });
 });
 
