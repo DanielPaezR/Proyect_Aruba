@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { apiClient } from "../api/client";
 import { useAuth } from "../context/AuthContext";
+import { isTimeTrackingRole } from "../types/auth";
 
 /** Pide la ubicacion y llama a /time-entries/auto-check. Esto NO marca
  * ENTRADA/SALIDA — solo actualiza la ultima ubicacion conocida y, si aplica,
@@ -29,15 +30,16 @@ function checkGeofence() {
 }
 
 /** Al montar (abrir la app) y cada vez que vuelve a foreground, si el usuario
- * es TRABAJADOR_CAMPO, registra su proximidad a la oficina como referencia.
- * Silencioso por diseno: sin loaders ni popups, el trabajador sigue usando
- * la app normal — y sigue marcando ENTRADA/SALIDA siempre a mano. */
+ * puede marcar horario (Trabajador de Campo o Supervisor), registra su
+ * proximidad a la oficina como referencia. Silencioso por diseno: sin
+ * loaders ni popups, el usuario sigue usando la app normal — y sigue
+ * marcando ENTRADA/SALIDA siempre a mano. */
 export function useGeofenceCheck() {
   const { user } = useAuth();
   const role = user?.role;
 
   useEffect(() => {
-    if (role !== "TRABAJADOR_CAMPO") {
+    if (!role || !isTimeTrackingRole(role)) {
       return;
     }
 

@@ -4,7 +4,7 @@ import { Menu, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import { useGeofenceCheck } from "../hooks/useGeofenceCheck";
-import { isInventoryRole, isManagerRole } from "../types/auth";
+import { isInventoryRole, isManagerRole, isTimeTrackingRole } from "../types/auth";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 
 function navLinkClassName({ isActive }: { isActive: boolean }) {
@@ -68,7 +68,7 @@ export function Layout() {
                   {t("nav.myActivities", { ns: "common" })}
                 </NavLink>
               )}
-              {user.role === "TRABAJADOR_CAMPO" && (
+              {isTimeTrackingRole(user.role) && (
                 <NavLink to="/my-hours" className={navLinkClassName}>
                   {t("nav.myHours", { ns: "common" })}
                 </NavLink>

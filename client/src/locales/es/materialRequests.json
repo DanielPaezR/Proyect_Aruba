@@ -4,6 +4,8 @@
   "statusFilterAll": "Todos",
   "empty": "No hay solicitudes",
   "quantityLabel": "Cantidad",
+  "projectLabel": "Proyecto",
+  "projectGeneralOption": "General",
   "requestedByLabel": "Solicitado por",
   "resolvedByLabel": "Resuelto por",
   "resolutionNoteLabel": "Nota (opcional)",

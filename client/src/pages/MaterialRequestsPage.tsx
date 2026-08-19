@@ -144,6 +144,10 @@ export function MaterialRequestsPage() {
                   {request.item ? ` ${request.item.unit}` : ""}
                 </span>
                 <span className="card-meta">
+                  {t("projectLabel", { ns: "materialRequests" })}:{" "}
+                  {request.project?.name ?? t("projectGeneralOption", { ns: "materialRequests" })}
+                </span>
+                <span className="card-meta">
                   {t("requestedByLabel", { ns: "materialRequests" })}: {request.requestedBy.name}
                 </span>
                 <span className="card-meta">{formatDate(request.createdAt)}</span>

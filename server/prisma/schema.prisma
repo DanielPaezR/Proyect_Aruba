@@ -285,10 +285,11 @@ model Project {
   createdById String
   createdBy   User   @relation("ProjectCreatedBy", fields: [createdById], references: [id])
 
-  activities   Activity[]
-  invoices     Invoice[]
-  payments     Payment[]
-  chatMessages ChatMessage[]
+  activities       Activity[]
+  invoices         Invoice[]
+  payments         Payment[]
+  chatMessages     ChatMessage[]
+  materialRequests MaterialRequest[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -705,6 +706,13 @@ model MaterialRequest {
   item             InventoryItem? @relation(fields: [itemId], references: [id], onDelete: SetNull)
   itemNameFreeText String?
 
+  // Nullable: permite solicitudes generales no atadas a un proyecto puntual
+  // (ej. insumos de bodega). onDelete SetNull por el mismo motivo que itemId
+  // — si el proyecto se borra despues, la solicitud sigue siendo un registro
+  // historico valido.
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
   quantity Int
   reason   String
 
@@ -719,6 +727,7 @@ model MaterialRequest {
 
   @@index([requestedById])
   @@index([itemId])
+  @@index([projectId])
   @@index([status])
   @@map("material_requests")
 }

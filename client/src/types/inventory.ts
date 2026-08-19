@@ -23,6 +23,8 @@ export interface MaterialRequest {
   itemId: string | null;
   item: { id: string; name: string; unit: string; type: InventoryItemType } | null;
   itemNameFreeText: string | null;
+  projectId: string | null;
+  project: { id: string; name: string } | null;
   quantity: number;
   reason: string;
   status: MaterialRequestStatus;

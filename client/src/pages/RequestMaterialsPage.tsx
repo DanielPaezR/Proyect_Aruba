@@ -4,9 +4,11 @@ import { useTranslation } from "react-i18next";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { translateStatus } from "../i18n/statusLabel";
+import type { Activity } from "../types/activity";
 import type { InventoryItem, MaterialRequest } from "../types/inventory";
 
 const FREE_TEXT_OPTION = "__free_text__";
+const GENERAL_PROJECT_OPTION = "__general__";
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
@@ -18,6 +20,8 @@ export function RequestMaterialsPage() {
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [selectedItemId, setSelectedItemId] = useState<string>("");
   const [freeTextName, setFreeTextName] = useState("");
+  const [projects, setProjects] = useState<{ id: string; name: string }[]>([]);
+  const [selectedProjectId, setSelectedProjectId] = useState<string>(GENERAL_PROJECT_OPTION);
   const [quantity, setQuantity] = useState("1");
   const [reason, setReason] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,6 +42,24 @@ export function RequestMaterialsPage() {
     }
   }
 
+  /** Proyectos donde el trabajador tiene alguna actividad asignada, deducidos
+   * de GET /activities/mine (no hay un endpoint dedicado de "mis proyectos") —
+   * mas la opcion "General" para solicitudes no atadas a un proyecto. */
+  async function loadProjects() {
+    try {
+      const response = await apiClient.get<{ activities: Activity[] }>("/activities/mine");
+      const seen = new Map<string, string>();
+      for (const activity of response.data.activities) {
+        if (activity.project) {
+          seen.set(activity.project.id, activity.project.name);
+        }
+      }
+      setProjects(Array.from(seen, ([id, name]) => ({ id, name })));
+    } catch {
+      // El selector queda solo con la opcion "General"; el formulario sigue usable.
+    }
+  }
+
   async function loadMyRequests() {
     setIsLoadingRequests(true);
     setLoadError(null);
@@ -53,6 +75,7 @@ export function RequestMaterialsPage() {
 
   useEffect(() => {
     void loadItems();
+    void loadProjects();
     void loadMyRequests();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -67,11 +90,13 @@ export function RequestMaterialsPage() {
       await apiClient.post("/material-requests", {
         itemId: isFreeText ? undefined : selectedItemId,
         itemNameFreeText: isFreeText ? freeTextName : undefined,
+        projectId: selectedProjectId === GENERAL_PROJECT_OPTION ? undefined : selectedProjectId,
         quantity: Number(quantity),
         reason,
       });
       setSelectedItemId("");
       setFreeTextName("");
+      setSelectedProjectId(GENERAL_PROJECT_OPTION);
       setQuantity("1");
       setReason("");
       setSubmitSuccess(true);
@@ -116,6 +141,18 @@ export function RequestMaterialsPage() {
             />
           </label>
         )}
+
+        <label>
+          {t("projectLabel", { ns: "requestMaterials" })}
+          <select value={selectedProjectId} onChange={(event) => setSelectedProjectId(event.target.value)}>
+            {projects.map((project) => (
+              <option key={project.id} value={project.id}>
+                {project.name}
+              </option>
+            ))}
+            <option value={GENERAL_PROJECT_OPTION}>{t("projectGeneralOption", { ns: "requestMaterials" })}</option>
+          </select>
+        </label>
 
         <label>
           {t("quantityLabel", { ns: "requestMaterials" })}
@@ -176,6 +213,10 @@ export function RequestMaterialsPage() {
                 <span className="card-meta">
                   {t("quantityLabel", { ns: "requestMaterials" })}: {request.quantity}
                   {request.item ? ` ${request.item.unit}` : ""}
+                </span>
+                <span className="card-meta">
+                  {t("projectLabel", { ns: "requestMaterials" })}:{" "}
+                  {request.project?.name ?? t("projectGeneralOption", { ns: "requestMaterials" })}
                 </span>
                 <span className="card-meta">{formatDate(request.createdAt)}</span>
                 <p className="card-description">{request.reason}</p>

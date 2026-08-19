@@ -12,6 +12,9 @@ export const createMaterialRequestSchema = z
   .object({
     itemId: z.string().min(1).optional(),
     itemNameFreeText: z.string().trim().min(1).optional(),
+    // Nullable/opcional: una solicitud puede ser general, no atada a un
+    // proyecto puntual (ej. insumos de bodega).
+    projectId: z.string().min(1).optional(),
     quantity: z.number().int().positive(),
     reason: z.string().trim().min(1),
   })

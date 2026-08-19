@@ -4,6 +4,8 @@
   "itemLabel": "Item",
   "itemNotInCatalog": "Not in the catalog (specify)",
   "freeTextLabel": "Item name",
+  "projectLabel": "Project",
+  "projectGeneralOption": "General / not tied to a project",
   "quantityLabel": "Quantity",
   "reasonLabel": "Reason",
   "submit": "Send request",

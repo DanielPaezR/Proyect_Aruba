@@ -4,6 +4,8 @@
   "statusFilterAll": "Tur",
   "empty": "No tin solisitud",
   "quantityLabel": "Kantidad",
+  "projectLabel": "Proyekto",
+  "projectGeneralOption": "General",
   "requestedByLabel": "Solisitá pa",
   "resolvedByLabel": "Resolví pa",
   "resolutionNoteLabel": "Nota (opshonal)",

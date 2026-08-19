@@ -4,6 +4,8 @@
   "itemLabel": "Item",
   "itemNotInCatalog": "No ta den katalogo (spesifiká)",
   "freeTextLabel": "Nomber di item",
+  "projectLabel": "Proyekto",
+  "projectGeneralOption": "General / no relashoná ku un proyekto",
   "quantityLabel": "Kantidad",
   "reasonLabel": "Motibu",
   "submit": "Manda solisitud",

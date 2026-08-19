@@ -12,6 +12,7 @@ const materialRequestInclude = {
   requestedBy: { select: { id: true, name: true, role: true } },
   resolvedBy: { select: { id: true, name: true } },
   item: { select: { id: true, name: true, unit: true, type: true } },
+  project: { select: { id: true, name: true } },
 } as const;
 
 // Desde donde se puede pasar a cada estado — PENDIENTE es el unico punto de
@@ -68,11 +69,19 @@ export async function createMaterialRequest(requesterId: string, input: CreateMa
     }
   }
 
+  if (input.projectId) {
+    const project = await prisma.project.findUnique({ where: { id: input.projectId }, select: { id: true } });
+    if (!project) {
+      throw ApiError.notFound(ErrorCode.PROJECT_NOT_FOUND, "Proyecto no encontrado");
+    }
+  }
+
   return prisma.materialRequest.create({
     data: {
       requestedById: requesterId,
       itemId: input.itemId,
       itemNameFreeText: input.itemId ? undefined : input.itemNameFreeText,
+      projectId: input.projectId,
       quantity: input.quantity,
       reason: input.reason,
     },
