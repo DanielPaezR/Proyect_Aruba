@@ -1,0 +1,35 @@
+{
+  "title": "Agenda",
+  "sharedNote": "Shared agenda for the management team: every event is visible to both Jefe and Supervisor, it's not a private personal agenda.",
+  "createButton": "New event",
+  "createFormTitle": "New event",
+  "editFormTitle": "Edit event",
+  "empty": "No events or scheduled activities in this period",
+  "createdByLabel": "Created by",
+  "activityBadge": "Project activity",
+  "period": {
+    "week": "Week",
+    "month": "Month"
+  },
+  "nav": {
+    "previous": "Previous period",
+    "next": "Next period",
+    "today": "Today"
+  },
+  "type": {
+    "REUNION": "Meeting",
+    "PENDIENTE": "To-do",
+    "OTRO": "Other"
+  },
+  "form": {
+    "titleLabel": "Title",
+    "descriptionLabel": "Description",
+    "startAtLabel": "Start date and time",
+    "endAtLabel": "End date and time (optional)",
+    "typeLabel": "Type",
+    "save": "Save",
+    "saving": "Saving..."
+  },
+  "deleteTitle": "Delete event",
+  "deleteMessage": "Are you sure you want to delete \"{{title}}\"? This action cannot be undone."
+}

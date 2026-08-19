@@ -96,6 +96,11 @@ export function Layout() {
                   {t("nav.teamMap", { ns: "common" })}
                 </NavLink>
               )}
+              {isManagerRole(user.role) && (
+                <NavLink to="/agenda" className={navLinkClassName}>
+                  {t("nav.agenda", { ns: "common" })}
+                </NavLink>
+              )}
               {isInventoryRole(user.role) && (
                 <NavLink to="/inventory" className={navLinkClassName}>
                   {t("nav.inventory", { ns: "common" })}

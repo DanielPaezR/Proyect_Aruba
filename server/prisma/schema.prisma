@@ -131,6 +131,12 @@ enum PaymentMethod {
   OTRO
 }
 
+enum AgendaEventType {
+  REUNION
+  PENDIENTE
+  OTRO
+}
+
 // ---------- Modelos ----------
 
 model User {
@@ -199,6 +205,7 @@ model User {
   materialRequests         MaterialRequest[]    @relation("MaterialRequestRequestedBy")
   resolvedMaterialRequests MaterialRequest[]    @relation("MaterialRequestResolvedBy")
   toolIncidentReports      ToolIncidentReport[] @relation("ToolIncidentReportedBy")
+  agendaEvents             AgendaEvent[]        @relation("AgendaEventCreatedBy")
 
   @@map("users")
 }
@@ -718,4 +725,33 @@ model ToolIncidentReport {
 
   @@index([toolAssignmentId])
   @@map("tool_incident_reports")
+}
+
+// Agenda compartida de Jefe/Supervisor: reuniones y pendientes generales de
+// gestion, distinta de la programacion de actividades de proyecto
+// (Activity.scheduledDate). Es deliberadamente compartida, no privada por
+// persona — cualquier Jefe/Supervisor ve todos los eventos (ver
+// agenda-events.service.ts), createdById solo determina quien puede
+// editar/borrar un evento ajeno (el Jefe siempre puede, el creador siempre
+// puede el suyo).
+model AgendaEvent {
+  id          String  @id @default(cuid())
+  title       String
+  description String?
+
+  startAt DateTime
+  // Nullable: no todo evento tiene una hora de fin definida de antemano
+  // (ej. un "pendiente" sin horario fijo, a diferencia de una reunion).
+  endAt   DateTime?
+
+  type AgendaEventType
+
+  createdById String
+  createdBy   User   @relation("AgendaEventCreatedBy", fields: [createdById], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([startAt])
+  @@map("agenda_events")
 }

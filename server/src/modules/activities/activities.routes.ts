@@ -24,6 +24,10 @@ export const activitiesRouter = Router();
 
 activitiesRouter.use(authenticate);
 activitiesRouter.get("/mine", activitiesController.listMine);
+// Antes de /:activityId para no quedar shadowed por el parametro dinamico.
+// Usada por la agenda de Jefe/Supervisor (ver agenda-events) para combinar
+// actividades programadas con AgendaEvent en una sola vista.
+activitiesRouter.get("/scheduled", authorize(...MANAGERS), activitiesController.listScheduled);
 activitiesRouter.get("/:activityId", activitiesController.getOne);
 activitiesRouter.patch(
   "/:activityId",

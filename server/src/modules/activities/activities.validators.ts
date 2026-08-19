@@ -25,6 +25,11 @@ export const listActivitiesQuerySchema = z.object({
   assignedToId: z.string().optional(),
 });
 
+export const listScheduledActivitiesQuerySchema = z.object({
+  from: z.coerce.date(),
+  to: z.coerce.date(),
+});
+
 export const assignWorkerSchema = z.object({
   userId: z.string(),
 });

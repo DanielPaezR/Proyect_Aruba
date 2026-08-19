@@ -62,6 +62,23 @@ export async function listMyActivities(userId: string, filters: { status?: Activ
   });
 }
 
+/**
+ * Actividades programadas en un rango de fechas, sin importar el proyecto —
+ * usado para combinar con AgendaEvent en la vista de agenda de Jefe/Supervisor
+ * (ver agenda-events.service.ts). Solo Jefe/Supervisor llegan aca (gateado en
+ * activities.routes.ts), asi que no hace falta visibilityWhere.
+ */
+export async function listScheduledActivities(from: Date, to: Date) {
+  return prisma.activity.findMany({
+    where: { scheduledDate: { gte: from, lte: to } },
+    include: {
+      ...activityInclude,
+      project: { select: { id: true, name: true } },
+    },
+    orderBy: { scheduledDate: "asc" },
+  });
+}
+
 export async function getActivity(user: AuthUser, activityId: string) {
   const activity = await prisma.activity.findFirst({
     where: { id: activityId, ...visibilityWhere(user) },

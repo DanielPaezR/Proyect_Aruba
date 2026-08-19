@@ -1,0 +1,35 @@
+{
+  "title": "Agenda",
+  "sharedNote": "Agenda compartida del equipo de gestión: todos los eventos son visibles para Jefe y Supervisor, no es una agenda personal.",
+  "createButton": "Nuevo evento",
+  "createFormTitle": "Nuevo evento",
+  "editFormTitle": "Editar evento",
+  "empty": "No hay eventos ni actividades programadas en este período",
+  "createdByLabel": "Creado por",
+  "activityBadge": "Actividad de proyecto",
+  "period": {
+    "week": "Semana",
+    "month": "Mes"
+  },
+  "nav": {
+    "previous": "Período anterior",
+    "next": "Período siguiente",
+    "today": "Hoy"
+  },
+  "type": {
+    "REUNION": "Reunión",
+    "PENDIENTE": "Pendiente",
+    "OTRO": "Otro"
+  },
+  "form": {
+    "titleLabel": "Título",
+    "descriptionLabel": "Descripción",
+    "startAtLabel": "Fecha y hora de inicio",
+    "endAtLabel": "Fecha y hora de fin (opcional)",
+    "typeLabel": "Tipo",
+    "save": "Guardar",
+    "saving": "Guardando..."
+  },
+  "deleteTitle": "Eliminar evento",
+  "deleteMessage": "¿Seguro que quieres eliminar \"{{title}}\"? Esta acción no se puede deshacer."
+}

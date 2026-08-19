@@ -5,6 +5,7 @@ import {
   assignWorkerSchema,
   createActivitySchema,
   listActivitiesQuerySchema,
+  listScheduledActivitiesQuerySchema,
   skipActivitySchema,
   updateActivitySchema,
   updateActivityStatusSchema,
@@ -19,6 +20,12 @@ export const listForProject = asyncHandler(async (req: Request, res: Response) =
 export const listMine = asyncHandler(async (req: Request, res: Response) => {
   const filters = listActivitiesQuerySchema.parse(req.query);
   const activities = await activitiesService.listMyActivities(req.user!.id, filters);
+  res.json({ activities });
+});
+
+export const listScheduled = asyncHandler(async (req: Request, res: Response) => {
+  const { from, to } = listScheduledActivitiesQuerySchema.parse(req.query);
+  const activities = await activitiesService.listScheduledActivities(from, to);
   res.json({ activities });
 });
 

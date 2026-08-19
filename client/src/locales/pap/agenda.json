@@ -1,0 +1,35 @@
+{
+  "title": "Agenda",
+  "sharedNote": "Agenda kompartí di e ekipo di gerensia: tur evento ta visibel pa Hefe i Supervisor, e no ta un agenda personal.",
+  "createButton": "Evento nobo",
+  "createFormTitle": "Evento nobo",
+  "editFormTitle": "Edita evento",
+  "empty": "No tin evento ni aktividat programá den e período aki",
+  "createdByLabel": "Kreá pa",
+  "activityBadge": "Aktividat di proyekto",
+  "period": {
+    "week": "Siman",
+    "month": "Luna"
+  },
+  "nav": {
+    "previous": "Período anterior",
+    "next": "Período siguiente",
+    "today": "Awe"
+  },
+  "type": {
+    "REUNION": "Reunion",
+    "PENDIENTE": "Pendiente",
+    "OTRO": "Otro"
+  },
+  "form": {
+    "titleLabel": "Titulo",
+    "descriptionLabel": "Deskripshon",
+    "startAtLabel": "Fecha i ora di kuminsamentu",
+    "endAtLabel": "Fecha i ora di final (opshonal)",
+    "typeLabel": "Tipo",
+    "save": "Warda",
+    "saving": "Ta warda..."
+  },
+  "deleteTitle": "Elimina evento",
+  "deleteMessage": "Bo ta sigur bo ke elimina \"{{title}}\"? E akshon aki no por wordu revertí."
+}

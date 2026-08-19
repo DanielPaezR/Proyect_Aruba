@@ -273,7 +273,22 @@ button {
   text-decoration: underline;
 }
 
+/* Selector de idioma + Cerrar sesion agrupados en la misma fila, al final
+   del menu — antes el selector vivia suelto en el topbar. */
+.drawer-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.drawer-footer-actions .language-switcher select {
+  background: var(--navy-700);
+  color: #ffffff;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
 .drawer-logout-button {
+  flex: 1;
   padding: 10px 16px;
   border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -285,12 +300,6 @@ button {
 
 .drawer-logout-button:hover {
   background: rgba(255, 255, 255, 0.1);
-}
-
-.topbar-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
 }
 
 .language-switcher select {
@@ -349,26 +358,35 @@ button {
   min-height: 100dvh;
 }
 
-/* El panel con foto solo tiene sentido en desktop (ver media query mas
-   abajo) — en mobile queda oculto y se muestra un logo chico en el topbar
-   del panel de formulario en su lugar. */
+/* Mobile-first: banner de foto arriba (no oculto — antes desaparecia del
+   todo en mobile y solo quedaba un logo chico), con la marca superpuesta
+   arriba de la foto. En desktop se convierte en el panel lateral de siempre
+   (ver media query mas abajo: pasa a ocupar toda la altura y centra el
+   contenido en vez de alinearlo arriba). */
 .login-brand-panel {
-  display: none;
+  display: flex;
   position: relative;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: 32px 24px;
+  min-height: 42vh;
+  padding: 40px 24px 28px;
   background-size: cover;
   background-position: center;
   overflow: hidden;
 }
 
-/* Oscurece la foto de fondo para que el logo y el texto blancos se lean bien
-   encima, sin importar que tan clara/oscura sea la foto que se use. */
+/* Degradado hacia abajo (no diagonal como en desktop): arriba, sobre la
+   foto, solo lo necesario para que el logo/texto blancos se lean; abajo,
+   bien oscuro para fundirse con la tarjeta de login que sigue debajo. */
 .login-brand-panel-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(160deg, rgba(17, 27, 41, 0.55) 0%, rgba(17, 27, 41, 0.85) 100%);
+  background: linear-gradient(
+    to bottom,
+    rgba(17, 27, 41, 0.45) 0%,
+    rgba(17, 27, 41, 0.15) 40%,
+    rgba(17, 27, 41, 0.95) 100%
+  );
 }
 
 .login-brand-panel-content {
@@ -406,15 +424,7 @@ button {
 .login-form-panel-topbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-/* Solo visible en mobile, donde .login-brand-panel esta oculto — sin esto la
-   pantalla quedaria sin ninguna marca visible. */
-.login-mobile-logo {
-  height: 32px;
-  width: auto;
+  justify-content: flex-end;
 }
 
 .login-form-panel .language-switcher select {
@@ -1112,6 +1122,97 @@ a.card-title:hover {
   font-weight: 500;
 }
 
+/* Agenda compartida (Jefe/Supervisor) */
+
+.agenda-shared-note {
+  margin: -8px 0 16px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.agenda-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  margin-bottom: 16px;
+}
+
+.agenda-period-selector,
+.agenda-nav {
+  display: flex;
+  gap: 4px;
+}
+
+.agenda-period-selector button,
+.agenda-nav button {
+  padding: 6px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.agenda-period-selector button.active {
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border-color: var(--btn-bg);
+}
+
+.agenda-range-label {
+  font-size: 13px;
+  color: var(--text);
+}
+
+.agenda-day-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.agenda-day-heading {
+  margin: 0 0 8px;
+  font-size: 15px;
+  color: var(--text-h);
+  text-transform: capitalize;
+}
+
+.agenda-entry-icon {
+  vertical-align: -3px;
+  margin-right: 6px;
+  color: var(--accent);
+}
+
+.agenda-entry-card--activity {
+  border-style: dashed;
+}
+
+.agenda-type-badge {
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.agenda-type-badge--PENDIENTE {
+  background: var(--gold-500);
+  color: var(--navy-900);
+}
+
+.agenda-type-badge--OTRO {
+  background: var(--bg-subtle);
+  color: var(--text);
+}
+
+.agenda-type-badge--ACTIVITY {
+  background: transparent;
+  color: var(--text);
+  border: 1px dashed var(--border);
+}
+
 .button-link {
   display: inline-flex;
   align-items: center;
@@ -1275,7 +1376,11 @@ a.card-title:hover {
   margin-top: 12px;
 }
 
-.card-actions button {
+.card-actions button,
+.card-actions a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   padding: 6px 12px;
   font-size: 13px;
   border-radius: 6px;
@@ -1286,6 +1391,7 @@ a.card-title:hover {
      (crear, aprobar) por atencion. */
   color: var(--text);
   min-height: 36px;
+  text-decoration: none;
 }
 
 .card-actions .danger-button {
@@ -1720,10 +1826,6 @@ a.card-title:hover {
     padding: 12px 24px;
   }
 
-  .topbar-actions {
-    gap: 16px;
-  }
-
   .app-content {
     padding: 32px 24px;
   }
@@ -1733,9 +1835,16 @@ a.card-title:hover {
   }
 
   .login-brand-panel {
-    display: flex;
     flex: 1;
+    align-items: center;
     min-height: 100dvh;
+    padding: 32px 24px;
+  }
+
+  /* En mobile el degradado va de arriba a abajo (ver base); en desktop
+     vuelve a ser el diagonal original, mas parejo en toda la foto. */
+  .login-brand-panel-overlay {
+    background: linear-gradient(160deg, rgba(17, 27, 41, 0.55) 0%, rgba(17, 27, 41, 0.85) 100%);
   }
 
   .login-logo {
@@ -1755,11 +1864,5 @@ a.card-title:hover {
 
   .login-form {
     padding: 32px 8px;
-  }
-
-  /* La marca ya esta en el panel de foto — el logo chico del topbar solo es
-     para mobile. */
-  .login-mobile-logo {
-    display: none;
   }
 }

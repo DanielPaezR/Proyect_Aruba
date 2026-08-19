@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authRouter } from "../modules/auth/auth.routes";
 import { activitiesRouter } from "../modules/activities/activities.routes";
+import { agendaEventsRouter } from "../modules/agenda-events/agenda-events.routes";
 import { clientsRouter } from "../modules/clients/clients.routes";
 import { dashboardRouter } from "../modules/dashboard/dashboard.routes";
 import { evidencesRouter } from "../modules/evidences/evidences.routes";
@@ -34,3 +35,4 @@ apiRouter.use("/inventory", inventoryRouter);
 apiRouter.use("/material-requests", materialRequestsRouter);
 apiRouter.use("/tool-assignments", toolAssignmentsRouter);
 apiRouter.use("/tool-incident-reports", toolIncidentReportsRouter);
+apiRouter.use("/agenda-events", agendaEventsRouter);
