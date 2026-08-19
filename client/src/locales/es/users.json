@@ -18,6 +18,28 @@
     "inactive": "Inactivo",
     "hourlyRateNotSpecified": "Precio por hora no especificado"
   },
+  "viewProfileButton": "Ver perfil",
+  "profile": {
+    "editFormTitle": "Editar perfil laboral",
+    "hireDateLabel": "Fecha de contratación",
+    "overtimeRateLabel": "Precio por hora extra (AWG)",
+    "specialtiesLabel": "Especialidades (separadas por coma)",
+    "specialtiesPlaceholder": "Ej. Cableado residencial, Paneles solares",
+    "workDaysPerWeekLabel": "Días de trabajo por semana",
+    "workScheduleNoteLabel": "Horario",
+    "workScheduleNotePlaceholder": "Ej. Lunes a viernes, 7am-4pm",
+    "saving": "Guardando...",
+    "saveSubmit": "Guardar cambios",
+    "generalSection": "Datos generales",
+    "notSpecified": "No especificado",
+    "specialtiesSection": "Especialidades",
+    "scheduleSection": "Horario",
+    "projectsSection": "Proyectos en los que ha trabajado",
+    "noProjects": "Todavía no ha trabajado en ningún proyecto",
+    "paySection": "Sueldo y horas del mes",
+    "hoursThisMonthLabel": "Horas trabajadas este mes",
+    "hoursValue": "{{hours}} h"
+  },
   "salary": {
     "showButton": "Ver historial de sueldo",
     "hideButton": "Ocultar historial de sueldo",

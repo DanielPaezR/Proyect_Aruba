@@ -18,6 +18,28 @@
     "inactive": "Inactive",
     "hourlyRateNotSpecified": "Hourly rate not specified"
   },
+  "viewProfileButton": "View profile",
+  "profile": {
+    "editFormTitle": "Edit work profile",
+    "hireDateLabel": "Hire date",
+    "overtimeRateLabel": "Overtime hourly rate (AWG)",
+    "specialtiesLabel": "Specialties (comma-separated)",
+    "specialtiesPlaceholder": "E.g. Residential wiring, Solar panels",
+    "workDaysPerWeekLabel": "Work days per week",
+    "workScheduleNoteLabel": "Schedule",
+    "workScheduleNotePlaceholder": "E.g. Monday to Friday, 7am-4pm",
+    "saving": "Saving...",
+    "saveSubmit": "Save changes",
+    "generalSection": "General information",
+    "notSpecified": "Not specified",
+    "specialtiesSection": "Specialties",
+    "scheduleSection": "Schedule",
+    "projectsSection": "Projects worked on",
+    "noProjects": "Hasn't worked on any projects yet",
+    "paySection": "Pay and hours this month",
+    "hoursThisMonthLabel": "Hours worked this month",
+    "hoursValue": "{{hours}} h"
+  },
   "salary": {
     "showButton": "View salary history",
     "hideButton": "Hide salary history",

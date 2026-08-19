@@ -18,6 +18,28 @@
     "inactive": "Inaktivo",
     "hourlyRateNotSpecified": "Preis pa ora no spesifiká"
   },
+  "viewProfileButton": "Wak perfil",
+  "profile": {
+    "editFormTitle": "Edita perfil laboral",
+    "hireDateLabel": "Fecha di kontratashon",
+    "overtimeRateLabel": "Preis pa ora ekstra (AWG)",
+    "specialtiesLabel": "Especialidatnan (separá pa koma)",
+    "specialtiesPlaceholder": "Pe. Kablero residensial, Panelnan solar",
+    "workDaysPerWeekLabel": "Dianan di trabou pa siman",
+    "workScheduleNoteLabel": "Horario",
+    "workScheduleNotePlaceholder": "Pe. Lunes te bierna, 7am-4pm",
+    "saving": "Ta warda...",
+    "saveSubmit": "Warda kambio",
+    "generalSection": "Datos general",
+    "notSpecified": "No spesifiká",
+    "specialtiesSection": "Especialidatnan",
+    "scheduleSection": "Horario",
+    "projectsSection": "Proyektonan den kua a trahá",
+    "noProjects": "Ainda no a trahá den ningun proyekto",
+    "paySection": "Salario i oranan di e luna aki",
+    "hoursThisMonthLabel": "Oranan trahá e luna aki",
+    "hoursValue": "{{hours}} h"
+  },
   "salary": {
     "showButton": "Wak historial di salario",
     "hideButton": "Skonde historial di salario",

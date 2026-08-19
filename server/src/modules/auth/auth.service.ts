@@ -5,14 +5,16 @@ import { env } from "../../config/env";
 import { deleteImage, uploadImage, USER_PROFILE_PHOTOS_FOLDER } from "../../config/storage";
 import { ApiError } from "../../utils/ApiError";
 import { ErrorCode } from "../../utils/errorCodes";
-import { arubaMonthRangeUtc, arubaToday } from "../../utils/geo";
+import { arubaMonthRangeUtc, arubaStartOfMonthUtc, arubaToday } from "../../utils/geo";
 import { generateRefreshToken, hashRefreshToken, signAccessToken } from "../../utils/jwt";
+import * as timeEntriesService from "../time-entries/time-entries.service";
 import type {
   CreateScoreEventInput,
   CreateUserInput,
   LoginInput,
   UpdateHourlyRateInput,
   UpdateProfileInput,
+  UpdateUserInput,
 } from "./auth.validators";
 
 // Puntaje con el que arranca cada trabajador al inicio del mes; los eventos
@@ -47,6 +49,31 @@ const SUPERVISOR_USER_FIELDS = {
   locale: true,
   photoUrl: true,
 } as const;
+
+// Perfil consolidado del trabajador: mismos campos por rol de arriba, mas los
+// datos de perfil laboral — overtimeHourlyRate solo para JEFE (mismo criterio
+// que hourlyRate, ya incluido en PUBLIC_USER_FIELDS), el resto (hireDate,
+// specialties, etc) es visible para ambos.
+const JEFE_PROFILE_FIELDS = {
+  ...PUBLIC_USER_FIELDS,
+  overtimeHourlyRate: true,
+  hireDate: true,
+  specialties: true,
+  workDaysPerWeek: true,
+  workScheduleNote: true,
+} as const;
+
+const SUPERVISOR_PROFILE_FIELDS = {
+  ...SUPERVISOR_USER_FIELDS,
+  hireDate: true,
+  specialties: true,
+  workDaysPerWeek: true,
+  workScheduleNote: true,
+} as const;
+
+function roundToOneDecimal(value: number): number {
+  return Math.round(value * 10) / 10;
+}
 
 function refreshTokenExpiryDate(): Date {
   const date = new Date();
@@ -169,6 +196,58 @@ export async function listUsers(requesterRole: Role) {
   return prisma.user.findMany({
     select: requesterRole === "JEFE" ? PUBLIC_USER_FIELDS : SUPERVISOR_USER_FIELDS,
     orderBy: { name: "asc" },
+  });
+}
+
+/**
+ * Perfil "todo en uno" del trabajador: datos basicos + laborales, proyectos
+ * distintos en los que trabajo (via ActivityAssignment -> Activity ->
+ * Project, deduplicados por venir de un Project.findMany en vez de iterar
+ * asignaciones), y horas trabajadas del mes actual (mismo calculo que
+ * getWorkerDashboard en dashboard.service.ts, pero por mes en vez de semana).
+ */
+export async function getWorkerProfile(userId: string, requesterRole: Role) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: requesterRole === "JEFE" ? JEFE_PROFILE_FIELDS : SUPERVISOR_PROFILE_FIELDS,
+  });
+
+  if (!user) {
+    throw ApiError.notFound(ErrorCode.USER_NOT_FOUND, "Usuario no encontrado");
+  }
+
+  const projects = await prisma.project.findMany({
+    where: { activities: { some: { assignments: { some: { userId } } } } },
+    select: { id: true, name: true, status: true },
+    orderBy: { name: "asc" },
+  });
+
+  const monthSummary = await timeEntriesService.getSummary({ from: arubaStartOfMonthUtc(), userId });
+  const hoursThisMonth = roundToOneDecimal((monthSummary[0]?.totalMinutes ?? 0) / 60);
+
+  return { user, projects, hoursThisMonth };
+}
+
+/**
+ * Edicion general de usuario (JEFE-only) — hoy solo cubre los campos de
+ * perfil laboral agregados para el perfil consolidado (ver updateUserSchema).
+ */
+export async function updateUser(userId: string, input: UpdateUserInput) {
+  const exists = await prisma.user.findUnique({ where: { id: userId }, select: { id: true } });
+  if (!exists) {
+    throw ApiError.notFound(ErrorCode.USER_NOT_FOUND, "Usuario no encontrado");
+  }
+
+  return prisma.user.update({
+    where: { id: userId },
+    data: {
+      ...(input.hireDate !== undefined ? { hireDate: input.hireDate } : {}),
+      ...(input.overtimeHourlyRate !== undefined ? { overtimeHourlyRate: input.overtimeHourlyRate } : {}),
+      ...(input.specialties !== undefined ? { specialties: input.specialties } : {}),
+      ...(input.workDaysPerWeek !== undefined ? { workDaysPerWeek: input.workDaysPerWeek } : {}),
+      ...(input.workScheduleNote !== undefined ? { workScheduleNote: input.workScheduleNote } : {}),
+    },
+    select: JEFE_PROFILE_FIELDS,
   });
 }
 

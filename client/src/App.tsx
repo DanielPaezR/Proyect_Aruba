@@ -16,6 +16,7 @@ import { SettingsPage } from "./pages/SettingsPage";
 import { SupervisorDashboardPage } from "./pages/SupervisorDashboardPage";
 import { TeamMapPage } from "./pages/TeamMapPage";
 import { UsersManagementPage } from "./pages/UsersManagementPage";
+import { WorkerProfilePage } from "./pages/WorkerProfilePage";
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
               <Route path="/evidences" element={<EvidencesReviewPage />} />
               <Route path="/invoices" element={<InvoicesQueuePage />} />
               <Route path="/users" element={<UsersManagementPage />} />
+              <Route path="/users/:userId" element={<WorkerProfilePage />} />
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="/team-map" element={<TeamMapPage />} />
             </Route>

@@ -15,6 +15,19 @@ export const createUserSchema = z.object({
   hourlyRate: z.number().positive().optional(),
 });
 
+// Edicion general de usuario (JEFE-only) — por ahora solo los campos de
+// perfil laboral agregados para el perfil consolidado del trabajador.
+// hourlyRate NO esta aca: sigue exclusivamente en PATCH /hourly-rate, que
+// lleva su propio historial auditado (SalaryRaise) — no hay dos caminos
+// distintos para tocar el mismo campo auditado.
+export const updateUserSchema = z.object({
+  hireDate: z.coerce.date().nullable().optional(),
+  overtimeHourlyRate: z.number().positive().nullable().optional(),
+  specialties: z.array(z.string()).optional(),
+  workDaysPerWeek: z.number().int().min(1).max(7).nullable().optional(),
+  workScheduleNote: z.string().nullable().optional(),
+});
+
 export const updateLocaleSchema = z.object({
   locale: z.nativeEnum(Locale),
 });
@@ -45,6 +58,7 @@ export const getMonthlyScoreQuerySchema = z.object({
 
 export type LoginInput = z.infer<typeof loginSchema>;
 export type CreateUserInput = z.infer<typeof createUserSchema>;
+export type UpdateUserInput = z.infer<typeof updateUserSchema>;
 export type UpdateLocaleInput = z.infer<typeof updateLocaleSchema>;
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 export type UpdateHourlyRateInput = z.infer<typeof updateHourlyRateSchema>;

@@ -20,6 +20,19 @@ authRouter.post("/users", authenticate, authorize(Role.JEFE), authController.cre
 // /users/locations (lectura de equipo compartida, gestion sigue siendo del Jefe).
 authRouter.get("/users", authenticate, authorize(Role.JEFE, Role.SUPERVISOR), authController.listUsers);
 
+// Edicion general (campos de perfil laboral): solo el Jefe.
+authRouter.patch("/users/:userId", authenticate, authorize(Role.JEFE), authController.updateUser);
+
+// Perfil consolidado del trabajador: Jefe y Supervisor, mismo criterio que
+// el listado (overtimeHourlyRate/hourlyRate se ocultan para Supervisor
+// adentro del service, no aca).
+authRouter.get(
+  "/users/:userId/profile",
+  authenticate,
+  authorize(Role.JEFE, Role.SUPERVISOR),
+  authController.getWorkerProfile,
+);
+
 // Precio por hora e historial de aumentos: solo el Jefe.
 authRouter.patch(
   "/users/:userId/hourly-rate",

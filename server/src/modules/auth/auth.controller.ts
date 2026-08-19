@@ -11,6 +11,7 @@ import {
   updateHourlyRateSchema,
   updateLocaleSchema,
   updateProfileSchema,
+  updateUserSchema,
 } from "./auth.validators";
 
 const REFRESH_COOKIE = "refreshToken";
@@ -63,6 +64,17 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
 export const listUsers = asyncHandler(async (req: Request, res: Response) => {
   const users = await authService.listUsers(req.user!.role);
   res.json({ users });
+});
+
+export const getWorkerProfile = asyncHandler(async (req: Request, res: Response) => {
+  const profile = await authService.getWorkerProfile(req.params.userId, req.user!.role);
+  res.json(profile);
+});
+
+export const updateUser = asyncHandler(async (req: Request, res: Response) => {
+  const input = updateUserSchema.parse(req.body);
+  const user = await authService.updateUser(req.params.userId, input);
+  res.json({ user });
 });
 
 export const updateLocale = asyncHandler(async (req: Request, res: Response) => {

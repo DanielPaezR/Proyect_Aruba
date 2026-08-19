@@ -125,6 +125,18 @@ model User {
   // por ahora solo se captura el dato.
   hourlyRate Decimal? @db.Decimal(10, 2)
 
+  // Tarifa de hora extra, distinta de hourlyRate. Nullable: no todos los
+  // trabajadores tienen horas extra pactadas.
+  overtimeHourlyRate Decimal? @db.Decimal(10, 2)
+
+  // Datos de perfil laboral, para el perfil consolidado del trabajador —
+  // todo nullable/opcional, se carga a mano por el JEFE cuando corresponda,
+  // no hay valor por defecto sensato para ninguno de estos.
+  hireDate         DateTime?
+  specialties      String[]  @default([])
+  workDaysPerWeek  Int?
+  workScheduleNote String?
+
   // Foto de perfil, editable por el propio usuario desde /profile. Nullable:
   // la mayoria de usuarios sembrados/creados no la van a tener de entrada.
   photoUrl      String?
