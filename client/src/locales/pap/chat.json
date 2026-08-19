@@ -1,0 +1,9 @@
+{
+  "sectionTitle": "Chat",
+  "empty": "Ainda no tin mensahe. Bo por ta e promé cu skirbi.",
+  "inputPlaceholder": "Skirbi un mensahe...",
+  "sendButton": "Manda",
+  "connecting": "Ta konektá...",
+  "pageTitle": "Chat di proyekto",
+  "pageTitleWithProject": "Chat — {{name}}"
+}

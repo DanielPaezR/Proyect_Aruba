@@ -1,0 +1,9 @@
+{
+  "sectionTitle": "Chat",
+  "empty": "Todavía no hay mensajes. Sé el primero en escribir.",
+  "inputPlaceholder": "Escribe un mensaje...",
+  "sendButton": "Enviar",
+  "connecting": "Conectando...",
+  "pageTitle": "Chat del proyecto",
+  "pageTitleWithProject": "Chat — {{name}}"
+}

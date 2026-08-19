@@ -8,6 +8,7 @@ import { AssignWorkersPanel } from "../components/AssignWorkersPanel";
 import { BackButton } from "../components/BackButton";
 import { ClientPicker } from "../components/ClientPicker";
 import { ConfirmDialog } from "../components/ConfirmDialog";
+import { ProjectChatSection } from "../components/ProjectChatSection";
 import { ProjectInvoicesSection } from "../components/ProjectInvoicesSection";
 import { ProjectPaymentsSection } from "../components/ProjectPaymentsSection";
 import { useAuth } from "../context/AuthContext";
@@ -789,6 +790,8 @@ export function ProjectDetailPage() {
               ))}
             </ul>
           )}
+
+          {canManage && <ProjectChatSection projectId={projectId} />}
 
           {canManage && <ProjectInvoicesSection projectId={projectId} />}
 

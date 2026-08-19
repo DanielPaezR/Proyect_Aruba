@@ -49,6 +49,7 @@
     "removingEvidence": "Removing...",
     "removeEvidenceConfirm": "Remove this evidence? This action cannot be undone.",
     "directionsButton": "Get directions",
+    "chatButton": "Project chat",
     "skipButton": "Skip",
     "skipFormTitle": "Skip activity",
     "skipReasonInputLabel": "Reason (required)",

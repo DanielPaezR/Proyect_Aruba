@@ -10,6 +10,7 @@ import { InvoicesQueuePage } from "./pages/InvoicesQueuePage";
 import { LoginPage } from "./pages/LoginPage";
 import { MyActivitiesPage } from "./pages/MyActivitiesPage";
 import { ProfilePage } from "./pages/ProfilePage";
+import { ProjectChatPage } from "./pages/ProjectChatPage";
 import { ProjectDetailPage } from "./pages/ProjectDetailPage";
 import { ProjectsListPage } from "./pages/ProjectsListPage";
 import { SettingsPage } from "./pages/SettingsPage";
@@ -32,6 +33,7 @@ function App() {
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/projects" element={<ProjectsListPage />} />
               <Route path="/projects/:projectId" element={<ProjectDetailPage />} />
+              <Route path="/projects/:projectId/chat" element={<ProjectChatPage />} />
               <Route path="/clients" element={<ClientsListPage />} />
               <Route path="/clients/:clientId" element={<ClientDetailPage />} />
               <Route path="/evidences" element={<EvidencesReviewPage />} />

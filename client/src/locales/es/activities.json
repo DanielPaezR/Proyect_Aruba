@@ -49,6 +49,7 @@
     "removingEvidence": "Quitando...",
     "removeEvidenceConfirm": "¿Quitar esta evidencia? Esta acción no se puede deshacer.",
     "directionsButton": "Cómo llegar",
+    "chatButton": "Chat del proyecto",
     "skipButton": "Omitir",
     "skipFormTitle": "Omitir actividad",
     "skipReasonInputLabel": "Motivo (obligatorio)",

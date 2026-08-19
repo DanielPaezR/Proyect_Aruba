@@ -9,6 +9,7 @@ import {
   Images,
   ImageIcon,
   MapPin,
+  MessageCircle,
   Play,
   SkipForward,
   Wrench,
@@ -16,6 +17,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { useAuth } from "../context/AuthContext";
@@ -265,6 +267,14 @@ export function MyActivityCard({ activity, onActivityUpdated }: MyActivityCardPr
             <span>{t("mine.directionsButton", { ns: "activities" })}</span>
           </a>
         )}
+        <Link
+          to={`/projects/${activity.projectId}/chat`}
+          state={{ projectName: activity.project?.name }}
+          className="activity-action-button activity-action-button--secondary"
+        >
+          <MessageCircle size={18} aria-hidden="true" />
+          <span>{t("mine.chatButton", { ns: "activities" })}</span>
+        </Link>
         {nextStatus && (
           <button
             type="button"

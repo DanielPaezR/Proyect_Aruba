@@ -4,6 +4,7 @@ import { initReactI18next } from "react-i18next";
 
 import esCommon from "../locales/es/common.json";
 import esAuth from "../locales/es/auth.json";
+import esChat from "../locales/es/chat.json";
 import esDashboard from "../locales/es/dashboard.json";
 import esClients from "../locales/es/clients.json";
 import esProjects from "../locales/es/projects.json";
@@ -17,6 +18,7 @@ import esTeamMap from "../locales/es/teamMap.json";
 import esProfile from "../locales/es/profile.json";
 import enCommon from "../locales/en/common.json";
 import enAuth from "../locales/en/auth.json";
+import enChat from "../locales/en/chat.json";
 import enDashboard from "../locales/en/dashboard.json";
 import enClients from "../locales/en/clients.json";
 import enProjects from "../locales/en/projects.json";
@@ -30,6 +32,7 @@ import enTeamMap from "../locales/en/teamMap.json";
 import enProfile from "../locales/en/profile.json";
 import papCommon from "../locales/pap/common.json";
 import papAuth from "../locales/pap/auth.json";
+import papChat from "../locales/pap/chat.json";
 import papDashboard from "../locales/pap/dashboard.json";
 import papClients from "../locales/pap/clients.json";
 import papProjects from "../locales/pap/projects.json";
@@ -55,6 +58,7 @@ void i18n
     resources: {
       es: {
         common: esCommon,
+        chat: esChat,
         auth: esAuth,
         dashboard: esDashboard,
         clients: esClients,
@@ -70,6 +74,7 @@ void i18n
       },
       en: {
         common: enCommon,
+        chat: enChat,
         auth: enAuth,
         dashboard: enDashboard,
         clients: enClients,
@@ -85,6 +90,7 @@ void i18n
       },
       pap: {
         common: papCommon,
+        chat: papChat,
         auth: papAuth,
         dashboard: papDashboard,
         clients: papClients,
@@ -102,6 +108,7 @@ void i18n
     fallbackLng: "es",
     supportedLngs: SUPPORTED_LANGUAGES,
     ns: [
+      "chat",
       "common",
       "auth",
       "dashboard",
