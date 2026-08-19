@@ -228,7 +228,11 @@ model Project {
   ownerName          String?
   ownerPhone         String?
   ownerEmail         String?
+  // address sigue siendo util como descripcion complementaria (ej. "casa
+  // azul, porton negro"), pero mapsUrl es ahora la fuente primaria de
+  // ubicacion para "Como llegar" cuando esta presente.
   address            String?
+  mapsUrl            String?
   sector             ProjectSector?
   accessNotes        String?
   propertyType       ProjectPropertyType?

@@ -15,6 +15,9 @@
     "client": "Client",
     "clientRequired": "Select or create a client for the project",
     "address": "Address",
+    "mapsUrl": "Google Maps link",
+    "mapsUrlPlaceholder": "https://maps.app.goo.gl/...",
+    "mapsUrlInvalid": "The link must start with https:// and be a Google Maps link (google.com/maps or maps.app.goo.gl)",
     "sector": "Sector",
     "sectorPlaceholder": "Select a sector",
     "accessNotes": "Access notes",
@@ -36,6 +39,8 @@
     "message": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone."
   },
   "empty": "No projects yet",
+  "searchPlaceholder": "Search project by name...",
+  "noResults": "No projects match your search",
   "activitiesCount_one": "{{count}} activity",
   "activitiesCount_other": "{{count}} activities",
   "status": {
@@ -73,11 +78,13 @@
     "URGENTE": "Urgent"
   },
   "detail": {
+    "showDetails": "View project details",
     "clientSection": "Client",
     "locationSection": "Location",
     "workSection": "Job details",
     "notSpecified": "Not specified",
     "viewPlansButton": "View electrical plans",
-    "viewClientButton": "View client record"
+    "viewClientButton": "View client record",
+    "viewOnMapsButton": "View on Google Maps"
   }
 }

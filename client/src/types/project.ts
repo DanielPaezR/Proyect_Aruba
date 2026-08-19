@@ -46,6 +46,7 @@ interface ProjectOperationalFields {
   ownerPhone: string | null;
   ownerEmail: string | null;
   address: string | null;
+  mapsUrl: string | null;
   sector: ProjectSector | null;
   accessNotes: string | null;
   propertyType: ProjectPropertyType | null;

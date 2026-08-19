@@ -1,6 +1,19 @@
 import { z } from "zod";
 import { ProjectPriority, ProjectPropertyType, ProjectSector, ProjectStatus, ProjectWorkType } from "@prisma/client";
 
+// Validacion basica de formato, no verifica que el link resuelva a un lugar
+// real: debe ser https y apuntar a Google Maps (dominio completo o el
+// acortador maps.app.goo.gl que usa "Compartir" desde la app de Maps).
+const mapsUrlSchema = z
+  .string()
+  .refine(
+    (value) =>
+      value.startsWith("https://") && (value.includes("google.com/maps") || value.includes("maps.app.goo.gl")),
+    "El link debe empezar con https:// y ser un link de Google Maps (google.com/maps o maps.app.goo.gl)",
+  )
+  .nullable()
+  .optional();
+
 export const createProjectSchema = z.object({
   name: z.string().min(2),
   description: z.string().optional(),
@@ -22,6 +35,7 @@ export const createProjectSchema = z.object({
   ownerPhone: z.string().min(1).optional(),
   ownerEmail: z.string().email().optional(),
   address: z.string().min(1),
+  mapsUrl: mapsUrlSchema,
   sector: z.nativeEnum(ProjectSector).optional(),
   accessNotes: z.string().optional(),
   propertyType: z.nativeEnum(ProjectPropertyType),

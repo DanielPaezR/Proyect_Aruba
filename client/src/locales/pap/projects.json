@@ -15,6 +15,9 @@
     "client": "Kliente",
     "clientRequired": "Skohe òf krea un kliente pa e proyekto",
     "address": "Adrès",
+    "mapsUrl": "Link di Google Maps",
+    "mapsUrlPlaceholder": "https://maps.app.goo.gl/...",
+    "mapsUrlInvalid": "E link mester kuminsa ku https:// i ta un link di Google Maps (google.com/maps òf maps.app.goo.gl)",
     "sector": "Sektor",
     "sectorPlaceholder": "Skohe un sektor",
     "accessNotes": "Nota di akseso",
@@ -36,6 +39,8 @@
     "message": "Bo ta sigur bo ke elimina \"{{name}}\"? E akshon aki no por wordu revertí."
   },
   "empty": "Ainda no tin proyekto",
+  "searchPlaceholder": "Buska proyekto pa nòmber...",
+  "noResults": "Ningun proyekto ta koinsidi ku e búsqueda",
   "activitiesCount_one": "{{count}} aktividat",
   "activitiesCount_other": "{{count}} aktividatnan",
   "status": {
@@ -73,11 +78,13 @@
     "URGENTE": "Urgente"
   },
   "detail": {
+    "showDetails": "Wak detaye di e proyekto",
     "clientSection": "Kliente",
     "locationSection": "Ubikashon",
     "workSection": "Detaye di trabou",
     "notSpecified": "No spesifiká",
     "viewPlansButton": "Wak plano elektriko",
-    "viewClientButton": "Wak fichi di kliente"
+    "viewClientButton": "Wak fichi di kliente",
+    "viewOnMapsButton": "Wak den Google Maps"
   }
 }

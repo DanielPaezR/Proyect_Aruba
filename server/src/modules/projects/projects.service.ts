@@ -32,7 +32,8 @@ export async function getProject(user: AuthUser, projectId: string) {
       createdBy: { select: { id: true, name: true } },
       client: { select: { id: true, name: true, phone: true, email: true } },
       activities: {
-        orderBy: { createdAt: "desc" },
+        // Programadas primero (mas cercana primero), sin fecha al final.
+        orderBy: { scheduledDate: { sort: "asc", nulls: "last" } },
         include: {
           assignments: { include: { user: { select: { id: true, name: true } } } },
           _count: { select: { evidences: true } },

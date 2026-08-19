@@ -15,6 +15,9 @@
     "client": "Cliente",
     "clientRequired": "Selecciona o crea un cliente para el proyecto",
     "address": "Dirección",
+    "mapsUrl": "Link de Google Maps",
+    "mapsUrlPlaceholder": "https://maps.app.goo.gl/...",
+    "mapsUrlInvalid": "El link debe empezar con https:// y ser un link de Google Maps (google.com/maps o maps.app.goo.gl)",
     "sector": "Sector",
     "sectorPlaceholder": "Selecciona un sector",
     "accessNotes": "Notas de acceso",
@@ -36,6 +39,8 @@
     "message": "¿Estás seguro de que quieres eliminar \"{{name}}\"? Esta acción no se puede deshacer."
   },
   "empty": "Todavía no hay proyectos",
+  "searchPlaceholder": "Buscar proyecto por nombre...",
+  "noResults": "Ningún proyecto coincide con la búsqueda",
   "activitiesCount_one": "{{count}} actividad",
   "activitiesCount_other": "{{count}} actividades",
   "status": {
@@ -73,11 +78,13 @@
     "URGENTE": "Urgente"
   },
   "detail": {
+    "showDetails": "Ver detalles del proyecto",
     "clientSection": "Cliente",
     "locationSection": "Ubicación",
     "workSection": "Detalles del trabajo",
     "notSpecified": "No especificado",
     "viewPlansButton": "Ver planos eléctricos",
-    "viewClientButton": "Ver ficha del cliente"
+    "viewClientButton": "Ver ficha del cliente",
+    "viewOnMapsButton": "Ver en Google Maps"
   }
 }
