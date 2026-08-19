@@ -103,7 +103,7 @@ export const updateUserPhoto = asyncHandler(async (req: Request, res: Response) 
   if (!req.file) {
     throw ApiError.badRequest(ErrorCode.IMAGE_REQUIRED, "Falta la imagen (campo 'photo')");
   }
-  const user = await authService.updateUserPhoto(req.params.userId, req.file);
+  const user = await authService.updateUserPhoto(req.params.userId, req.file, req.user!.role);
   res.json({ user });
 });
 

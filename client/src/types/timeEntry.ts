@@ -1,4 +1,4 @@
-export const PUNCH_TYPES = ["ENTRADA", "SALIDA"] as const;
+export const PUNCH_TYPES = ["ENTRADA", "ALMUERZO_INICIO", "ALMUERZO_FIN", "SALIDA"] as const;
 export type PunchType = (typeof PUNCH_TYPES)[number];
 
 export const TIME_ENTRY_SOURCES = ["MANUAL", "AUTO_GEOFENCE"] as const;
@@ -32,8 +32,24 @@ export interface ProximityLogReference {
 export interface UserDaySummary {
   user: { id: string; name: string };
   entries: TimeEntry[];
+  /** Neto: ya descuenta el tiempo de almuerzo de cada sesion. */
   totalMinutes: number;
+  normalMinutes: number;
+  overtimeMinutes: number;
+  lunchMinutes: number;
   hasOpenEntry: boolean;
+  hasOpenLunch: boolean;
   /** Referencia informativa ("estuvo cerca de la oficina a esta hora"), no una marcacion real. */
   unmatchedProximityLogs: ProximityLogReference[];
+}
+
+/** Forma de GET /time-entries/today/mine — estado en vivo del dia de hoy. */
+export interface TodayTimeStatus {
+  lastPunchType: PunchType | null;
+  validNextTypes: PunchType[];
+  workedMinutes: number;
+  normalMinutes: number;
+  overtimeMinutes: number;
+  lunchMinutes: number;
+  earningsEstimate: number | null;
 }

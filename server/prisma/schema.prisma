@@ -64,6 +64,8 @@ enum EvidenceStatus {
 
 enum PunchType {
   ENTRADA
+  ALMUERZO_INICIO
+  ALMUERZO_FIN
   SALIDA
 }
 
@@ -409,7 +411,14 @@ model SalaryRaise {
 
   previousRate Decimal? @db.Decimal(10, 2)
   newRate      Decimal  @db.Decimal(10, 2)
-  reason       String?
+
+  // Cambio de tarifa de hora extra, opcional: un mismo aumento puede tocar
+  // solo la tarifa normal, o ambas a la vez con un solo motivo. Nullable
+  // tambien por compatibilidad con aumentos viejos que no la tenian.
+  previousOvertimeRate Decimal? @db.Decimal(10, 2)
+  newOvertimeRate      Decimal? @db.Decimal(10, 2)
+
+  reason String?
 
   createdById String
   createdBy   User   @relation("SalaryRaiseCreatedBy", fields: [createdById], references: [id])
@@ -575,6 +584,11 @@ model CompanySettings {
 
   afternoonWindowStart String @default("16:30")
   afternoonWindowEnd   String @default("18:00")
+
+  // Umbral en minutos para calcular horas extra (ver time-entries.service.ts
+  // getSummary/getTodayStatus): lo que exceda esto en un dia cuenta como
+  // overtimeMinutes en vez de normalMinutes. Default 480 = 8 horas.
+  standardDailyMinutes Int @default(480)
 
   updatedAt DateTime @updatedAt
 

@@ -12,6 +12,7 @@ import { InvoicesQueuePage } from "./pages/InvoicesQueuePage";
 import { LoginPage } from "./pages/LoginPage";
 import { MaterialRequestsPage } from "./pages/MaterialRequestsPage";
 import { MyActivitiesPage } from "./pages/MyActivitiesPage";
+import { MyHoursPage } from "./pages/MyHoursPage";
 import { MyToolsPage } from "./pages/MyToolsPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { ProjectChatPage } from "./pages/ProjectChatPage";
@@ -37,6 +38,7 @@ function App() {
               <Route path="/" element={<HomeRedirect />} />
               <Route path="/dashboard" element={<SupervisorDashboardPage />} />
               <Route path="/my-activities" element={<MyActivitiesPage />} />
+              <Route path="/my-hours" element={<MyHoursPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/projects" element={<ProjectsListPage />} />
               <Route path="/projects/:projectId" element={<ProjectDetailPage />} />

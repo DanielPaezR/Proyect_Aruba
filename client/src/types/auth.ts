@@ -23,6 +23,7 @@ export interface User {
   phone: string | null;
   // Serializado por Prisma/Express como string decimal (ej. "18.5"), no number.
   hourlyRate: string | null;
+  overtimeHourlyRate: string | null;
   isActive: boolean;
   locale: UserLocale;
   photoUrl: string | null;

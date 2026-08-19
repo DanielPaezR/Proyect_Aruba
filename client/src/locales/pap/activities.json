@@ -55,21 +55,6 @@
     "skipReasonInputLabel": "Motibu (obligatorio)",
     "skipSubmit": "Konfirmá",
     "skipSubmitting": "Ta warda...",
-    "timeEntriesTitle": "Markashon di awe",
-    "timeEntriesEmpty": "Ainda bo no tin markashon awe",
-    "entryType": {
-      "ENTRADA": "Drenta",
-      "SALIDA": "Sali"
-    },
-    "autoBadge": "Automátiko",
-    "manualBadge": "Manual",
-    "totalLabel": "Total",
-    "openLabel": "Na kurso",
-    "punch": {
-      "clockIn": "Marka drenta",
-      "clockOut": "Marka sali",
-      "submitting": "Ta marka..."
-    },
     "stats": {
       "hoursThisWeek": "Oranan trahá e siman aki",
       "hoursValue": "{{hours}} h",

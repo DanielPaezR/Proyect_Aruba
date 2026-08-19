@@ -51,8 +51,12 @@ export const updateProfileSchema = z.object({
   phone: z.string().optional(),
 });
 
+// Unico lugar donde se cambian hourlyRate/overtimeHourlyRate — un solo
+// SalaryRaise puede registrar ambos a la vez con un solo motivo.
+// newOvertimeRate es opcional: un aumento puede tocar solo la tarifa normal.
 export const updateHourlyRateSchema = z.object({
   newRate: z.number().positive(),
+  newOvertimeRate: z.number().positive().optional(),
   reason: z.string().optional(),
 });
 

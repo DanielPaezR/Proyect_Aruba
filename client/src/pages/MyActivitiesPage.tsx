@@ -1,11 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { MyActivityCard } from "../components/MyActivityCard";
 import type { Activity } from "../types/activity";
-import type { UserDaySummary } from "../types/timeEntry";
-import { formatHoursFromMinutes } from "../utils/formatHours";
 
 interface WorkerStats {
   hoursThisWeek: number;
@@ -21,43 +19,8 @@ export function MyActivitiesPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // undefined = todavia no se cargo; null = cargado pero sin marcaciones hoy (o error).
-  const [todaySummary, setTodaySummary] = useState<UserDaySummary | null | undefined>(undefined);
-
   // undefined = todavia no se cargo; null = error al cargar (seccion secundaria).
   const [workerStats, setWorkerStats] = useState<WorkerStats | null | undefined>(undefined);
-
-  const [isPunching, setIsPunching] = useState(false);
-  const [punchError, setPunchError] = useState<string | null>(null);
-
-  // Se reutiliza tanto en la carga inicial como despues de marcar, para
-  // refrescar el estado (siguiente tipo de marcacion, total del dia) sin
-  // recargar toda la pagina.
-  const loadTimeEntries = useCallback(async () => {
-    try {
-      // Sin filtros: el backend usa el dia de hoy en Aruba por default.
-      const response = await apiClient.get<{ summary: UserDaySummary[] }>("/time-entries/summary/mine");
-      setTodaySummary(response.data.summary[0] ?? null);
-    } catch {
-      // Seccion secundaria de la pagina: si falla, las actividades siguen
-      // usables igual, no vale la pena mostrar un error aparte para esto.
-      setTodaySummary(null);
-    }
-  }, []);
-
-  async function handlePunch() {
-    const type = todaySummary?.hasOpenEntry ? "SALIDA" : "ENTRADA";
-    setPunchError(null);
-    setIsPunching(true);
-    try {
-      await apiClient.post("/time-entries", { type });
-      await loadTimeEntries();
-    } catch (error) {
-      setPunchError(translateApiError(t, error));
-    } finally {
-      setIsPunching(false);
-    }
-  }
 
   useEffect(() => {
     let cancelled = false;
@@ -97,12 +60,11 @@ export function MyActivitiesPage() {
     }
 
     void load();
-    void loadTimeEntries();
     void loadWorkerStats();
     return () => {
       cancelled = true;
     };
-  }, [t, loadTimeEntries]);
+  }, [t]);
 
   function handleActivityUpdated(updated: Activity) {
     // PATCH /activities/:id/status no devuelve "project" (a diferencia de GET
@@ -117,28 +79,6 @@ export function MyActivitiesPage() {
       <div className="page-header">
         <h1>{t("mine.title", { ns: "activities" })}</h1>
       </div>
-
-      {todaySummary !== undefined && (
-        <div className="punch-panel">
-          <button
-            type="button"
-            className={todaySummary?.hasOpenEntry ? "punch-button punch-button--out" : "punch-button punch-button--in"}
-            onClick={() => void handlePunch()}
-            disabled={isPunching}
-          >
-            {isPunching
-              ? t("mine.punch.submitting", { ns: "activities" })
-              : todaySummary?.hasOpenEntry
-                ? t("mine.punch.clockOut", { ns: "activities" })
-                : t("mine.punch.clockIn", { ns: "activities" })}
-          </button>
-          {punchError && (
-            <p className="form-error" role="alert">
-              {punchError}
-            </p>
-          )}
-        </div>
-      )}
 
       {workerStats && (
         <div className="stat-grid">
@@ -172,45 +112,6 @@ export function MyActivitiesPage() {
             <span className="stat-card__label">{t("mine.stats.streak", { ns: "activities" })}</span>
           </div>
         </div>
-      )}
-
-      {todaySummary !== undefined && (
-        <section className="my-time-entries">
-          <h2>{t("mine.timeEntriesTitle", { ns: "activities" })}</h2>
-          {!todaySummary || todaySummary.entries.length === 0 ? (
-            <p>{t("mine.timeEntriesEmpty", { ns: "activities" })}</p>
-          ) : (
-            <>
-              <p className="card-meta">
-                {t("mine.totalLabel", { ns: "activities" })}: {formatHoursFromMinutes(todaySummary.totalMinutes)}
-                {todaySummary.hasOpenEntry && ` · ${t("mine.openLabel", { ns: "activities" })}`}
-              </p>
-              <ul className="card-list">
-                {todaySummary.entries.map((entry) => (
-                  <li key={entry.id} className="card">
-                    <div className="card-header">
-                      <span className="card-title">
-                        {t(`mine.entryType.${entry.type}`, { ns: "activities" })}
-                      </span>
-                      <span
-                        className={
-                          entry.source === "AUTO_GEOFENCE" ? "status-badge status-badge--auto" : "status-badge"
-                        }
-                      >
-                        {entry.source === "AUTO_GEOFENCE"
-                          ? t("mine.autoBadge", { ns: "activities" })
-                          : t("mine.manualBadge", { ns: "activities" })}
-                      </span>
-                    </div>
-                    <span className="card-meta">
-                      {new Date(entry.timestamp).toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit" })}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-        </section>
       )}
 
       {isLoading && <p className="page-loading">{t("loading", { ns: "common" })}</p>}

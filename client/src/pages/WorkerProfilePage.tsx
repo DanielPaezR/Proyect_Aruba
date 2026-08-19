@@ -69,6 +69,7 @@ export function WorkerProfilePage() {
   const [historyError, setHistoryError] = useState<string | null>(null);
   const [isRaiseFormOpen, setIsRaiseFormOpen] = useState(false);
   const [newRate, setNewRate] = useState("");
+  const [newOvertimeRate, setNewOvertimeRate] = useState("");
   const [raiseReason, setRaiseReason] = useState("");
   const [isSubmittingRaise, setIsSubmittingRaise] = useState(false);
   const [raiseError, setRaiseError] = useState<string | null>(null);
@@ -309,9 +310,11 @@ export function WorkerProfilePage() {
     try {
       await apiClient.patch(`/auth/users/${userId}/hourly-rate`, {
         newRate: Number(newRate),
+        newOvertimeRate: newOvertimeRate ? Number(newOvertimeRate) : undefined,
         reason: raiseReason || undefined,
       });
       setNewRate("");
+      setNewOvertimeRate("");
       setRaiseReason("");
       setIsRaiseFormOpen(false);
       await Promise.all([loadProfile(userId), loadSalaryHistory(userId)]);
@@ -666,6 +669,17 @@ export function WorkerProfilePage() {
                         />
                       </label>
                       <label>
+                        {t("salary.newOvertimeRateLabel", { ns: "users" })}
+                        <input
+                          type="number"
+                          min="0.01"
+                          step="0.01"
+                          value={newOvertimeRate}
+                          onChange={(event) => setNewOvertimeRate(event.target.value)}
+                          placeholder={t("salary.newOvertimeRatePlaceholder", { ns: "users" })}
+                        />
+                      </label>
+                      <label>
                         {t("salary.reasonLabel", { ns: "users" })}
                         <textarea
                           value={raiseReason}
@@ -716,6 +730,15 @@ export function WorkerProfilePage() {
                               </span>
                               <span className="card-meta">{formatTimeAgo(raise.createdAt)}</span>
                             </div>
+                            {raise.newOvertimeRate && (
+                              <p className="card-meta">
+                                {t("salary.overtimeRateChange", {
+                                  ns: "users",
+                                  previous: formatHourlyRate(raise.previousOvertimeRate) ?? "—",
+                                  next: formatHourlyRate(raise.newOvertimeRate),
+                                })}
+                              </p>
+                            )}
                             {raise.reason && <p className="card-description">{raise.reason}</p>}
                             <span className="card-meta">
                               {t("salary.registeredBy", { ns: "users", name: raise.createdBy.name })}

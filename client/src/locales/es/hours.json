@@ -1,0 +1,17 @@
+{
+  "title": "Horas",
+  "punch": {
+    "ENTRADA": "Entrar",
+    "ALMUERZO_INICIO": "Almuerzo",
+    "ALMUERZO_FIN": "Reanudar",
+    "SALIDA": "Salida",
+    "submitting": "Marcando..."
+  },
+  "stats": {
+    "workedToday": "Horas trabajadas hoy",
+    "overtimeToday": "Horas extra hoy",
+    "lunchToday": "Almuerzo hoy",
+    "earningsToday": "Vas ganando hoy",
+    "estimateNote": "Estimado en base a tu tarifa registrada — no es el cálculo oficial de nómina."
+  }
+}

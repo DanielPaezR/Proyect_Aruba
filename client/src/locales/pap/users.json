@@ -64,12 +64,15 @@
     "registerButton": "Registra aumento",
     "formTitle": "Registra aumento di salario",
     "newRateLabel": "Preis pa ora nobo (AWG)",
+    "newOvertimeRateLabel": "Preis pa ora ekstra nobo (AWG)",
+    "newOvertimeRatePlaceholder": "Opshonal — laga bashí si e no ta kambia",
     "reasonLabel": "Motibu (opshonal)",
     "submit": "Warda aumento",
     "saving": "Ta warda...",
     "historyTitle": "Historial di aumento",
     "historyEmpty": "Ainda no tin aumento registrá",
     "rateChange": "{{previous}} → {{next}}",
+    "overtimeRateChange": "Ora ekstra: {{previous}} → {{next}}",
     "registeredBy": "Registrá pa {{name}}"
   },
   "score": {

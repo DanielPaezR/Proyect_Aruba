@@ -41,6 +41,12 @@ const PUBLIC_USER_FIELDS = {
   role: true,
   phone: true,
   hourlyRate: true,
+  // Igual de sensible que hourlyRate (mismo criterio que en
+  // JEFE_PROFILE_FIELDS/SUPERVISOR_PROFILE_FIELDS), pero hace falta en el
+  // propio GET /me: el trabajador necesita ver su propia tarifa extra para
+  // el estimado de ganancia en vivo (ver time-entries.service.ts
+  // getTodayStatus) — no es informacion sensible respecto de si mismo.
+  overtimeHourlyRate: true,
   isActive: true,
   locale: true,
   photoUrl: true,
@@ -140,6 +146,7 @@ export async function login(input: LoginInput) {
       role: user.role,
       phone: user.phone,
       hourlyRate: user.hourlyRate,
+      overtimeHourlyRate: user.overtimeHourlyRate,
       isActive: user.isActive,
       locale: user.locale,
       photoUrl: user.photoUrl,
@@ -322,8 +329,11 @@ export async function reactivateUser(userId: string) {
 }
 
 /** Equivalente a updateProfile (foto propia) pero para que un Jefe/Supervisor
- * suba/reemplace la foto de CUALQUIER trabajador — mismo patron Cloudinary. */
-export async function updateUserPhoto(userId: string, photo: Express.Multer.File) {
+ * suba/reemplace la foto de CUALQUIER trabajador — mismo patron Cloudinary.
+ * requesterRole decide el select de vuelta: un Supervisor no debe ver el
+ * hourlyRate/overtimeHourlyRate de otro trabajador solo por subirle una foto
+ * (mismo criterio que listUsers). */
+export async function updateUserPhoto(userId: string, photo: Express.Multer.File, requesterRole: Role) {
   const existing = await prisma.user.findUnique({ where: { id: userId } });
   if (!existing) {
     throw ApiError.notFound(ErrorCode.USER_NOT_FOUND, "Usuario no encontrado");
@@ -342,7 +352,7 @@ export async function updateUserPhoto(userId: string, photo: Express.Multer.File
   return prisma.user.update({
     where: { id: userId },
     data: { photoUrl: uploaded.url, photoPublicId: uploaded.publicId },
-    select: PUBLIC_USER_FIELDS,
+    select: requesterRole === Role.JEFE ? PUBLIC_USER_FIELDS : SUPERVISOR_USER_FIELDS,
   });
 }
 
@@ -419,7 +429,9 @@ export async function updateProfile(userId: string, input: UpdateProfileInput, p
  * Registra un aumento de sueldo por hora: crea la fila de historial
  * (previousRate = el hourlyRate actual antes de este cambio) y actualiza
  * User.hourlyRate, todo en una sola transaccion — no debe quedar el precio
- * actualizado sin su registro en el historial, ni al reves.
+ * actualizado sin su registro en el historial, ni al reves. Unico lugar
+ * donde se toca hourlyRate/overtimeHourlyRate — newOvertimeRate es opcional,
+ * un aumento puede tocar solo la tarifa normal.
  */
 export async function updateHourlyRate(userId: string, createdById: string, input: UpdateHourlyRateInput) {
   const existing = await prisma.user.findUnique({ where: { id: userId } });
@@ -430,7 +442,10 @@ export async function updateHourlyRate(userId: string, createdById: string, inpu
   const [updatedUser] = await prisma.$transaction([
     prisma.user.update({
       where: { id: userId },
-      data: { hourlyRate: input.newRate },
+      data: {
+        hourlyRate: input.newRate,
+        ...(input.newOvertimeRate !== undefined ? { overtimeHourlyRate: input.newOvertimeRate } : {}),
+      },
       select: PUBLIC_USER_FIELDS,
     }),
     prisma.salaryRaise.create({
@@ -438,6 +453,8 @@ export async function updateHourlyRate(userId: string, createdById: string, inpu
         userId,
         previousRate: existing.hourlyRate,
         newRate: input.newRate,
+        previousOvertimeRate: input.newOvertimeRate !== undefined ? existing.overtimeHourlyRate : undefined,
+        newOvertimeRate: input.newOvertimeRate,
         reason: input.reason,
         createdById,
       },

@@ -55,21 +55,6 @@
     "skipReasonInputLabel": "Reason (required)",
     "skipSubmit": "Confirm",
     "skipSubmitting": "Saving...",
-    "timeEntriesTitle": "Today's clock-ins",
-    "timeEntriesEmpty": "No clock-ins yet today",
-    "entryType": {
-      "ENTRADA": "Clock in",
-      "SALIDA": "Clock out"
-    },
-    "autoBadge": "Automatic",
-    "manualBadge": "Manual",
-    "totalLabel": "Total",
-    "openLabel": "In progress",
-    "punch": {
-      "clockIn": "Clock in",
-      "clockOut": "Clock out",
-      "submitting": "Clocking..."
-    },
     "stats": {
       "hoursThisWeek": "Hours worked this week",
       "hoursValue": "{{hours}} h",

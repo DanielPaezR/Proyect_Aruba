@@ -1,0 +1,17 @@
+{
+  "title": "Oranan",
+  "punch": {
+    "ENTRADA": "Drenta",
+    "ALMUERZO_INICIO": "Almuerzo",
+    "ALMUERZO_FIN": "Sigui",
+    "SALIDA": "Sali",
+    "submitting": "Ta marka..."
+  },
+  "stats": {
+    "workedToday": "Oranan trahá awe",
+    "overtimeToday": "Ora ekstra awe",
+    "lunchToday": "Almuerzo awe",
+    "earningsToday": "Bo ta gana awe",
+    "estimateNote": "Estimado base riba bo tarifa registrá — e no ta e kalkulo ofisial di nómina."
+  }
+}

@@ -35,6 +35,7 @@
     "projects": "Proyektonan",
     "clients": "Klientenan",
     "myActivities": "Mi aktividatnan",
+    "myHours": "Oranan",
     "evidences": "Evidensianan",
     "invoices": "Facturanan",
     "users": "Usuarionan",
@@ -121,7 +122,11 @@
       "USER_ALREADY_ACTIVE": "E usuario aki ya ta aktivo",
       "CANNOT_DEACTIVATE_SELF": "Bo no por desaktivá bo mes kuenta",
       "WORKER_DOCUMENT_NOT_FOUND": "Dokumento no ta wordu hañá",
-      "WORKER_DOCUMENT_DELETE_FORBIDDEN": "Bo no por elimina e dokumento aki"
+      "WORKER_DOCUMENT_DELETE_FORBIDDEN": "Bo no por elimina e dokumento aki",
+      "ALREADY_ON_LUNCH": "Bo ta na bo almuerzo kaba",
+      "NO_OPEN_LUNCH": "Bo no tin un almuerzo habrí pa finalisá",
+      "NO_OPEN_ENTRY_FOR_LUNCH": "Bo no tin un entrada habrí pa marka almuerzo",
+      "CANNOT_EXIT_DURING_LUNCH": "Bo mester finalisá bo almuerzo promé bo marka salida"
     }
   }
 }

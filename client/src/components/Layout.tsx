@@ -69,6 +69,11 @@ export function Layout() {
                 </NavLink>
               )}
               {user.role === "TRABAJADOR_CAMPO" && (
+                <NavLink to="/my-hours" className={navLinkClassName}>
+                  {t("nav.myHours", { ns: "common" })}
+                </NavLink>
+              )}
+              {user.role === "TRABAJADOR_CAMPO" && (
                 <NavLink to="/my-tools" className={navLinkClassName}>
                   {t("nav.myTools", { ns: "common" })}
                 </NavLink>

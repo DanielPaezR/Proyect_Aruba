@@ -1,0 +1,17 @@
+{
+  "title": "Hours",
+  "punch": {
+    "ENTRADA": "Clock in",
+    "ALMUERZO_INICIO": "Lunch",
+    "ALMUERZO_FIN": "Resume",
+    "SALIDA": "Clock out",
+    "submitting": "Clocking..."
+  },
+  "stats": {
+    "workedToday": "Hours worked today",
+    "overtimeToday": "Overtime today",
+    "lunchToday": "Lunch today",
+    "earningsToday": "You're earning today",
+    "estimateNote": "Estimated from your recorded rate — not the official payroll calculation."
+  }
+}

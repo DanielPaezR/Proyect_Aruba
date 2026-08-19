@@ -23,6 +23,7 @@ import esToolIncidents from "../locales/es/toolIncidents.json";
 import esMyTools from "../locales/es/myTools.json";
 import esRequestMaterials from "../locales/es/requestMaterials.json";
 import esAgenda from "../locales/es/agenda.json";
+import esHours from "../locales/es/hours.json";
 import enCommon from "../locales/en/common.json";
 import enAuth from "../locales/en/auth.json";
 import enChat from "../locales/en/chat.json";
@@ -44,6 +45,7 @@ import enToolIncidents from "../locales/en/toolIncidents.json";
 import enMyTools from "../locales/en/myTools.json";
 import enRequestMaterials from "../locales/en/requestMaterials.json";
 import enAgenda from "../locales/en/agenda.json";
+import enHours from "../locales/en/hours.json";
 import papCommon from "../locales/pap/common.json";
 import papAuth from "../locales/pap/auth.json";
 import papChat from "../locales/pap/chat.json";
@@ -65,6 +67,7 @@ import papToolIncidents from "../locales/pap/toolIncidents.json";
 import papMyTools from "../locales/pap/myTools.json";
 import papRequestMaterials from "../locales/pap/requestMaterials.json";
 import papAgenda from "../locales/pap/agenda.json";
+import papHours from "../locales/pap/hours.json";
 
 export const SUPPORTED_LANGUAGES = ["es", "en", "pap"] as const;
 export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
@@ -99,6 +102,7 @@ void i18n
         myTools: esMyTools,
         requestMaterials: esRequestMaterials,
         agenda: esAgenda,
+        hours: esHours,
       },
       en: {
         common: enCommon,
@@ -122,6 +126,7 @@ void i18n
         myTools: enMyTools,
         requestMaterials: enRequestMaterials,
         agenda: enAgenda,
+        hours: enHours,
       },
       pap: {
         common: papCommon,
@@ -145,6 +150,7 @@ void i18n
         myTools: papMyTools,
         requestMaterials: papRequestMaterials,
         agenda: papAgenda,
+        hours: papHours,
       },
     },
     fallbackLng: "es",
@@ -171,6 +177,7 @@ void i18n
       "myTools",
       "requestMaterials",
       "agenda",
+      "hours",
     ],
     defaultNS: "common",
     interpolation: { escapeValue: false },

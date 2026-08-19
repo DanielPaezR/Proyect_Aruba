@@ -47,6 +47,11 @@ export const summaryMine = asyncHandler(async (req: Request, res: Response) => {
   res.json({ summary });
 });
 
+export const todayMine = asyncHandler(async (req: Request, res: Response) => {
+  const status = await timeEntriesService.getTodayStatus(req.user!);
+  res.json(status);
+});
+
 export const update = asyncHandler(async (req: Request, res: Response) => {
   const input = updateTimeEntrySchema.parse(req.body);
   const timeEntry = await timeEntriesService.updateTimeEntry(req.user!, req.params.timeEntryId, input);

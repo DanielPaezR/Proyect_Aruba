@@ -64,12 +64,15 @@
     "registerButton": "Register raise",
     "formTitle": "Register salary raise",
     "newRateLabel": "New hourly rate (AWG)",
+    "newOvertimeRateLabel": "New overtime hourly rate (AWG)",
+    "newOvertimeRatePlaceholder": "Optional — leave blank if unchanged",
     "reasonLabel": "Reason (optional)",
     "submit": "Save raise",
     "saving": "Saving...",
     "historyTitle": "Raise history",
     "historyEmpty": "No raises registered yet",
     "rateChange": "{{previous}} → {{next}}",
+    "overtimeRateChange": "Overtime: {{previous}} → {{next}}",
     "registeredBy": "Registered by {{name}}"
   },
   "score": {

@@ -63,18 +63,38 @@ function getLastEntry(userId: string): Promise<LastEntry> {
 }
 
 /**
- * Una ENTRADA solo es valida si no hay una entrada abierta; una SALIDA solo es
- * valida si hay una entrada abierta para cerrar. Es la unica fuente de verdad
- * para esto — la usan tanto el marcado manual (createTimeEntry) como el
- * automatico por geocerca (autoCheck), que en vez de lanzar error simplemente
- * no hace nada si la secuencia no aplica.
+ * Secuencia de 4 estados (ver ultimo tipo marcado):
+ *   sin marcacion abierta (o ultimo SALIDA) -> solo ENTRADA
+ *   ultimo ENTRADA                          -> ALMUERZO_INICIO o SALIDA
+ *   ultimo ALMUERZO_INICIO                  -> solo ALMUERZO_FIN
+ *   ultimo ALMUERZO_FIN                     -> ALMUERZO_INICIO (otro descanso) o SALIDA
+ * Es la unica fuente de verdad para esto — la usan tanto el marcado manual
+ * (createTimeEntry) como getTodayStatus (para decidir que botones mostrar) y
+ * el automatico por geocerca (autoCheck, que ya no marca ENTRADA/SALIDA pero
+ * comparte el mismo tipo LastEntry).
  */
 function isValidPunchSequence(lastEntry: LastEntry, type: PunchType): boolean {
-  if (type === PunchType.ENTRADA) {
-    return lastEntry?.type !== PunchType.ENTRADA;
+  const last = lastEntry?.type ?? null;
+  switch (type) {
+    case PunchType.ENTRADA:
+      return last === null || last === PunchType.SALIDA;
+    case PunchType.ALMUERZO_INICIO:
+      return last === PunchType.ENTRADA || last === PunchType.ALMUERZO_FIN;
+    case PunchType.ALMUERZO_FIN:
+      return last === PunchType.ALMUERZO_INICIO;
+    case PunchType.SALIDA:
+      return last === PunchType.ENTRADA || last === PunchType.ALMUERZO_FIN;
+    default:
+      return false;
   }
-  return lastEntry?.type === PunchType.ENTRADA;
 }
+
+const ALL_PUNCH_TYPES: PunchType[] = [
+  PunchType.ENTRADA,
+  PunchType.ALMUERZO_INICIO,
+  PunchType.ALMUERZO_FIN,
+  PunchType.SALIDA,
+];
 
 export async function createTimeEntry(user: AuthUser, input: CreateTimeEntryInput) {
   if (input.activityId) {
@@ -84,8 +104,22 @@ export async function createTimeEntry(user: AuthUser, input: CreateTimeEntryInpu
   const lastEntry = await getLastEntry(user.id);
 
   if (!isValidPunchSequence(lastEntry, input.type)) {
+    const last = lastEntry?.type ?? null;
     if (input.type === PunchType.ENTRADA) {
       throw ApiError.conflict(ErrorCode.OPEN_ENTRY_EXISTS, "Ya tienes una entrada registrada sin una salida previa");
+    }
+    if (input.type === PunchType.ALMUERZO_INICIO) {
+      if (last === PunchType.ALMUERZO_INICIO) {
+        throw ApiError.conflict(ErrorCode.ALREADY_ON_LUNCH, "Ya estás en tu almuerzo");
+      }
+      throw ApiError.conflict(ErrorCode.NO_OPEN_ENTRY_FOR_LUNCH, "No tienes una entrada abierta para marcar almuerzo");
+    }
+    if (input.type === PunchType.ALMUERZO_FIN) {
+      throw ApiError.conflict(ErrorCode.NO_OPEN_LUNCH, "No tienes un almuerzo abierto para finalizar");
+    }
+    // SALIDA
+    if (last === PunchType.ALMUERZO_INICIO) {
+      throw ApiError.conflict(ErrorCode.CANNOT_EXIT_DURING_LUNCH, "Debes finalizar tu almuerzo antes de marcar salida");
     }
     throw ApiError.conflict(ErrorCode.NO_OPEN_ENTRY, "No tienes una entrada abierta para registrar una salida");
   }
@@ -183,8 +217,14 @@ export interface ProximityLogReference {
 export interface UserDaySummary {
   user: { id: string; name: string };
   entries: TimeEntryWithRelations[];
+  // Neto: (SALIDA - ENTRADA) menos el tiempo de almuerzo de cada sesion, no
+  // el bruto — el almuerzo nunca cuenta como trabajado.
   totalMinutes: number;
+  normalMinutes: number;
+  overtimeMinutes: number;
+  lunchMinutes: number;
   hasOpenEntry: boolean;
+  hasOpenLunch: boolean;
   // GeofenceProximityLog de este rango que no cae cerca (en el tiempo) de
   // ninguna marcacion real — referencia informativa de "estuvo cerca de la
   // oficina" para cuando el trabajador olvido marcar. Nunca reemplaza ni
@@ -203,10 +243,57 @@ function isNearAnyEntry(detectedAt: Date, entries: { timestamp: Date }[]): boole
 }
 
 /**
+ * Camina las marcaciones de un dia/rango en orden y devuelve los acumulados
+ * de sesiones YA CERRADAS (una SALIDA cierra la ENTRADA correspondiente,
+ * restando cualquier almuerzo tomado en esa sesion). No cuenta nada de una
+ * sesion que siga abierta al final del rango — eso es responsabilidad de
+ * quien llama (getSummary la deja fuera del total; getTodayStatus la suma
+ * en vivo usando la hora actual). Compartido por los dos para no repetir la
+ * misma logica de emparejar ENTRADA/ALMUERZO_INICIO/ALMUERZO_FIN/SALIDA.
+ */
+function walkClosedSessions(entries: { type: PunchType; timestamp: Date }[]): {
+  netMinutes: number;
+  lunchMinutes: number;
+  openEntradaAt: Date | null;
+  openLunchAt: Date | null;
+  sessionLunchMinutesSoFar: number;
+} {
+  let openEntradaAt: Date | null = null;
+  let openLunchAt: Date | null = null;
+  let sessionLunchMinutes = 0;
+  let netMinutes = 0;
+  let lunchMinutes = 0;
+
+  for (const entry of entries) {
+    if (entry.type === PunchType.ENTRADA) {
+      openEntradaAt = entry.timestamp;
+      sessionLunchMinutes = 0;
+    } else if (entry.type === PunchType.ALMUERZO_INICIO && openEntradaAt) {
+      openLunchAt = entry.timestamp;
+    } else if (entry.type === PunchType.ALMUERZO_FIN && openLunchAt) {
+      const minutes = (entry.timestamp.getTime() - openLunchAt.getTime()) / 60000;
+      sessionLunchMinutes += minutes;
+      lunchMinutes += minutes;
+      openLunchAt = null;
+    } else if (entry.type === PunchType.SALIDA && openEntradaAt) {
+      const grossMinutes = (entry.timestamp.getTime() - openEntradaAt.getTime()) / 60000;
+      netMinutes += Math.max(0, grossMinutes - sessionLunchMinutes);
+      openEntradaAt = null;
+      sessionLunchMinutes = 0;
+    }
+  }
+
+  return { netMinutes, lunchMinutes, openEntradaAt, openLunchAt, sessionLunchMinutesSoFar: sessionLunchMinutes };
+}
+
+/**
  * Horas trabajadas por usuario en un rango: empareja cada ENTRADA con la
- * SALIDA que le sigue. Una ENTRADA sin SALIDA todavia (hasOpenEntry) no suma
+ * SALIDA que le sigue, restando el tiempo de almuerzo de cada sesion (ver
+ * walkClosedSessions). Una ENTRADA sin SALIDA todavia (hasOpenEntry) no suma
  * a totalMinutes — se muestra aparte para que quien revisa sepa que sigue
- * abierta, en vez de inflar el total silenciosamente en cada consulta.
+ * abierta, en vez de inflar el total silenciosamente en cada consulta. De lo
+ * neto, lo que exceda standardDailyMinutes (CompanySettings) cuenta como
+ * overtimeMinutes.
  *
  * Tambien adjunta, por usuario, los GeofenceProximityLog del mismo rango que
  * no tienen una marcacion real cerca en el tiempo — referencia para el
@@ -228,7 +315,7 @@ export async function getSummary(filters: SummaryQuery): Promise<UserDaySummary[
 
   const userFilter = filters.userId ? { userId: filters.userId } : { user: { role: Role.TRABAJADOR_CAMPO } };
 
-  const [entries, proximityLogs] = await Promise.all([
+  const [entries, proximityLogs, settings] = await Promise.all([
     prisma.timeEntry.findMany({
       where: { ...userFilter, timestamp: { gte: start, ...(end ? { lt: end } : {}) } },
       include: timeEntryInclude,
@@ -239,13 +326,24 @@ export async function getSummary(filters: SummaryQuery): Promise<UserDaySummary[
       include: { user: { select: { id: true, name: true } } },
       orderBy: [{ userId: "asc" }, { detectedAt: "asc" }],
     }),
+    settingsService.getSettings(),
   ]);
 
   const byUser = new Map<string, UserDaySummary>();
   function ensureBucket(userId: string, user: { id: string; name: string }): UserDaySummary {
     let bucket = byUser.get(userId);
     if (!bucket) {
-      bucket = { user, entries: [], totalMinutes: 0, hasOpenEntry: false, unmatchedProximityLogs: [] };
+      bucket = {
+        user,
+        entries: [],
+        totalMinutes: 0,
+        normalMinutes: 0,
+        overtimeMinutes: 0,
+        lunchMinutes: 0,
+        hasOpenEntry: false,
+        hasOpenLunch: false,
+        unmatchedProximityLogs: [],
+      };
       byUser.set(userId, bucket);
     }
     return bucket;
@@ -256,16 +354,13 @@ export async function getSummary(filters: SummaryQuery): Promise<UserDaySummary[
   }
 
   for (const bucket of byUser.values()) {
-    let openEntradaAt: Date | null = null;
-    for (const entry of bucket.entries) {
-      if (entry.type === PunchType.ENTRADA) {
-        openEntradaAt = entry.timestamp;
-      } else if (entry.type === PunchType.SALIDA && openEntradaAt) {
-        bucket.totalMinutes += (entry.timestamp.getTime() - openEntradaAt.getTime()) / 60000;
-        openEntradaAt = null;
-      }
-    }
+    const { netMinutes, lunchMinutes, openEntradaAt, openLunchAt } = walkClosedSessions(bucket.entries);
+    bucket.totalMinutes = netMinutes;
+    bucket.lunchMinutes = lunchMinutes;
+    bucket.normalMinutes = Math.min(netMinutes, settings.standardDailyMinutes);
+    bucket.overtimeMinutes = Math.max(0, netMinutes - settings.standardDailyMinutes);
     bucket.hasOpenEntry = openEntradaAt !== null;
+    bucket.hasOpenLunch = openLunchAt !== null;
   }
 
   for (const log of proximityLogs) {
@@ -301,4 +396,86 @@ export async function updateTimeEntry(editor: AuthUser, timeEntryId: string, inp
     },
     include: timeEntryInclude,
   });
+}
+
+export interface TodayTimeStatus {
+  lastPunchType: PunchType | null;
+  // Que botones deberia mostrar el cliente ahora mismo — unica fuente de
+  // verdad (isValidPunchSequence), el cliente no reimplementa la secuencia.
+  validNextTypes: PunchType[];
+  workedMinutes: number;
+  normalMinutes: number;
+  overtimeMinutes: number;
+  lunchMinutes: number;
+  // null si el usuario no tiene hourlyRate configurado (ej. no todos los
+  // roles lo tienen) — no hay estimado sensato sin una tarifa base.
+  earningsEstimate: number | null;
+}
+
+/**
+ * Estado de hoy para el trabajador autenticado, en vivo: si tiene una sesion
+ * o un almuerzo abiertos, usa la hora actual como si fuera el "corte" (sin
+ * escribir nada) para que el contador de horas/ganancia estimada avance
+ * mientras la pantalla esta abierta, en vez de quedar congelado desde la
+ * ultima marcacion. Mismo pairing ENTRADA/ALMUERZO_INICIO/ALMUERZO_FIN/
+ * SALIDA que getSummary (ver walkClosedSessions), mas la sesion abierta.
+ */
+export async function getTodayStatus(user: AuthUser): Promise<TodayTimeStatus> {
+  const start = arubaStartOfTodayUtc();
+  const end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
+
+  const [entries, settings, fullUser] = await Promise.all([
+    prisma.timeEntry.findMany({
+      where: { userId: user.id, timestamp: { gte: start, lt: end } },
+      orderBy: { timestamp: "asc" },
+      select: { type: true, timestamp: true },
+    }),
+    settingsService.getSettings(),
+    prisma.user.findUnique({ where: { id: user.id }, select: { hourlyRate: true, overtimeHourlyRate: true } }),
+  ]);
+
+  const now = new Date();
+  const { netMinutes, lunchMinutes, openEntradaAt, openLunchAt, sessionLunchMinutesSoFar } =
+    walkClosedSessions(entries);
+
+  let liveNetMinutes = netMinutes;
+  let liveLunchMinutes = lunchMinutes;
+
+  if (openEntradaAt) {
+    if (openLunchAt) {
+      // En almuerzo ahora mismo: las horas trabajadas se congelan en el
+      // momento en que empezo el almuerzo, no siguen sumando.
+      const sessionWorkedSoFar = (openLunchAt.getTime() - openEntradaAt.getTime()) / 60000 - sessionLunchMinutesSoFar;
+      liveNetMinutes += Math.max(0, sessionWorkedSoFar);
+      liveLunchMinutes += (now.getTime() - openLunchAt.getTime()) / 60000;
+    } else {
+      const sessionWorkedSoFar = (now.getTime() - openEntradaAt.getTime()) / 60000 - sessionLunchMinutesSoFar;
+      liveNetMinutes += Math.max(0, sessionWorkedSoFar);
+    }
+  }
+
+  const normalMinutes = Math.min(liveNetMinutes, settings.standardDailyMinutes);
+  const overtimeMinutes = Math.max(0, liveNetMinutes - settings.standardDailyMinutes);
+
+  const lastPunchType = entries.length > 0 ? entries[entries.length - 1].type : null;
+  const lastEntry: LastEntry = lastPunchType ? { type: lastPunchType } : null;
+  const validNextTypes = ALL_PUNCH_TYPES.filter((type) => isValidPunchSequence(lastEntry, type));
+
+  let earningsEstimate: number | null = null;
+  if (fullUser?.hourlyRate) {
+    const normalRate = fullUser.hourlyRate.toNumber();
+    const overtimeRate = fullUser.overtimeHourlyRate ? fullUser.overtimeHourlyRate.toNumber() : normalRate;
+    earningsEstimate =
+      Math.round(((normalMinutes / 60) * normalRate + (overtimeMinutes / 60) * overtimeRate) * 100) / 100;
+  }
+
+  return {
+    lastPunchType,
+    validNextTypes,
+    workedMinutes: Math.round(liveNetMinutes),
+    normalMinutes: Math.round(normalMinutes),
+    overtimeMinutes: Math.round(overtimeMinutes),
+    lunchMinutes: Math.round(liveLunchMinutes),
+    earningsEstimate,
+  };
 }

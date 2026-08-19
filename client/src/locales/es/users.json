@@ -64,12 +64,15 @@
     "registerButton": "Registrar aumento",
     "formTitle": "Registrar aumento de sueldo",
     "newRateLabel": "Nuevo precio por hora (AWG)",
+    "newOvertimeRateLabel": "Nuevo precio por hora extra (AWG)",
+    "newOvertimeRatePlaceholder": "Opcional — deja vacío si no cambia",
     "reasonLabel": "Motivo (opcional)",
     "submit": "Guardar aumento",
     "saving": "Guardando...",
     "historyTitle": "Historial de aumentos",
     "historyEmpty": "Todavía no hay aumentos registrados",
     "rateChange": "{{previous}} → {{next}}",
+    "overtimeRateChange": "Hora extra: {{previous}} → {{next}}",
     "registeredBy": "Registrado por {{name}}"
   },
   "score": {
