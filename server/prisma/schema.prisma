@@ -161,6 +161,14 @@ enum Feature {
   FACTURAS
 }
 
+// Adelanto (a favor del trabajador, se resta de la liquidacion) o descuento
+// (en contra, tambien se resta) — los dos restan del sueldo del periodo, la
+// distincion es solo de motivo/reporte, ver SalaryAdjustment.
+enum SalaryAdjustmentType {
+  ADELANTO
+  DESCUENTO
+}
+
 // ---------- Modelos ----------
 
 model User {
@@ -205,25 +213,27 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  createdProjects       Project[]              @relation("ProjectCreatedBy")
-  activityAssignments   ActivityAssignment[]
-  timeEntries           TimeEntry[]
-  editedTimeEntries     TimeEntry[]            @relation("TimeEntryEditedBy")
-  uploadedEvidences     Evidence[]             @relation("EvidenceUploadedBy")
-  reviewedEvidences     Evidence[]             @relation("EvidenceReviewedBy")
-  uploadedInvoices      Invoice[]              @relation("InvoiceUploadedBy")
-  reviewedInvoices      Invoice[]              @relation("InvoiceReviewedBy")
-  recordedPayments      Payment[]              @relation("PaymentRecordedBy")
-  skippedActivities     Activity[]             @relation("ActivitySkippedBy")
-  chatMessages          ChatMessage[]
-  refreshTokens         RefreshToken[]
-  pushSubscriptions     PushSubscription[]
-  punchReminderLogs     PunchReminderLog[]
-  geofenceProximityLogs GeofenceProximityLog[]
-  salaryRaises          SalaryRaise[]          @relation("SalaryRaiseForUser")
-  createdSalaryRaises   SalaryRaise[]          @relation("SalaryRaiseCreatedBy")
-  scoreEvents           WorkerScoreEvent[]     @relation("WorkerScoreEventForUser")
-  createdScoreEvents    WorkerScoreEvent[]     @relation("WorkerScoreEventCreatedBy")
+  createdProjects          Project[]              @relation("ProjectCreatedBy")
+  activityAssignments      ActivityAssignment[]
+  timeEntries              TimeEntry[]
+  editedTimeEntries        TimeEntry[]            @relation("TimeEntryEditedBy")
+  uploadedEvidences        Evidence[]             @relation("EvidenceUploadedBy")
+  reviewedEvidences        Evidence[]             @relation("EvidenceReviewedBy")
+  uploadedInvoices         Invoice[]              @relation("InvoiceUploadedBy")
+  reviewedInvoices         Invoice[]              @relation("InvoiceReviewedBy")
+  recordedPayments         Payment[]              @relation("PaymentRecordedBy")
+  skippedActivities        Activity[]             @relation("ActivitySkippedBy")
+  chatMessages             ChatMessage[]
+  refreshTokens            RefreshToken[]
+  pushSubscriptions        PushSubscription[]
+  punchReminderLogs        PunchReminderLog[]
+  geofenceProximityLogs    GeofenceProximityLog[]
+  salaryRaises             SalaryRaise[]          @relation("SalaryRaiseForUser")
+  createdSalaryRaises      SalaryRaise[]          @relation("SalaryRaiseCreatedBy")
+  salaryAdjustments        SalaryAdjustment[]     @relation("SalaryAdjustmentForUser")
+  createdSalaryAdjustments SalaryAdjustment[]     @relation("SalaryAdjustmentCreatedBy")
+  scoreEvents              WorkerScoreEvent[]     @relation("WorkerScoreEventForUser")
+  createdScoreEvents       WorkerScoreEvent[]     @relation("WorkerScoreEventCreatedBy")
 
   toolAssignments          ToolAssignment[]     @relation("ToolAssignmentUser")
   materialRequests         MaterialRequest[]    @relation("MaterialRequestRequestedBy")
@@ -453,6 +463,34 @@ model SalaryRaise {
 
   @@index([userId, createdAt])
   @@map("salary_raises")
+}
+
+// Adelantos y descuentos de sueldo por trabajador — base para el calculo de
+// liquidacion mensual (Modulo 2.3). Cada fila es un evento inmutable (no se
+// edita; ver DELETE en auth.service.ts para corregir un registro mal
+// ingresado, mismo criterio que Payment). No toca ningun campo de User, a
+// diferencia de SalaryRaise: es puro registro para que la liquidacion lo
+// sume/reste sobre el sueldo del periodo correspondiente.
+model SalaryAdjustment {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation("SalaryAdjustmentForUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  type   SalaryAdjustmentType
+  amount Decimal              @db.Decimal(10, 2)
+  reason String
+
+  // Mes/dia al que aplica el adelanto/descuento para la liquidacion, no
+  // necesariamente el mismo dia en que se registro (ver createdAt).
+  effectiveDate DateTime
+
+  createdById String
+  createdBy   User   @relation("SalaryAdjustmentCreatedBy", fields: [createdById], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, effectiveDate])
+  @@map("salary_adjustments")
 }
 
 // Evento de puntaje mensual (bonos/descuentos por incidentes). El puntaje de

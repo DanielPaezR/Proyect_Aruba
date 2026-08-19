@@ -125,6 +125,7 @@
       "CANNOT_DEACTIVATE_SELF": "You can't deactivate your own account",
       "WORKER_DOCUMENT_NOT_FOUND": "Document not found",
       "WORKER_DOCUMENT_DELETE_FORBIDDEN": "You can't delete this document",
+      "SALARY_ADJUSTMENT_NOT_FOUND": "Record not found",
       "ALREADY_ON_LUNCH": "You're already on your lunch break",
       "NO_OPEN_LUNCH": "You don't have an open lunch break to end",
       "NO_OPEN_ENTRY_FOR_LUNCH": "You don't have an open clock-in to start a lunch break",

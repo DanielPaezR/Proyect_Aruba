@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { Locale, Role } from "@prisma/client";
+import { Locale, Role, SalaryAdjustmentType } from "@prisma/client";
 
 export const loginSchema = z.object({
   email: z.string().email(),
@@ -78,6 +78,21 @@ export const uploadWorkerDocumentSchema = z.object({
   label: z.string().min(1).max(100),
 });
 
+// reason siempre obligatorio (a diferencia de SalaryRaise, donde es
+// opcional) — nunca un adelanto ni un descuento sin motivo. effectiveDate es
+// el mes/dia al que aplica para la liquidacion, no cuando se registro.
+export const createSalaryAdjustmentSchema = z.object({
+  type: z.nativeEnum(SalaryAdjustmentType),
+  amount: z.number().positive(),
+  reason: z.string().min(1, "El motivo es obligatorio"),
+  effectiveDate: z.coerce.date(),
+});
+
+export const getSalaryAdjustmentsQuerySchema = z.object({
+  from: z.coerce.date().optional(),
+  to: z.coerce.date().optional(),
+});
+
 export type LoginInput = z.infer<typeof loginSchema>;
 export type CreateUserInput = z.infer<typeof createUserSchema>;
 export type UpdateUserInput = z.infer<typeof updateUserSchema>;
@@ -88,3 +103,5 @@ export type UpdateHourlyRateInput = z.infer<typeof updateHourlyRateSchema>;
 export type CreateScoreEventInput = z.infer<typeof createScoreEventSchema>;
 export type GetMonthlyScoreQuery = z.infer<typeof getMonthlyScoreQuerySchema>;
 export type UploadWorkerDocumentInput = z.infer<typeof uploadWorkerDocumentSchema>;
+export type CreateSalaryAdjustmentInput = z.infer<typeof createSalaryAdjustmentSchema>;
+export type GetSalaryAdjustmentsQuery = z.infer<typeof getSalaryAdjustmentsQuerySchema>;

@@ -135,6 +135,32 @@ authRouter.get(
   authController.salaryHistory,
 );
 
+// Adelantos y descuentos: solo Administrador/Gerente, base para la
+// liquidacion mensual (Modulo 2.3). DELETE es borrado real (no hay edicion),
+// mismo criterio que ya usan con Payment — solo para corregir un registro
+// mal ingresado.
+authRouter.post(
+  "/users/:userId/salary-adjustments",
+  authenticate,
+  requireFeature(Feature.USUARIOS),
+  authorize(Role.ADMINISTRADOR, Role.GERENTE),
+  authController.createSalaryAdjustment,
+);
+authRouter.get(
+  "/users/:userId/salary-adjustments",
+  authenticate,
+  requireFeature(Feature.USUARIOS),
+  authorize(Role.ADMINISTRADOR, Role.GERENTE),
+  authController.listSalaryAdjustments,
+);
+authRouter.delete(
+  "/users/:userId/salary-adjustments/:adjustmentId",
+  authenticate,
+  requireFeature(Feature.USUARIOS),
+  authorize(Role.ADMINISTRADOR, Role.GERENTE),
+  authController.deleteSalaryAdjustment,
+);
+
 // Puntaje mensual (bonos/descuentos por incidentes): solo Administrador/Gerente.
 authRouter.post(
   "/users/:userId/score-events",

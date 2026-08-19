@@ -75,6 +75,24 @@
     "overtimeRateChange": "Hora extra: {{previous}} → {{next}}",
     "registeredBy": "Registrado por {{name}}"
   },
+  "adjustments": {
+    "registerButton": "Registrar adelanto/descuento",
+    "formTitle": "Registrar adelanto o descuento",
+    "typeLabel": "Tipo",
+    "type": {
+      "ADELANTO": "Adelanto",
+      "DESCUENTO": "Descuento"
+    },
+    "amountLabel": "Monto (AWG)",
+    "effectiveDateLabel": "Fecha a la que aplica",
+    "reasonLabel": "Motivo",
+    "submit": "Guardar",
+    "saving": "Guardando...",
+    "historyTitle": "Adelantos y descuentos",
+    "historyEmpty": "Todavía no hay adelantos ni descuentos registrados",
+    "deleteTitle": "Eliminar registro",
+    "deleteMessage": "¿Seguro que quieres eliminar este {{type}} de {{amount}}? Esta acción no se puede deshacer."
+  },
   "score": {
     "showButton": "Ver puntaje del mes",
     "hideButton": "Ocultar puntaje del mes",

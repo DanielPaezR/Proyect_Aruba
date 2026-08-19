@@ -16,8 +16,10 @@ import { arubaMonthRangeUtc, arubaStartOfMonthUtc, arubaToday } from "../../util
 import { generateRefreshToken, hashRefreshToken, signAccessToken } from "../../utils/jwt";
 import * as timeEntriesService from "../time-entries/time-entries.service";
 import type {
+  CreateSalaryAdjustmentInput,
   CreateScoreEventInput,
   CreateUserInput,
+  GetSalaryAdjustmentsQuery,
   LoginInput,
   UpdateHourlyRateInput,
   UpdateMeInput,
@@ -484,6 +486,72 @@ export async function getSalaryHistory(userId: string) {
     include: { createdBy: { select: { id: true, name: true } } },
     orderBy: { createdAt: "desc" },
   });
+}
+
+const salaryAdjustmentInclude = {
+  createdBy: { select: { id: true, name: true } },
+} as const;
+
+/**
+ * Adelanto o descuento de sueldo, base para la liquidacion mensual (Modulo
+ * 2.3). No toca User.hourlyRate ni ningun otro campo — a diferencia de
+ * updateHourlyRate, esto es puro registro, el calculo de liquidacion lo
+ * suma/resta aparte.
+ */
+export async function createSalaryAdjustment(userId: string, createdById: string, input: CreateSalaryAdjustmentInput) {
+  const exists = await prisma.user.findUnique({ where: { id: userId }, select: { id: true } });
+  if (!exists) {
+    throw ApiError.notFound(ErrorCode.USER_NOT_FOUND, "Usuario no encontrado");
+  }
+
+  return prisma.salaryAdjustment.create({
+    data: {
+      userId,
+      type: input.type,
+      amount: input.amount,
+      reason: input.reason,
+      effectiveDate: input.effectiveDate,
+      createdById,
+    },
+    include: salaryAdjustmentInclude,
+  });
+}
+
+export async function getSalaryAdjustments(userId: string, query: GetSalaryAdjustmentsQuery) {
+  const exists = await prisma.user.findUnique({ where: { id: userId }, select: { id: true } });
+  if (!exists) {
+    throw ApiError.notFound(ErrorCode.USER_NOT_FOUND, "Usuario no encontrado");
+  }
+
+  return prisma.salaryAdjustment.findMany({
+    where: {
+      userId,
+      ...(query.from || query.to
+        ? {
+            effectiveDate: {
+              ...(query.from ? { gte: query.from } : {}),
+              ...(query.to ? { lte: query.to } : {}),
+            },
+          }
+        : {}),
+    },
+    include: salaryAdjustmentInclude,
+    orderBy: { effectiveDate: "desc" },
+  });
+}
+
+/** Borrado real (no hay edicion): mismo criterio que Payment, solo para
+ * corregir un registro mal ingresado — no hay auditoria de "quien lo borro". */
+export async function deleteSalaryAdjustment(targetUserId: string, adjustmentId: string) {
+  const adjustment = await prisma.salaryAdjustment.findUnique({
+    where: { id: adjustmentId },
+    select: { id: true, userId: true },
+  });
+  if (!adjustment || adjustment.userId !== targetUserId) {
+    throw ApiError.notFound(ErrorCode.SALARY_ADJUSTMENT_NOT_FOUND, "Registro no encontrado");
+  }
+
+  await prisma.salaryAdjustment.delete({ where: { id: adjustmentId } });
 }
 
 export async function createScoreEvent(userId: string, createdById: string, input: CreateScoreEventInput) {

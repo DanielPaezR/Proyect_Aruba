@@ -75,6 +75,24 @@
     "overtimeRateChange": "Overtime: {{previous}} → {{next}}",
     "registeredBy": "Registered by {{name}}"
   },
+  "adjustments": {
+    "registerButton": "Register advance/deduction",
+    "formTitle": "Register advance or deduction",
+    "typeLabel": "Type",
+    "type": {
+      "ADELANTO": "Advance",
+      "DESCUENTO": "Deduction"
+    },
+    "amountLabel": "Amount (AWG)",
+    "effectiveDateLabel": "Effective date",
+    "reasonLabel": "Reason",
+    "submit": "Save",
+    "saving": "Saving...",
+    "historyTitle": "Advances and deductions",
+    "historyEmpty": "No advances or deductions registered yet",
+    "deleteTitle": "Delete record",
+    "deleteMessage": "Are you sure you want to delete this {{type}} of {{amount}}? This action can't be undone."
+  },
   "score": {
     "showButton": "View monthly score",
     "hideButton": "Hide monthly score",

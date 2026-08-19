@@ -4,9 +4,11 @@ import { ErrorCode } from "../../utils/errorCodes";
 import { asyncHandler } from "../../utils/asyncHandler";
 import * as authService from "./auth.service";
 import {
+  createSalaryAdjustmentSchema,
   createScoreEventSchema,
   createUserSchema,
   getMonthlyScoreQuerySchema,
+  getSalaryAdjustmentsQuerySchema,
   loginSchema,
   updateHourlyRateSchema,
   updateLocaleSchema,
@@ -153,6 +155,23 @@ export const updateHourlyRate = asyncHandler(async (req: Request, res: Response)
 export const salaryHistory = asyncHandler(async (req: Request, res: Response) => {
   const history = await authService.getSalaryHistory(req.params.userId);
   res.json({ history });
+});
+
+export const createSalaryAdjustment = asyncHandler(async (req: Request, res: Response) => {
+  const input = createSalaryAdjustmentSchema.parse(req.body);
+  const adjustment = await authService.createSalaryAdjustment(req.params.userId, req.user!.id, input);
+  res.status(201).json({ adjustment });
+});
+
+export const listSalaryAdjustments = asyncHandler(async (req: Request, res: Response) => {
+  const query = getSalaryAdjustmentsQuerySchema.parse(req.query);
+  const adjustments = await authService.getSalaryAdjustments(req.params.userId, query);
+  res.json({ adjustments });
+});
+
+export const deleteSalaryAdjustment = asyncHandler(async (req: Request, res: Response) => {
+  await authService.deleteSalaryAdjustment(req.params.userId, req.params.adjustmentId);
+  res.status(204).send();
 });
 
 export const createScoreEvent = asyncHandler(async (req: Request, res: Response) => {

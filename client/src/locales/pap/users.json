@@ -75,6 +75,24 @@
     "overtimeRateChange": "Ora ekstra: {{previous}} → {{next}}",
     "registeredBy": "Registrá pa {{name}}"
   },
+  "adjustments": {
+    "registerButton": "Registra avansá/deskuento",
+    "formTitle": "Registra un avansá òf deskuento",
+    "typeLabel": "Tipo",
+    "type": {
+      "ADELANTO": "Avansá",
+      "DESCUENTO": "Deskuento"
+    },
+    "amountLabel": "Suma (AWG)",
+    "effectiveDateLabel": "Fecha ku e ta aplika",
+    "reasonLabel": "Motibu",
+    "submit": "Warda",
+    "saving": "Ta warda...",
+    "historyTitle": "Avansá i deskuento",
+    "historyEmpty": "Ainda no tin avansá ni deskuento registrá",
+    "deleteTitle": "Elimina registro",
+    "deleteMessage": "Bo ta sigur bo kier elimina e {{type}} di {{amount}} aki? E akshon aki no por wordu bolbé atras."
+  },
   "score": {
     "showButton": "Wak puntuashon di e luna",
     "hideButton": "Skonde puntuashon di e luna",

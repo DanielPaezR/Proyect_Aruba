@@ -125,6 +125,7 @@
       "CANNOT_DEACTIVATE_SELF": "Bo no por desaktivá bo mes kuenta",
       "WORKER_DOCUMENT_NOT_FOUND": "Dokumento no ta wordu hañá",
       "WORKER_DOCUMENT_DELETE_FORBIDDEN": "Bo no por elimina e dokumento aki",
+      "SALARY_ADJUSTMENT_NOT_FOUND": "No a haña e registro",
       "ALREADY_ON_LUNCH": "Bo ta na bo almuerzo kaba",
       "NO_OPEN_LUNCH": "Bo no tin un almuerzo habrí pa finalisá",
       "NO_OPEN_ENTRY_FOR_LUNCH": "Bo no tin un entrada habrí pa marka almuerzo",

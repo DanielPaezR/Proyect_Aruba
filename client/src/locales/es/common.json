@@ -125,6 +125,7 @@
       "CANNOT_DEACTIVATE_SELF": "No puedes desactivar tu propia cuenta",
       "WORKER_DOCUMENT_NOT_FOUND": "Documento no encontrado",
       "WORKER_DOCUMENT_DELETE_FORBIDDEN": "No puedes eliminar este documento",
+      "SALARY_ADJUSTMENT_NOT_FOUND": "No se encontró el registro",
       "ALREADY_ON_LUNCH": "Ya estás en tu almuerzo",
       "NO_OPEN_LUNCH": "No tienes un almuerzo abierto para finalizar",
       "NO_OPEN_ENTRY_FOR_LUNCH": "No tienes una entrada abierta para marcar almuerzo",

@@ -9,11 +9,12 @@ import { ConfirmDialog } from "../components/ConfirmDialog";
 import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
 import { isManagerRole, isTopManagerRole } from "../types/auth";
+import type { SalaryAdjustment, SalaryAdjustmentType } from "../types/salaryAdjustment";
 import type { SalaryRaise } from "../types/salaryRaise";
 import type { WorkerDocument } from "../types/workerDocument";
 import type { MonthlyScore } from "../types/workerScore";
 import type { WorkerProfile } from "../types/workerProfile";
-import { formatHourlyRate } from "../utils/formatCurrency";
+import { formatCurrency, formatHourlyRate } from "../utils/formatCurrency";
 import { timeAgo } from "../utils/timeAgo";
 
 interface EditFormState {
@@ -73,6 +74,20 @@ export function WorkerProfilePage() {
   const [raiseReason, setRaiseReason] = useState("");
   const [isSubmittingRaise, setIsSubmittingRaise] = useState(false);
   const [raiseError, setRaiseError] = useState<string | null>(null);
+
+  const [salaryAdjustments, setSalaryAdjustments] = useState<SalaryAdjustment[] | null>(null);
+  const [isLoadingAdjustments, setIsLoadingAdjustments] = useState(false);
+  const [adjustmentsError, setAdjustmentsError] = useState<string | null>(null);
+  const [isAdjustmentFormOpen, setIsAdjustmentFormOpen] = useState(false);
+  const [adjustmentType, setAdjustmentType] = useState<SalaryAdjustmentType>("ADELANTO");
+  const [adjustmentAmount, setAdjustmentAmount] = useState("");
+  const [adjustmentEffectiveDate, setAdjustmentEffectiveDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [adjustmentReason, setAdjustmentReason] = useState("");
+  const [isSubmittingAdjustment, setIsSubmittingAdjustment] = useState(false);
+  const [adjustmentError, setAdjustmentError] = useState<string | null>(null);
+  const [adjustmentToDelete, setAdjustmentToDelete] = useState<SalaryAdjustment | null>(null);
+  const [isDeletingAdjustment, setIsDeletingAdjustment] = useState(false);
+  const [deleteAdjustmentError, setDeleteAdjustmentError] = useState<string | null>(null);
 
   const [isScoreOpen, setIsScoreOpen] = useState(false);
   const [monthlyScore, setMonthlyScore] = useState<MonthlyScore | null>(null);
@@ -289,6 +304,19 @@ export function WorkerProfilePage() {
     }
   }
 
+  async function loadSalaryAdjustments(id: string) {
+    setIsLoadingAdjustments(true);
+    setAdjustmentsError(null);
+    try {
+      const response = await apiClient.get<{ adjustments: SalaryAdjustment[] }>(`/auth/users/${id}/salary-adjustments`);
+      setSalaryAdjustments(response.data.adjustments);
+    } catch (error) {
+      setAdjustmentsError(translateApiError(t, error));
+    } finally {
+      setIsLoadingAdjustments(false);
+    }
+  }
+
   async function toggleSalary() {
     if (!userId) {
       return;
@@ -297,6 +325,53 @@ export function WorkerProfilePage() {
     setIsSalaryOpen(opening);
     if (opening && salaryHistory === null) {
       await loadSalaryHistory(userId);
+    }
+    if (opening && salaryAdjustments === null) {
+      await loadSalaryAdjustments(userId);
+    }
+  }
+
+  async function handleAddAdjustment(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    if (!userId) {
+      return;
+    }
+    setAdjustmentError(null);
+    setIsSubmittingAdjustment(true);
+    try {
+      await apiClient.post(`/auth/users/${userId}/salary-adjustments`, {
+        type: adjustmentType,
+        amount: Number(adjustmentAmount),
+        reason: adjustmentReason,
+        effectiveDate: new Date(adjustmentEffectiveDate).toISOString(),
+      });
+      setAdjustmentType("ADELANTO");
+      setAdjustmentAmount("");
+      setAdjustmentEffectiveDate(new Date().toISOString().slice(0, 10));
+      setAdjustmentReason("");
+      setIsAdjustmentFormOpen(false);
+      await loadSalaryAdjustments(userId);
+    } catch (error) {
+      setAdjustmentError(translateApiError(t, error));
+    } finally {
+      setIsSubmittingAdjustment(false);
+    }
+  }
+
+  async function handleDeleteAdjustment() {
+    if (!adjustmentToDelete || !userId) {
+      return;
+    }
+    setDeleteAdjustmentError(null);
+    setIsDeletingAdjustment(true);
+    try {
+      await apiClient.delete(`/auth/users/${userId}/salary-adjustments/${adjustmentToDelete.id}`);
+      setAdjustmentToDelete(null);
+      await loadSalaryAdjustments(userId);
+    } catch (error) {
+      setDeleteAdjustmentError(translateApiError(t, error));
+    } finally {
+      setIsDeletingAdjustment(false);
     }
   }
 
@@ -747,6 +822,118 @@ export function WorkerProfilePage() {
                         ))}
                       </ul>
                     ))}
+
+                  <div className="page-header">
+                    <h3>{t("adjustments.historyTitle", { ns: "users" })}</h3>
+                    <button type="button" onClick={() => setIsAdjustmentFormOpen((open) => !open)}>
+                      {t("adjustments.registerButton", { ns: "users" })}
+                    </button>
+                  </div>
+
+                  {isAdjustmentFormOpen && (
+                    <form className="inline-form" onSubmit={(event) => void handleAddAdjustment(event)}>
+                      <h2>{t("adjustments.formTitle", { ns: "users" })}</h2>
+                      <label>
+                        {t("adjustments.typeLabel", { ns: "users" })}
+                        <select
+                          value={adjustmentType}
+                          onChange={(event) => setAdjustmentType(event.target.value as SalaryAdjustmentType)}
+                        >
+                          <option value="ADELANTO">{t("adjustments.type.ADELANTO", { ns: "users" })}</option>
+                          <option value="DESCUENTO">{t("adjustments.type.DESCUENTO", { ns: "users" })}</option>
+                        </select>
+                      </label>
+                      <label>
+                        {t("adjustments.amountLabel", { ns: "users" })}
+                        <input
+                          type="number"
+                          min="0.01"
+                          step="0.01"
+                          value={adjustmentAmount}
+                          onChange={(event) => setAdjustmentAmount(event.target.value)}
+                          required
+                        />
+                      </label>
+                      <label>
+                        {t("adjustments.effectiveDateLabel", { ns: "users" })}
+                        <input
+                          type="date"
+                          value={adjustmentEffectiveDate}
+                          onChange={(event) => setAdjustmentEffectiveDate(event.target.value)}
+                          required
+                        />
+                      </label>
+                      <label>
+                        {t("adjustments.reasonLabel", { ns: "users" })}
+                        <textarea
+                          value={adjustmentReason}
+                          onChange={(event) => setAdjustmentReason(event.target.value)}
+                          maxLength={500}
+                          required
+                          minLength={1}
+                        />
+                      </label>
+                      {adjustmentError && (
+                        <p className="form-error" role="alert">
+                          {adjustmentError}
+                        </p>
+                      )}
+                      <div className="form-actions">
+                        <button type="submit" disabled={isSubmittingAdjustment}>
+                          {isSubmittingAdjustment
+                            ? t("adjustments.saving", { ns: "users" })
+                            : t("adjustments.submit", { ns: "users" })}
+                        </button>
+                        <button type="button" onClick={() => setIsAdjustmentFormOpen(false)}>
+                          {t("actions.cancel", { ns: "common" })}
+                        </button>
+                      </div>
+                    </form>
+                  )}
+
+                  {isLoadingAdjustments && <p className="page-loading">{t("loading", { ns: "common" })}</p>}
+
+                  {!isLoadingAdjustments && adjustmentsError && (
+                    <p className="form-error" role="alert">
+                      {adjustmentsError}
+                    </p>
+                  )}
+
+                  {!isLoadingAdjustments &&
+                    !adjustmentsError &&
+                    salaryAdjustments &&
+                    (salaryAdjustments.length === 0 ? (
+                      <p>{t("adjustments.historyEmpty", { ns: "users" })}</p>
+                    ) : (
+                      <ul className="card-list">
+                        {salaryAdjustments.map((adjustment) => (
+                          <li key={adjustment.id} className="card">
+                            <div className="card-header">
+                              <span className="card-title">
+                                {t(`adjustments.type.${adjustment.type}`, { ns: "users" })} —{" "}
+                                {formatCurrency(adjustment.amount)}
+                              </span>
+                              <span className="card-meta">
+                                {new Date(adjustment.effectiveDate).toLocaleDateString()}
+                              </span>
+                            </div>
+                            <p className="card-description">{adjustment.reason}</p>
+                            <span className="card-meta">
+                              {t("salary.registeredBy", { ns: "users", name: adjustment.createdBy.name })}
+                            </span>
+                            <div className="card-actions">
+                              <button
+                                type="button"
+                                className="danger-button"
+                                onClick={() => setAdjustmentToDelete(adjustment)}
+                              >
+                                {t("actions.delete", { ns: "common" })}
+                              </button>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    ))}
                 </div>
               )}
             </section>
@@ -946,6 +1133,25 @@ export function WorkerProfilePage() {
           onCancel={() => {
             setIsDeactivateConfirmOpen(false);
             setDeactivateError(null);
+          }}
+        />
+      )}
+
+      {adjustmentToDelete && (
+        <ConfirmDialog
+          title={t("adjustments.deleteTitle", { ns: "users" })}
+          message={t("adjustments.deleteMessage", {
+            ns: "users",
+            type: t(`adjustments.type.${adjustmentToDelete.type}`, { ns: "users" }),
+            amount: formatCurrency(adjustmentToDelete.amount),
+          })}
+          confirmLabel={t("actions.delete", { ns: "common" })}
+          isConfirming={isDeletingAdjustment}
+          error={deleteAdjustmentError}
+          onConfirm={() => void handleDeleteAdjustment()}
+          onCancel={() => {
+            setAdjustmentToDelete(null);
+            setDeleteAdjustmentError(null);
           }}
         />
       )}
