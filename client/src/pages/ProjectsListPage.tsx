@@ -11,6 +11,7 @@ import { translateStatus } from "../i18n/statusLabel";
 import { isManagerRole } from "../types/auth";
 import { PROJECT_PRIORITIES, PROJECT_PROPERTY_TYPES, PROJECT_SECTORS, PROJECT_WORK_TYPES } from "../types/project";
 import type { Project } from "../types/project";
+import { isValidGoogleMapsUrl } from "../utils/mapsUrl";
 
 export function ProjectsListPage() {
   const { t } = useTranslation(["projects", "common"]);
@@ -19,12 +20,14 @@ export function ProjectsListPage() {
   const [projects, setProjects] = useState<Project[] | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [clientId, setClientId] = useState<string | null>(null);
   const [address, setAddress] = useState("");
+  const [mapsUrl, setMapsUrl] = useState("");
   const [sector, setSector] = useState("");
   const [accessNotes, setAccessNotes] = useState("");
   const [propertyType, setPropertyType] = useState("");
@@ -62,11 +65,18 @@ export function ProjectsListPage() {
 
   const canManage = isManagerRole(user.role);
 
+  // Filtra por nombre (client-side, sin endpoint nuevo) y ordena alfabetico
+  // descendente por defecto.
+  const visibleProjects = (projects ?? [])
+    .filter((project) => project.name.toLowerCase().includes(searchTerm.trim().toLowerCase()))
+    .sort((a, b) => b.name.localeCompare(a.name));
+
   function resetForm() {
     setName("");
     setDescription("");
     setClientId(null);
     setAddress("");
+    setMapsUrl("");
     setSector("");
     setAccessNotes("");
     setPropertyType("");
@@ -81,6 +91,10 @@ export function ProjectsListPage() {
       setFormError(t("create.clientRequired", { ns: "projects" }));
       return;
     }
+    if (mapsUrl && !isValidGoogleMapsUrl(mapsUrl)) {
+      setFormError(t("create.mapsUrlInvalid", { ns: "projects" }));
+      return;
+    }
     setFormError(null);
     setIsSubmitting(true);
     try {
@@ -89,6 +103,7 @@ export function ProjectsListPage() {
         description: description || undefined,
         clientId,
         address,
+        mapsUrl: mapsUrl || undefined,
         sector: sector || undefined,
         accessNotes: accessNotes || undefined,
         propertyType,
@@ -134,6 +149,16 @@ export function ProjectsListPage() {
         )}
       </div>
 
+      <div className="search-bar">
+        <input
+          type="search"
+          value={searchTerm}
+          onChange={(event) => setSearchTerm(event.target.value)}
+          placeholder={t("searchPlaceholder", { ns: "projects" })}
+          aria-label={t("searchPlaceholder", { ns: "projects" })}
+        />
+      </div>
+
       {canManage && isFormOpen && (
         <form className="inline-form" onSubmit={(event) => void handleCreate(event)}>
           <h2>{t("create.formTitle", { ns: "projects" })}</h2>
@@ -160,6 +185,15 @@ export function ProjectsListPage() {
             <label>
               {t("create.address", { ns: "projects" })}
               <input value={address} onChange={(event) => setAddress(event.target.value)} required />
+            </label>
+            <label>
+              {t("create.mapsUrl", { ns: "projects" })}
+              <input
+                type="url"
+                value={mapsUrl}
+                onChange={(event) => setMapsUrl(event.target.value)}
+                placeholder={t("create.mapsUrlPlaceholder", { ns: "projects" })}
+              />
             </label>
             <label>
               {t("create.sector", { ns: "projects" })}
@@ -254,11 +288,11 @@ export function ProjectsListPage() {
       {!isLoading &&
         !errorMessage &&
         projects &&
-        (projects.length === 0 ? (
-          <p>{t("empty", { ns: "projects" })}</p>
+        (visibleProjects.length === 0 ? (
+          <p>{t(searchTerm ? "noResults" : "empty", { ns: "projects" })}</p>
         ) : (
           <ul className="card-list">
-            {projects.map((project) => (
+            {visibleProjects.map((project) => (
               <li key={project.id} className="card">
                 <Link to={`/projects/${project.id}`} className="card-link">
                   <div className="card-header">

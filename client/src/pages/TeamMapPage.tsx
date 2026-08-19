@@ -5,7 +5,7 @@ import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 import { useTranslation } from "react-i18next";
-import { Navigate } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { TimeEntryCard } from "../components/TimeEntryCard";
@@ -221,7 +221,9 @@ export function TeamMapPage() {
                 return (
                   <li key={worker.id} className="card">
                     <div className="card-header">
-                      <span className="card-title">{worker.name}</span>
+                      <Link to={`/users/${worker.id}`} className="card-title">
+                        {worker.name}
+                      </Link>
                       <span className={connected ? "status-badge" : "status-badge status-badge--muted"}>
                         {connected
                           ? t("workerStatus.connected", { ns: "teamMap" })

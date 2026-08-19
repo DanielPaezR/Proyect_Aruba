@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
+import { BackButton } from "../components/BackButton";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
@@ -147,9 +148,7 @@ export function ClientDetailPage() {
 
   return (
     <div className="client-detail-page">
-      <p className="breadcrumb">
-        <Link to="/clients">{t("title", { ns: "clients" })}</Link>
-      </p>
+      <BackButton to="/clients" label={t("title", { ns: "clients" })} />
 
       {isLoading && <p className="page-loading">{t("loading", { ns: "common" })}</p>}
 

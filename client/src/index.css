@@ -125,6 +125,30 @@ button {
   background: var(--navy-900);
 }
 
+.topbar-start {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.hamburger-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #ffffff;
+}
+
+.hamburger-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
 .brand {
   display: flex;
   align-items: center;
@@ -132,21 +156,11 @@ button {
   min-width: 0;
 }
 
-.brand-logo {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  padding: 3px 6px;
-  border-radius: 6px;
-  /* El logo tiene fondo blanco horneado en el PNG (texto negro) — sin este
-     contenedor claro se perderia contra el navy-900 del header. */
-  background: #ffffff;
-}
-
-.brand-logo img {
+.brand-logo-img {
   display: block;
-  height: 22px;
+  height: 28px;
   width: auto;
+  flex-shrink: 0;
 }
 
 .app-name {
@@ -157,51 +171,120 @@ button {
   text-overflow: ellipsis;
 }
 
-/* Mobile-first: la nav vive como barra fija abajo (patron movil comun — el
-   uso principal de esta app es en celular, y el pulgar llega mejor ahi que
-   arriba). Sigue siendo un <nav> normal dentro del topbar en el DOM; solo se
-   reposiciona por CSS, sin JS nuevo. Desde 640px vuelve a ser una barra
-   horizontal normal (ver media query mas abajo). */
-.main-nav {
+/* Menu de navegacion: drawer lateral izquierdo, igual en movil y desktop (no
+   hay variante de escritorio para esto, a diferencia del resto del archivo).
+   Se abre con el boton hamburguesa del topbar, se cierra con el overlay, la
+   X, o al elegir cualquier link (onClick en el contenedor .drawer-links). */
+.drawer-overlay {
   position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 20;
+  inset: 0;
+  z-index: 100;
   display: flex;
-  gap: 2px;
-  /* Navy-900 tambien aca: en movil la nav es una barra separada (fixed),
-     no hereda el fondo del topbar por herencia normal de CSS. */
-  background: var(--navy-900);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 4px calc(4px + env(safe-area-inset-right)) calc(4px + env(safe-area-inset-bottom))
-    calc(4px + env(safe-area-inset-left));
+  background: rgba(0, 0, 0, 0.5);
 }
 
-.main-nav a {
-  flex: 1;
+.drawer-panel {
+  width: min(280px, 85vw);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--navy-900);
+  box-shadow: var(--shadow);
+}
+
+.drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.drawer-header .app-name {
+  color: #ffffff;
+}
+
+.drawer-header button {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #ffffff;
+}
+
+.drawer-header button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.drawer-links {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px;
+}
+
+.drawer-links a {
+  display: flex;
+  align-items: center;
   min-height: 48px;
-  padding: 4px 6px;
+  padding: 10px 12px;
   border-radius: 8px;
   /* Texto claro semi-transparente por defecto: sobre navy-900, --text
      (slate-600) da ~2.5:1, muy por debajo de lo legible. */
   color: rgba(255, 255, 255, 0.75);
   text-decoration: none;
-  font-size: 12px;
-  text-align: center;
+  font-size: 15px;
 }
 
-.main-nav a:hover {
+.drawer-links a:hover {
   color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
 }
 
-.main-nav a.active {
+.drawer-links a.active {
   background: rgba(141, 198, 63, 0.25);
   color: var(--lime-500);
   font-weight: 600;
+}
+
+.drawer-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.drawer-profile-link {
+  padding: 8px 12px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.75);
+  text-decoration: none;
+}
+
+.drawer-profile-link:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+.drawer-logout-button {
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: transparent;
+  color: #ffffff;
+  min-height: 44px;
+  font-weight: 600;
+}
+
+.drawer-logout-button:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .topbar-actions {
@@ -243,46 +326,12 @@ button {
   min-height: 44px;
 }
 
-.user-menu {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.user-name {
-  /* Oculto en movil para dejar espacio; el usuario ya sabe quien es. Cuando
-     se muestra (desktop), es texto plano sobre el topbar navy-900, por eso
-     un blanco semi-transparente en vez de --text (slate-600 da ~2.5:1 ahi). */
-  display: none;
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.75);
-  text-decoration: none;
-}
-
-.user-name:hover {
-  text-decoration: underline;
-}
-
-.user-menu button {
-  padding: 8px 14px;
-  border-radius: 6px;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--text-h);
-  min-height: 44px;
-}
-
-.user-menu button:hover {
-  border-color: var(--accent);
-}
-
 .app-content {
   flex: 1;
   width: 100%;
   max-width: 960px;
   margin: 0 auto;
-  /* padding-bottom extra para que la nav fija de abajo no tape el contenido. */
-  padding: 20px 16px calc(76px + env(safe-area-inset-bottom));
+  padding: 20px 16px;
 }
 
 .page-loading {
@@ -630,8 +679,63 @@ button {
   margin-bottom: 24px;
 }
 
-.project-detail-page section {
+.project-detail-page section,
+.worker-profile-page section {
   margin-bottom: 32px;
+}
+
+.project-detail-accordion {
+  margin-bottom: 32px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-subtle);
+}
+
+.project-detail-accordion summary {
+  cursor: pointer;
+  list-style: none;
+  font-weight: 600;
+  font-size: 14px;
+  color: var(--text-h);
+}
+
+.project-detail-accordion summary::-webkit-details-marker {
+  display: none;
+}
+
+.project-detail-accordion summary::before {
+  content: "▸";
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.project-detail-accordion[open] summary::before {
+  content: "▾";
+}
+
+.project-detail-accordion[open] summary {
+  margin-bottom: 16px;
+}
+
+.project-detail-accordion section:last-child {
+  margin-bottom: 0;
+}
+
+.search-bar {
+  margin-bottom: 16px;
+}
+
+.search-bar input {
+  width: 100%;
+  font-family: inherit;
+  font-size: 16px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  min-height: 44px;
 }
 
 .page-header button {
@@ -833,6 +937,14 @@ button {
   color: var(--text-h);
 }
 
+a.card-title {
+  text-decoration: none;
+}
+
+a.card-title:hover {
+  text-decoration: underline;
+}
+
 .status-badge {
   padding: 2px 10px;
   border-radius: 999px;
@@ -891,17 +1003,22 @@ button {
   color: var(--text);
 }
 
-.breadcrumb {
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
   margin: 0 0 16px;
-  font-size: 14px;
-}
-
-.breadcrumb a {
+  padding: 8px 12px 8px 8px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
   color: var(--accent);
-  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
 }
 
-.breadcrumb a:hover {
+.back-button:hover {
+  background: var(--bg-subtle);
   text-decoration: underline;
 }
 
@@ -1314,6 +1431,56 @@ button {
   margin-bottom: 16px;
 }
 
+.worker-summary-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.worker-summary-card .profile-photo-preview,
+.worker-summary-card .profile-photo-placeholder {
+  width: 48px;
+  height: 48px;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.worker-summary-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.worker-profile-identity {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.worker-profile-identity h1 {
+  margin-bottom: 6px;
+}
+
+.tag-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tag {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 600;
+}
+
 .profile-photo-preview {
   width: 80px;
   height: 80px;
@@ -1352,37 +1519,18 @@ button {
   color: var(--text-h);
 }
 
-/* ---------- Desktop (>=640px): la nav vuelve a ser una barra horizontal
-   normal dentro del topbar en vez de la barra fija de abajo. Todo lo demas
-   ya es responsive por si solo (flex-wrap, grid auto-fit), asi que el resto
-   de las reglas de este archivo no necesitan variante de escritorio. ---------- */
+/* ---------- Desktop (>=640px): el resto ya es responsive por si solo
+   (flex-wrap, grid auto-fit, el drawer de nav es igual en ambos tamaños),
+   asi que el resto de las reglas de este archivo no necesitan variante de
+   escritorio. ---------- */
 
 @media (min-width: 640px) {
   .topbar {
     padding: 12px 24px;
   }
 
-  .main-nav {
-    position: static;
-    flex: 1;
-    gap: 4px;
-    background: none;
-    border-top: none;
-    padding: 0;
-  }
-
-  .main-nav a {
-    flex: none;
-    padding: 8px 14px;
-    font-size: 14px;
-  }
-
   .topbar-actions {
     gap: 16px;
-  }
-
-  .user-name {
-    display: inline;
   }
 
   .app-content {
