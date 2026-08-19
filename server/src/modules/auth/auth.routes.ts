@@ -18,7 +18,15 @@ authRouter.post("/users", authenticate, authorize(Role.JEFE), authController.cre
 // Listado: tambien el Supervisor — lo necesita de solo-lectura para asignar
 // trabajadores a actividades (ProjectDetailPage), mismo criterio que
 // /users/locations (lectura de equipo compartida, gestion sigue siendo del Jefe).
-authRouter.get("/users", authenticate, authorize(Role.JEFE, Role.SUPERVISOR), authController.listUsers);
+// Mercaderista tambien lo necesita de solo-lectura para elegir a que
+// trabajador asignar una herramienta (ToolAssignmentsPage) — el service ya
+// le oculta hourlyRate igual que a Supervisor (requesterRole !== "JEFE").
+authRouter.get(
+  "/users",
+  authenticate,
+  authorize(Role.JEFE, Role.SUPERVISOR, Role.MERCADERISTA),
+  authController.listUsers,
+);
 
 // Edicion general (campos de perfil laboral): solo el Jefe.
 authRouter.patch("/users/:userId", authenticate, authorize(Role.JEFE), authController.updateUser);

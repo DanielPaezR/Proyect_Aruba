@@ -1,0 +1,22 @@
+{
+  "title": "Herramientas asignadas",
+  "createButton": "Asignar herramienta",
+  "activeOnlyLabel": "Mostrar solo activas",
+  "createFormTitle": "Asignar herramienta",
+  "itemLabel": "Herramienta",
+  "itemPlaceholder": "Selecciona una herramienta",
+  "stockAvailable_one": "{{count}} en stock",
+  "stockAvailable_other": "{{count}} en stock",
+  "workerLabel": "Trabajador",
+  "workerPlaceholder": "Selecciona un trabajador",
+  "conditionLabel": "Estado al momento de entregar (opcional)",
+  "save": "Asignar",
+  "saving": "Asignando...",
+  "empty": "No hay herramientas asignadas",
+  "statusActive": "Asignada",
+  "statusReturned": "Devuelta",
+  "assignedAtLabel": "Asignada el",
+  "returnedAtLabel": "Devuelta el",
+  "returnButton": "Marcar devuelta",
+  "returning": "Guardando..."
+}

@@ -6,6 +6,11 @@ import { ErrorCode } from "../../utils/errorCodes";
 
 type AuthUser = { id: string; role: Role };
 
+// Ver comentario equivalente en activities.service.ts: ensureActivityAccess
+// no tiene authorize() a nivel de ruta, asi que el chequeo de rol tiene que
+// ser explicito aca para no dejar pasar por descarte a un rol nuevo.
+const MANAGERS: Role[] = [Role.JEFE, Role.SUPERVISOR];
+
 const evidenceInclude = {
   uploadedBy: { select: { id: true, name: true } },
   reviewedBy: { select: { id: true, name: true } },
@@ -26,6 +31,8 @@ async function ensureActivityAccess(user: AuthUser, activityId: string) {
     if (!isAssigned) {
       throw ApiError.forbidden(ErrorCode.ACTIVITY_NOT_ASSIGNED, "No tienes esta actividad asignada");
     }
+  } else if (!MANAGERS.includes(user.role)) {
+    throw ApiError.forbidden();
   }
 
   return activity;

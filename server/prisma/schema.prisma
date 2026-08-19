@@ -16,6 +16,26 @@ enum Role {
   JEFE
   SUPERVISOR
   TRABAJADOR_CAMPO
+  // Administra inventario (herramientas/materiales) — no es un rol de
+  // gestion de proyectos, no se solapa con isManagerRole/MANAGERS.
+  MERCADERISTA
+}
+
+enum InventoryItemType {
+  HERRAMIENTA
+  MATERIAL
+}
+
+enum MaterialRequestStatus {
+  PENDIENTE
+  APROBADA
+  RECHAZADA
+  ENTREGADA
+}
+
+enum ToolIncidentType {
+  DANIO
+  PERDIDA
 }
 
 enum ProjectStatus {
@@ -155,25 +175,30 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  createdProjects     Project[]            @relation("ProjectCreatedBy")
-  activityAssignments ActivityAssignment[]
-  timeEntries         TimeEntry[]
-  editedTimeEntries   TimeEntry[]          @relation("TimeEntryEditedBy")
-  uploadedEvidences   Evidence[]           @relation("EvidenceUploadedBy")
-  reviewedEvidences   Evidence[]           @relation("EvidenceReviewedBy")
-  uploadedInvoices    Invoice[]            @relation("InvoiceUploadedBy")
-  reviewedInvoices    Invoice[]            @relation("InvoiceReviewedBy")
-  recordedPayments    Payment[]            @relation("PaymentRecordedBy")
-  skippedActivities   Activity[]           @relation("ActivitySkippedBy")
-  chatMessages        ChatMessage[]
-  refreshTokens       RefreshToken[]
-  pushSubscriptions   PushSubscription[]
-  punchReminderLogs   PunchReminderLog[]
+  createdProjects       Project[]              @relation("ProjectCreatedBy")
+  activityAssignments   ActivityAssignment[]
+  timeEntries           TimeEntry[]
+  editedTimeEntries     TimeEntry[]            @relation("TimeEntryEditedBy")
+  uploadedEvidences     Evidence[]             @relation("EvidenceUploadedBy")
+  reviewedEvidences     Evidence[]             @relation("EvidenceReviewedBy")
+  uploadedInvoices      Invoice[]              @relation("InvoiceUploadedBy")
+  reviewedInvoices      Invoice[]              @relation("InvoiceReviewedBy")
+  recordedPayments      Payment[]              @relation("PaymentRecordedBy")
+  skippedActivities     Activity[]             @relation("ActivitySkippedBy")
+  chatMessages          ChatMessage[]
+  refreshTokens         RefreshToken[]
+  pushSubscriptions     PushSubscription[]
+  punchReminderLogs     PunchReminderLog[]
   geofenceProximityLogs GeofenceProximityLog[]
-  salaryRaises        SalaryRaise[] @relation("SalaryRaiseForUser")
-  createdSalaryRaises SalaryRaise[] @relation("SalaryRaiseCreatedBy")
-  scoreEvents        WorkerScoreEvent[] @relation("WorkerScoreEventForUser")
-  createdScoreEvents WorkerScoreEvent[] @relation("WorkerScoreEventCreatedBy")
+  salaryRaises          SalaryRaise[]          @relation("SalaryRaiseForUser")
+  createdSalaryRaises   SalaryRaise[]          @relation("SalaryRaiseCreatedBy")
+  scoreEvents           WorkerScoreEvent[]     @relation("WorkerScoreEventForUser")
+  createdScoreEvents    WorkerScoreEvent[]     @relation("WorkerScoreEventCreatedBy")
+
+  toolAssignments          ToolAssignment[]     @relation("ToolAssignmentUser")
+  materialRequests         MaterialRequest[]    @relation("MaterialRequestRequestedBy")
+  resolvedMaterialRequests MaterialRequest[]    @relation("MaterialRequestResolvedBy")
+  toolIncidentReports      ToolIncidentReport[] @relation("ToolIncidentReportedBy")
 
   @@map("users")
 }
@@ -315,15 +340,15 @@ model ActivityAssignment {
 // Marcación de entrada/salida. Cada marcación es un registro independiente
 // (tipo ENTRADA o SALIDA) con ubicación opcional.
 model TimeEntry {
-  id     String    @id @default(cuid())
+  id     String @id @default(cuid())
   userId String
-  user   User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   activityId String?
   activity   Activity? @relation(fields: [activityId], references: [id], onDelete: SetNull)
 
   type      PunchType
-  timestamp DateTime  @default(now())
+  timestamp DateTime        @default(now())
   latitude  Float?
   longitude Float?
   source    TimeEntrySource @default(MANUAL)
@@ -415,7 +440,7 @@ model Evidence {
   uploadedById String
   uploadedBy   User   @relation("EvidenceUploadedBy", fields: [uploadedById], references: [id])
 
-  imageUrl    String
+  imageUrl      String
   // public_id de Cloudinary — hace falta para poder borrar el archivo despues
   // (cloudinary.uploader.destroy). Nullable: evidencias sembradas antes de la
   // migracion a Cloudinary no lo tienen.
@@ -423,10 +448,10 @@ model Evidence {
   description   String?
   status        EvidenceStatus @default(PENDIENTE)
 
-  reviewedById   String?
-  reviewedBy     User?     @relation("EvidenceReviewedBy", fields: [reviewedById], references: [id])
-  reviewedAt     DateTime?
-  reviewComment  String?
+  reviewedById  String?
+  reviewedBy    User?     @relation("EvidenceReviewedBy", fields: [reviewedById], references: [id])
+  reviewedAt    DateTime?
+  reviewComment String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -450,7 +475,7 @@ model Invoice {
   uploadedById String
   uploadedBy   User   @relation("InvoiceUploadedBy", fields: [uploadedById], references: [id])
 
-  fileUrl String
+  fileUrl      String
   // public_id de Cloudinary (resource_type "raw") — hace falta para poder
   // borrar el archivo viejo al resubir una correccion.
   filePublicId String
@@ -578,4 +603,119 @@ model PunchReminderLog {
 
   @@unique([userId, window, date])
   @@map("punch_reminder_logs")
+}
+
+// Catalogo de inventario (herramientas y materiales), administrado por
+// MERCADERISTA. Un mismo modelo para ambos tipos (en vez de dos tablas
+// separadas) porque comparten todos los campos — solo cambia el significado
+// operativo (una herramienta se asigna y se devuelve, un material se pide y
+// se consume).
+model InventoryItem {
+  id   String            @id @default(cuid())
+  name String
+  type InventoryItemType
+
+  // Unidad de medida en texto libre (ej. "unidad", "metros", "cajas") — no un
+  // enum: el catalogo de materiales electricos es demasiado variado para
+  // cerrarlo a una lista fija.
+  unit String
+
+  stockQuantity Int @default(0)
+
+  // Nullable: la alerta de stock bajo es una funcionalidad futura, todavia no
+  // hay UI que la consuma — se captura el dato cuando existe para no tener
+  // que migrar de nuevo despues.
+  lowStockThreshold Int?
+  notes             String?
+
+  toolAssignments  ToolAssignment[]
+  materialRequests MaterialRequest[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("inventory_items")
+}
+
+// Herramienta a cargo de un trabajador. Un trabajador puede tener varias
+// simultaneamente (sin @@unique de por medio) — el "estado actual" de una
+// herramienta puntual se deriva de si tiene alguna ToolAssignment con
+// returnedAt null.
+model ToolAssignment {
+  id String @id @default(cuid())
+
+  itemId String
+  item   InventoryItem @relation(fields: [itemId], references: [id], onDelete: Restrict)
+
+  userId String
+  user   User   @relation("ToolAssignmentUser", fields: [userId], references: [id])
+
+  assignedAt DateTime @default(now())
+
+  // Null = todavia la tiene asignada; se completa al devolverla.
+  returnedAt DateTime?
+
+  // Nota de estado al momento de asignar (ej. "usada, con rayones") — una
+  // foto del momento de la entrega, no el estado actual.
+  condition String?
+
+  incidentReports ToolIncidentReport[]
+
+  @@index([itemId])
+  @@index([userId])
+  @@map("tool_assignments")
+}
+
+// Pedido de material (o herramienta) hecho por un trabajador o supervisor.
+model MaterialRequest {
+  id String @id @default(cuid())
+
+  requestedById String
+  requestedBy   User   @relation("MaterialRequestRequestedBy", fields: [requestedById], references: [id])
+
+  // Nullable: puede pedirse algo que todavia no existe en el catalogo, via
+  // texto libre (itemNameFreeText) en vez de una referencia real. onDelete
+  // SetNull porque si el item se borra despues, el pedido sigue siendo un
+  // registro historico valido (con itemNameFreeText y reason como respaldo).
+  itemId           String?
+  item             InventoryItem? @relation(fields: [itemId], references: [id], onDelete: SetNull)
+  itemNameFreeText String?
+
+  quantity Int
+  reason   String
+
+  status MaterialRequestStatus @default(PENDIENTE)
+
+  resolvedById   String?
+  resolvedBy     User?     @relation("MaterialRequestResolvedBy", fields: [resolvedById], references: [id])
+  resolvedAt     DateTime?
+  resolutionNote String?
+
+  createdAt DateTime @default(now())
+
+  @@index([requestedById])
+  @@index([itemId])
+  @@index([status])
+  @@map("material_requests")
+}
+
+// Reporte de que una herramienta a cargo de alguien se dañó o se perdió.
+model ToolIncidentReport {
+  id String @id @default(cuid())
+
+  toolAssignmentId String
+  toolAssignment   ToolAssignment @relation(fields: [toolAssignmentId], references: [id], onDelete: Cascade)
+
+  reportedById String
+  reportedBy   User   @relation("ToolIncidentReportedBy", fields: [reportedById], references: [id])
+
+  type        ToolIncidentType
+  description String
+
+  reportedAt     DateTime  @default(now())
+  resolvedAt     DateTime?
+  resolutionNote String?
+
+  @@index([toolAssignmentId])
+  @@map("tool_incident_reports")
 }

@@ -9,6 +9,11 @@ import type { AutoCheckInput, CreateTimeEntryInput, SummaryQuery, UpdateTimeEntr
 type AuthUser = { id: string; role: Role };
 type LastEntry = { type: PunchType } | null;
 
+// Ver comentario equivalente en activities.service.ts: ensureActivityAccessible
+// no tiene authorize() a nivel de ruta, asi que el chequeo de rol tiene que
+// ser explicito aca para no dejar pasar por descarte a un rol nuevo.
+const MANAGERS: Role[] = [Role.JEFE, Role.SUPERVISOR];
+
 const timeEntryInclude = {
   user: { select: { id: true, name: true } },
   activity: { select: { id: true, title: true, projectId: true } },
@@ -44,6 +49,8 @@ async function ensureActivityAccessible(user: AuthUser, activityId: string) {
     if (!isAssigned) {
       throw ApiError.forbidden(ErrorCode.ACTIVITY_NOT_ASSIGNED, "No tienes esta actividad asignada");
     }
+  } else if (!MANAGERS.includes(user.role)) {
+    throw ApiError.forbidden();
   }
 }
 

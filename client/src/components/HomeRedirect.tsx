@@ -1,7 +1,19 @@
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-/** Landing por rol: el trabajador de campo no tiene acceso al panel del supervisor. */
+function landingFor(role: string): string {
+  if (role === "TRABAJADOR_CAMPO") {
+    return "/my-activities";
+  }
+  if (role === "MERCADERISTA") {
+    return "/inventory";
+  }
+  return "/dashboard";
+}
+
+/** Landing por rol: cada rol cae en la pantalla a la que sí tiene acceso
+ * (el trabajador de campo no tiene panel de supervisor, el mercaderista no
+ * tiene dashboard ni panel de supervisor). */
 export function HomeRedirect() {
   const { user } = useAuth();
 
@@ -9,5 +21,5 @@ export function HomeRedirect() {
     return null;
   }
 
-  return <Navigate to={user.role === "TRABAJADOR_CAMPO" ? "/my-activities" : "/dashboard"} replace />;
+  return <Navigate to={landingFor(user.role)} replace />;
 }

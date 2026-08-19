@@ -1,0 +1,27 @@
+{
+  "title": "Inventario",
+  "createButton": "Nuevo ítem",
+  "createFormTitle": "Nuevo ítem",
+  "editFormTitle": "Editar ítem",
+  "nameLabel": "Nombre",
+  "typeLabel": "Tipo",
+  "unitLabel": "Unidad de medida",
+  "unitPlaceholder": "unidad, metros, cajas...",
+  "stockQuantityLabel": "Cantidad en stock",
+  "lowStockThresholdLabel": "Umbral de stock bajo (opcional)",
+  "lowStockThresholdPlaceholder": "Alertar cuando el stock llegue a...",
+  "notesLabel": "Notas (opcional)",
+  "save": "Guardar",
+  "saving": "Guardando...",
+  "empty": "No hay ítems en el inventario",
+  "stockLabel": "Stock",
+  "lowStockBadge": "Stock bajo",
+  "typeFilterLabel": "Tipo",
+  "typeFilterAll": "Todos",
+  "deleteTitle": "Eliminar ítem",
+  "deleteMessage": "¿Estás seguro de que quieres eliminar \"{{name}}\"? Esta acción no se puede deshacer.",
+  "itemType": {
+    "HERRAMIENTA": "Herramienta",
+    "MATERIAL": "Material"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "title": "Solicitudes de materiales",
+  "statusFilterLabel": "Estado",
+  "statusFilterAll": "Todos",
+  "empty": "No hay solicitudes",
+  "quantityLabel": "Cantidad",
+  "requestedByLabel": "Solicitado por",
+  "resolvedByLabel": "Resuelto por",
+  "resolutionNoteLabel": "Nota (opcional)",
+  "resolveSubmit": "Confirmar",
+  "resolveSubmitting": "Guardando...",
+  "resolveAction": {
+    "APROBADA": "Aprobar",
+    "RECHAZADA": "Rechazar",
+    "ENTREGADA": "Marcar entregada"
+  }
+}

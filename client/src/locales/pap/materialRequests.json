@@ -1,0 +1,17 @@
+{
+  "title": "Solisitud di material",
+  "statusFilterLabel": "Estado",
+  "statusFilterAll": "Tur",
+  "empty": "No tin solisitud",
+  "quantityLabel": "Kantidad",
+  "requestedByLabel": "Solisitá pa",
+  "resolvedByLabel": "Resolví pa",
+  "resolutionNoteLabel": "Nota (opshonal)",
+  "resolveSubmit": "Konfirmá",
+  "resolveSubmitting": "Ta warda...",
+  "resolveAction": {
+    "APROBADA": "Aprobá",
+    "RECHAZADA": "Rechasá",
+    "ENTREGADA": "Marka komo entregá"
+  }
+}

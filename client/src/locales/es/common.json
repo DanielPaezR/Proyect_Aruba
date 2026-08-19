@@ -25,7 +25,8 @@
   "roles": {
     "JEFE": "Jefe",
     "SUPERVISOR": "Supervisor",
-    "TRABAJADOR_CAMPO": "Trabajador de campo"
+    "TRABAJADOR_CAMPO": "Trabajador de campo",
+    "MERCADERISTA": "Mercaderista"
   },
   "nav": {
     "openMenu": "Abrir menú",
@@ -38,7 +39,11 @@
     "invoices": "Facturas",
     "users": "Usuarios",
     "settings": "Configuración",
-    "teamMap": "Mapa del equipo"
+    "teamMap": "Mapa del equipo",
+    "inventory": "Inventario",
+    "materialRequests": "Solicitudes de materiales",
+    "toolAssignments": "Herramientas asignadas",
+    "toolIncidents": "Reportes de daño/pérdida"
   },
   "activityStatus": {
     "PENDIENTE": "Pendiente",
@@ -46,6 +51,12 @@
     "COMPLETADA": "Completada",
     "CANCELADA": "Cancelada",
     "OMITIDA": "Omitida"
+  },
+  "materialRequestStatus": {
+    "PENDIENTE": "Pendiente",
+    "APROBADA": "Aprobada",
+    "RECHAZADA": "Rechazada",
+    "ENTREGADA": "Entregada"
   },
   "evidenceStatus": {
     "PENDIENTE": "Pendiente de revisión",
@@ -87,7 +98,21 @@
       "CLIENT_NOT_FOUND": "Cliente no encontrado",
       "CLIENT_HAS_PROJECTS": "No se puede eliminar un cliente con proyectos vinculados",
       "PROJECT_HAS_NO_CLIENT": "El proyecto no tiene un cliente vinculado — vincula uno antes de registrar pagos",
-      "PAYMENT_NOT_FOUND": "Pago no encontrado"
+      "PAYMENT_NOT_FOUND": "Pago no encontrado",
+      "INVENTORY_ITEM_NOT_FOUND": "Ítem de inventario no encontrado",
+      "INVENTORY_ITEM_HAS_ACTIVE_ASSIGNMENTS": "No se puede eliminar: este ítem tiene herramientas asignadas (activas o en su historial)",
+      "INVENTORY_ITEM_HAS_PENDING_REQUESTS": "No se puede eliminar: hay solicitudes de material pendientes para este ítem",
+      "INSUFFICIENT_STOCK": "No hay stock suficiente para esta cantidad",
+      "MATERIAL_REQUEST_NOT_FOUND": "Solicitud de material no encontrada",
+      "INVALID_MATERIAL_REQUEST_TRANSITION": "Ese cambio de estado no está permitido para esta solicitud",
+      "MATERIAL_REQUEST_ITEM_REQUIRED": "Debes indicar un ítem del catálogo o un nombre",
+      "TOOL_ASSIGNMENT_NOT_FOUND": "Asignación de herramienta no encontrada",
+      "TOOL_ASSIGNMENT_ALREADY_RETURNED": "Esta herramienta ya fue devuelta",
+      "ITEM_NOT_A_TOOL": "Solo se pueden asignar ítems de tipo herramienta",
+      "USER_NOT_FIELD_WORKER": "El usuario elegido no es un trabajador de campo",
+      "TOOL_INCIDENT_REPORT_NOT_FOUND": "Reporte no encontrado",
+      "TOOL_INCIDENT_ALREADY_RESOLVED": "Este reporte ya fue resuelto",
+      "TOOL_NOT_ASSIGNED_TO_YOU": "Esta herramienta no está a tu cargo"
     }
   }
 }

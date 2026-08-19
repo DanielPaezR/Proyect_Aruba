@@ -1,0 +1,27 @@
+{
+  "title": "Inventario",
+  "createButton": "Item nobo",
+  "createFormTitle": "Item nobo",
+  "editFormTitle": "Edita item",
+  "nameLabel": "Nomber",
+  "typeLabel": "Tipo",
+  "unitLabel": "Unidad di medida",
+  "unitPlaceholder": "unidad, meter, kaha...",
+  "stockQuantityLabel": "Kantidad na stock",
+  "lowStockThresholdLabel": "Límite di stock abou (opshonal)",
+  "lowStockThresholdPlaceholder": "Alertá ora stock yega na...",
+  "notesLabel": "Nota (opshonal)",
+  "save": "Warda",
+  "saving": "Ta warda...",
+  "empty": "No tin item den inventario",
+  "stockLabel": "Stock",
+  "lowStockBadge": "Stock abou",
+  "typeFilterLabel": "Tipo",
+  "typeFilterAll": "Tur",
+  "deleteTitle": "Elimina item",
+  "deleteMessage": "Bo ta sigur bo ke elimina \"{{name}}\"? E akshon aki no por wordu revertí.",
+  "itemType": {
+    "HERRAMIENTA": "Hermenshi",
+    "MATERIAL": "Material"
+  }
+}

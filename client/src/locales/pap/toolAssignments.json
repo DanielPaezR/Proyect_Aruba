@@ -1,0 +1,22 @@
+{
+  "title": "Hermenshi asigná",
+  "createButton": "Asigná hermenshi",
+  "activeOnlyLabel": "Mustra solo aktivo",
+  "createFormTitle": "Asigná hermenshi",
+  "itemLabel": "Hermenshi",
+  "itemPlaceholder": "Skohe un hermenshi",
+  "stockAvailable_one": "{{count}} na stock",
+  "stockAvailable_other": "{{count}} na stock",
+  "workerLabel": "Trahadó",
+  "workerPlaceholder": "Skohe un trahadó",
+  "conditionLabel": "Estado ora di entregá (opshonal)",
+  "save": "Asigná",
+  "saving": "Ta asigná...",
+  "empty": "No tin hermenshi asigná",
+  "statusActive": "Asigná",
+  "statusReturned": "Debolví",
+  "assignedAtLabel": "Asigná dia",
+  "returnedAtLabel": "Debolví dia",
+  "returnButton": "Marka komo debolví",
+  "returning": "Ta warda..."
+}

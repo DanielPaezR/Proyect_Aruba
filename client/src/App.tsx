@@ -6,8 +6,10 @@ import { AuthProvider } from "./context/AuthContext";
 import { ClientDetailPage } from "./pages/ClientDetailPage";
 import { ClientsListPage } from "./pages/ClientsListPage";
 import { EvidencesReviewPage } from "./pages/EvidencesReviewPage";
+import { InventoryPage } from "./pages/InventoryPage";
 import { InvoicesQueuePage } from "./pages/InvoicesQueuePage";
 import { LoginPage } from "./pages/LoginPage";
+import { MaterialRequestsPage } from "./pages/MaterialRequestsPage";
 import { MyActivitiesPage } from "./pages/MyActivitiesPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { ProjectChatPage } from "./pages/ProjectChatPage";
@@ -16,6 +18,8 @@ import { ProjectsListPage } from "./pages/ProjectsListPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { SupervisorDashboardPage } from "./pages/SupervisorDashboardPage";
 import { TeamMapPage } from "./pages/TeamMapPage";
+import { ToolAssignmentsPage } from "./pages/ToolAssignmentsPage";
+import { ToolIncidentsPage } from "./pages/ToolIncidentsPage";
 import { UsersManagementPage } from "./pages/UsersManagementPage";
 import { WorkerProfilePage } from "./pages/WorkerProfilePage";
 
@@ -42,6 +46,10 @@ function App() {
               <Route path="/users/:userId" element={<WorkerProfilePage />} />
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="/team-map" element={<TeamMapPage />} />
+              <Route path="/inventory" element={<InventoryPage />} />
+              <Route path="/material-requests" element={<MaterialRequestsPage />} />
+              <Route path="/tool-assignments" element={<ToolAssignmentsPage />} />
+              <Route path="/tool-incidents" element={<ToolIncidentsPage />} />
             </Route>
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

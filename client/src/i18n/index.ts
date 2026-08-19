@@ -16,6 +16,10 @@ import esUsers from "../locales/es/users.json";
 import esSettings from "../locales/es/settings.json";
 import esTeamMap from "../locales/es/teamMap.json";
 import esProfile from "../locales/es/profile.json";
+import esInventory from "../locales/es/inventory.json";
+import esMaterialRequests from "../locales/es/materialRequests.json";
+import esToolAssignments from "../locales/es/toolAssignments.json";
+import esToolIncidents from "../locales/es/toolIncidents.json";
 import enCommon from "../locales/en/common.json";
 import enAuth from "../locales/en/auth.json";
 import enChat from "../locales/en/chat.json";
@@ -30,6 +34,10 @@ import enUsers from "../locales/en/users.json";
 import enSettings from "../locales/en/settings.json";
 import enTeamMap from "../locales/en/teamMap.json";
 import enProfile from "../locales/en/profile.json";
+import enInventory from "../locales/en/inventory.json";
+import enMaterialRequests from "../locales/en/materialRequests.json";
+import enToolAssignments from "../locales/en/toolAssignments.json";
+import enToolIncidents from "../locales/en/toolIncidents.json";
 import papCommon from "../locales/pap/common.json";
 import papAuth from "../locales/pap/auth.json";
 import papChat from "../locales/pap/chat.json";
@@ -44,6 +52,10 @@ import papUsers from "../locales/pap/users.json";
 import papSettings from "../locales/pap/settings.json";
 import papTeamMap from "../locales/pap/teamMap.json";
 import papProfile from "../locales/pap/profile.json";
+import papInventory from "../locales/pap/inventory.json";
+import papMaterialRequests from "../locales/pap/materialRequests.json";
+import papToolAssignments from "../locales/pap/toolAssignments.json";
+import papToolIncidents from "../locales/pap/toolIncidents.json";
 
 export const SUPPORTED_LANGUAGES = ["es", "en", "pap"] as const;
 export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
@@ -71,6 +83,10 @@ void i18n
         settings: esSettings,
         teamMap: esTeamMap,
         profile: esProfile,
+        inventory: esInventory,
+        materialRequests: esMaterialRequests,
+        toolAssignments: esToolAssignments,
+        toolIncidents: esToolIncidents,
       },
       en: {
         common: enCommon,
@@ -87,6 +103,10 @@ void i18n
         settings: enSettings,
         teamMap: enTeamMap,
         profile: enProfile,
+        inventory: enInventory,
+        materialRequests: enMaterialRequests,
+        toolAssignments: enToolAssignments,
+        toolIncidents: enToolIncidents,
       },
       pap: {
         common: papCommon,
@@ -103,6 +123,10 @@ void i18n
         settings: papSettings,
         teamMap: papTeamMap,
         profile: papProfile,
+        inventory: papInventory,
+        materialRequests: papMaterialRequests,
+        toolAssignments: papToolAssignments,
+        toolIncidents: papToolIncidents,
       },
     },
     fallbackLng: "es",
@@ -122,6 +146,10 @@ void i18n
       "settings",
       "teamMap",
       "profile",
+      "inventory",
+      "materialRequests",
+      "toolAssignments",
+      "toolIncidents",
     ],
     defaultNS: "common",
     interpolation: { escapeValue: false },

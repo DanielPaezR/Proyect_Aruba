@@ -1,9 +1,15 @@
-export const ROLES = ["JEFE", "SUPERVISOR", "TRABAJADOR_CAMPO"] as const;
+export const ROLES = ["JEFE", "SUPERVISOR", "TRABAJADOR_CAMPO", "MERCADERISTA"] as const;
 export type UserRole = (typeof ROLES)[number];
 
 /** JEFE y SUPERVISOR comparten los mismos permisos de gestión en casi toda la app. */
 export function isManagerRole(role: UserRole): boolean {
   return role === "JEFE" || role === "SUPERVISOR";
+}
+
+/** Administra inventario — separado de isManagerRole a propósito, mismo
+ * criterio que INVENTORY_ROLES en el backend (auth.middleware.ts). */
+export function isInventoryRole(role: UserRole): boolean {
+  return role === "MERCADERISTA" || role === "JEFE";
 }
 
 export const LOCALES = ["ES", "EN", "PAP"] as const;

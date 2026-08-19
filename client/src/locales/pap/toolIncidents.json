@@ -1,0 +1,20 @@
+{
+  "title": "Reporte di daño òf perdida",
+  "statusFilterLabel": "Estado",
+  "statusFilterAll": "Tur",
+  "statusPending": "Pendiente",
+  "statusResolved": "Resolví",
+  "empty": "No tin reporte",
+  "workerLabel": "Trahadó",
+  "reportedByLabel": "Reportá pa",
+  "resolvedLabel": "Resolví",
+  "resolveButton": "Resolvé",
+  "resolveFormTitle": "Resolvé reporte",
+  "resolutionNoteLabel": "Nota (opshonal)",
+  "resolveSubmit": "Konfirmá",
+  "resolveSubmitting": "Ta warda...",
+  "incidentType": {
+    "DANIO": "Daño",
+    "PERDIDA": "Perdida"
+  }
+}

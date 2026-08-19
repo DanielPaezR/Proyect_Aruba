@@ -12,6 +12,7 @@ import {
   ProjectPropertyType,
   ProjectWorkType,
   ProjectPriority,
+  InventoryItemType,
 } from "@prisma/client";
 import { EVIDENCES_FOLDER, uploadImage } from "../src/config/storage";
 
@@ -28,6 +29,7 @@ const JEFE_EMAIL = process.env.SEED_JEFE_EMAIL ?? "jefe@empresa.com";
 const SUPERVISOR_EMAIL = process.env.SEED_SUPERVISOR_EMAIL ?? "supervisor@empresa.com";
 const WORKER_EMAIL = process.env.SEED_WORKER_EMAIL ?? "trabajador@empresa.com";
 const WORKER2_EMAIL = process.env.SEED_WORKER2_EMAIL ?? "trabajador2@empresa.com";
+const MERCADERISTA_EMAIL = process.env.SEED_MERCADERISTA_EMAIL ?? "mercaderista@empresa.com";
 
 const SEED_USERS: SeedUser[] = [
   {
@@ -54,6 +56,12 @@ const SEED_USERS: SeedUser[] = [
     email: WORKER2_EMAIL,
     password: process.env.SEED_WORKER2_PASSWORD ?? "CambiarEsta123!",
   },
+  {
+    name: "Mercaderista de Prueba",
+    role: Role.MERCADERISTA,
+    email: MERCADERISTA_EMAIL,
+    password: process.env.SEED_MERCADERISTA_PASSWORD ?? "CambiarEsta123!",
+  },
 ];
 
 // IDs fijos para que el proyecto/actividades/evidencia de prueba sean
@@ -64,6 +72,9 @@ const SEED_ACTIVITY_TABLERO_ID = "seed-activity-tablero-demo";
 const SEED_ACTIVITY_TOMACORRIENTES_ID = "seed-activity-tomacorrientes-demo";
 const SEED_EVIDENCE_ID = "seed-evidence-tablero-demo";
 const SEED_EVIDENCE_PUBLIC_ID = "seed-placeholder-evidence";
+const SEED_TOOL_ITEM_ID = "seed-inventory-taladro-demo";
+const SEED_MATERIAL_ITEM_ID = "seed-inventory-cable-demo";
+const SEED_TOOL_ASSIGNMENT_ID = "seed-tool-assignment-demo";
 
 async function seedUsers(): Promise<Record<string, { id: string }>> {
   const usersByEmail: Record<string, { id: string }> = {};
@@ -191,9 +202,54 @@ async function seedDemoProject(usersByEmail: Record<string, { id: string }>) {
   }
 }
 
+async function seedInventory(usersByEmail: Record<string, { id: string }>) {
+  const worker1 = usersByEmail[WORKER_EMAIL];
+
+  const tool = await prisma.inventoryItem.upsert({
+    where: { id: SEED_TOOL_ITEM_ID },
+    update: {},
+    create: {
+      id: SEED_TOOL_ITEM_ID,
+      name: "Taladro percutor inalámbrico",
+      type: InventoryItemType.HERRAMIENTA,
+      unit: "unidad",
+      stockQuantity: 3,
+      lowStockThreshold: 1,
+      notes: "Incluye cargador y dos baterías.",
+    },
+  });
+
+  await prisma.inventoryItem.upsert({
+    where: { id: SEED_MATERIAL_ITEM_ID },
+    update: {},
+    create: {
+      id: SEED_MATERIAL_ITEM_ID,
+      name: "Cable THHN #12 AWG",
+      type: InventoryItemType.MATERIAL,
+      unit: "metros",
+      stockQuantity: 500,
+      lowStockThreshold: 50,
+    },
+  });
+
+  await prisma.toolAssignment.upsert({
+    where: { id: SEED_TOOL_ASSIGNMENT_ID },
+    update: {},
+    create: {
+      id: SEED_TOOL_ASSIGNMENT_ID,
+      itemId: tool.id,
+      userId: worker1.id,
+      condition: "Buen estado, sin daños visibles al momento de entregar.",
+    },
+  });
+
+  console.log("Inventario de prueba (herramienta, material, y asignación) listo.");
+}
+
 async function main() {
   const usersByEmail = await seedUsers();
   await seedDemoProject(usersByEmail);
+  await seedInventory(usersByEmail);
 
   console.log("Cambia estas contraseñas después del primer inicio de sesión.");
 }

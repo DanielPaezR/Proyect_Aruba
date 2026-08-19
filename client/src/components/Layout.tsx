@@ -4,7 +4,7 @@ import { Menu, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../context/AuthContext";
 import { useGeofenceCheck } from "../hooks/useGeofenceCheck";
-import { isManagerRole } from "../types/auth";
+import { isInventoryRole, isManagerRole } from "../types/auth";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 
 function navLinkClassName({ isActive }: { isActive: boolean }) {
@@ -87,6 +87,26 @@ export function Layout() {
               {isManagerRole(user.role) && (
                 <NavLink to="/team-map" className={navLinkClassName}>
                   {t("nav.teamMap", { ns: "common" })}
+                </NavLink>
+              )}
+              {isInventoryRole(user.role) && (
+                <NavLink to="/inventory" className={navLinkClassName}>
+                  {t("nav.inventory", { ns: "common" })}
+                </NavLink>
+              )}
+              {isInventoryRole(user.role) && (
+                <NavLink to="/material-requests" className={navLinkClassName}>
+                  {t("nav.materialRequests", { ns: "common" })}
+                </NavLink>
+              )}
+              {isInventoryRole(user.role) && (
+                <NavLink to="/tool-assignments" className={navLinkClassName}>
+                  {t("nav.toolAssignments", { ns: "common" })}
+                </NavLink>
+              )}
+              {isInventoryRole(user.role) && (
+                <NavLink to="/tool-incidents" className={navLinkClassName}>
+                  {t("nav.toolIncidents", { ns: "common" })}
                 </NavLink>
               )}
               {user.role === "JEFE" && (

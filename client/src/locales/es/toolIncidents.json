@@ -1,0 +1,20 @@
+{
+  "title": "Reportes de daño o pérdida",
+  "statusFilterLabel": "Estado",
+  "statusFilterAll": "Todos",
+  "statusPending": "Pendientes",
+  "statusResolved": "Resueltos",
+  "empty": "No hay reportes",
+  "workerLabel": "Trabajador",
+  "reportedByLabel": "Reportado por",
+  "resolvedLabel": "Resuelto",
+  "resolveButton": "Resolver",
+  "resolveFormTitle": "Resolver reporte",
+  "resolutionNoteLabel": "Nota (opcional)",
+  "resolveSubmit": "Confirmar",
+  "resolveSubmitting": "Guardando...",
+  "incidentType": {
+    "DANIO": "Daño",
+    "PERDIDA": "Pérdida"
+  }
+}

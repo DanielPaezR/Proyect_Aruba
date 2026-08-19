@@ -1,0 +1,27 @@
+{
+  "title": "Inventory",
+  "createButton": "New item",
+  "createFormTitle": "New item",
+  "editFormTitle": "Edit item",
+  "nameLabel": "Name",
+  "typeLabel": "Type",
+  "unitLabel": "Unit of measure",
+  "unitPlaceholder": "unit, meters, boxes...",
+  "stockQuantityLabel": "Stock quantity",
+  "lowStockThresholdLabel": "Low stock threshold (optional)",
+  "lowStockThresholdPlaceholder": "Alert when stock reaches...",
+  "notesLabel": "Notes (optional)",
+  "save": "Save",
+  "saving": "Saving...",
+  "empty": "No items in inventory yet",
+  "stockLabel": "Stock",
+  "lowStockBadge": "Low stock",
+  "typeFilterLabel": "Type",
+  "typeFilterAll": "All",
+  "deleteTitle": "Delete item",
+  "deleteMessage": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
+  "itemType": {
+    "HERRAMIENTA": "Tool",
+    "MATERIAL": "Material"
+  }
+}

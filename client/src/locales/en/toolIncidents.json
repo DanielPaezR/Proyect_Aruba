@@ -1,0 +1,20 @@
+{
+  "title": "Damage & loss reports",
+  "statusFilterLabel": "Status",
+  "statusFilterAll": "All",
+  "statusPending": "Pending",
+  "statusResolved": "Resolved",
+  "empty": "No reports",
+  "workerLabel": "Worker",
+  "reportedByLabel": "Reported by",
+  "resolvedLabel": "Resolved",
+  "resolveButton": "Resolve",
+  "resolveFormTitle": "Resolve report",
+  "resolutionNoteLabel": "Note (optional)",
+  "resolveSubmit": "Confirm",
+  "resolveSubmitting": "Saving...",
+  "incidentType": {
+    "DANIO": "Damage",
+    "PERDIDA": "Loss"
+  }
+}

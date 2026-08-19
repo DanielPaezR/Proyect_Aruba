@@ -1,0 +1,22 @@
+{
+  "title": "Tool assignments",
+  "createButton": "Assign tool",
+  "activeOnlyLabel": "Show only active",
+  "createFormTitle": "Assign tool",
+  "itemLabel": "Tool",
+  "itemPlaceholder": "Select a tool",
+  "stockAvailable_one": "{{count}} in stock",
+  "stockAvailable_other": "{{count}} in stock",
+  "workerLabel": "Worker",
+  "workerPlaceholder": "Select a worker",
+  "conditionLabel": "Condition when handed over (optional)",
+  "save": "Assign",
+  "saving": "Assigning...",
+  "empty": "No tools assigned",
+  "statusActive": "Assigned",
+  "statusReturned": "Returned",
+  "assignedAtLabel": "Assigned on",
+  "returnedAtLabel": "Returned on",
+  "returnButton": "Mark as returned",
+  "returning": "Saving..."
+}

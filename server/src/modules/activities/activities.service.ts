@@ -8,6 +8,12 @@ import type { CreateActivityInput, SkipActivityInput, UpdateActivityInput } from
 
 type AuthUser = { id: string; role: Role };
 
+// Usado para los chequeos de permiso explicitos de este archivo (ver
+// updateActivityStatus/skipActivity) — no confundir con el MANAGERS de
+// activities.routes.ts, que gatea rutas enteras; este es a nivel de service,
+// para las dos rutas que no tienen authorize() y dependen de logica interna.
+const MANAGERS: Role[] = [Role.JEFE, Role.SUPERVISOR];
+
 const activityInclude = {
   assignments: { include: { user: { select: { id: true, name: true } } } },
   skippedBy: { select: { id: true, name: true } },
@@ -179,6 +185,11 @@ export async function updateActivityStatus(user: AuthUser, activityId: string, s
         "Un trabajador de campo solo puede marcar En Progreso o Completada",
       );
     }
+  } else if (!MANAGERS.includes(user.role)) {
+    // Permiso explicito, no "todo lo que no es trabajador esta permitido":
+    // un rol nuevo sin necesidad definida aca (ej. MERCADERISTA) no debe
+    // heredar acceso de gestion de actividades por descarte.
+    throw ApiError.forbidden();
   }
 
   // Regla de integridad de datos, no de permisos: aplica a todos los roles
@@ -230,6 +241,8 @@ export async function skipActivity(user: AuthUser, activityId: string, input: Sk
     if (!isAssigned) {
       throw ApiError.forbidden(ErrorCode.ACTIVITY_NOT_ASSIGNED, "No tienes esta actividad asignada");
     }
+  } else if (!MANAGERS.includes(user.role)) {
+    throw ApiError.forbidden();
   }
 
   if (!SKIPPABLE_STATUSES.includes(activity.status)) {

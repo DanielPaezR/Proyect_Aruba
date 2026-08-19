@@ -25,7 +25,8 @@
   "roles": {
     "JEFE": "Hefe",
     "SUPERVISOR": "Supervisor",
-    "TRABAJADOR_CAMPO": "Trahadó di kampo"
+    "TRABAJADOR_CAMPO": "Trahadó di kampo",
+    "MERCADERISTA": "Merkaderista"
   },
   "nav": {
     "openMenu": "Habri menú",
@@ -38,7 +39,11 @@
     "invoices": "Facturanan",
     "users": "Usuarionan",
     "settings": "Konfigurashon",
-    "teamMap": "Mapa di ekipo"
+    "teamMap": "Mapa di ekipo",
+    "inventory": "Inventario",
+    "materialRequests": "Solisitud di material",
+    "toolAssignments": "Hermenshi asigná",
+    "toolIncidents": "Reporte di daño/perdida"
   },
   "activityStatus": {
     "PENDIENTE": "Pendiente",
@@ -46,6 +51,12 @@
     "COMPLETADA": "Kompletá",
     "CANCELADA": "Kanselá",
     "OMITIDA": "Omití"
+  },
+  "materialRequestStatus": {
+    "PENDIENTE": "Pendiente",
+    "APROBADA": "Aprobá",
+    "RECHAZADA": "Rechasá",
+    "ENTREGADA": "Entregá"
   },
   "evidenceStatus": {
     "PENDIENTE": "Pendiente di revishon",
@@ -87,7 +98,21 @@
       "CLIENT_NOT_FOUND": "No a haña e kliente",
       "CLIENT_HAS_PROJECTS": "No por elimina un kliente ku proyekto vinkulá",
       "PROJECT_HAS_NO_CLIENT": "E proyekto no tin kliente vinkulá — vinkula un promé di registra pago",
-      "PAYMENT_NOT_FOUND": "No a haña e pago"
+      "PAYMENT_NOT_FOUND": "No a haña e pago",
+      "INVENTORY_ITEM_NOT_FOUND": "No a haña e item di inventario",
+      "INVENTORY_ITEM_HAS_ACTIVE_ASSIGNMENTS": "No por elimina: e item aki tin hermenshi asigná (aktivo òf den su historial)",
+      "INVENTORY_ITEM_HAS_PENDING_REQUESTS": "No por elimina: tin solisitud di material pendiente pa e item aki",
+      "INSUFFICIENT_STOCK": "No tin stock sufisiente pa e kantidad aki",
+      "MATERIAL_REQUEST_NOT_FOUND": "No a haña e solisitud di material",
+      "INVALID_MATERIAL_REQUEST_TRANSITION": "E kambio di estado ei no ta permitino pa e solisitud aki",
+      "MATERIAL_REQUEST_ITEM_REQUIRED": "Mester skohe un item di katalogo òf skirbi un nomber",
+      "TOOL_ASSIGNMENT_NOT_FOUND": "No a haña e asignashon di hermenshi",
+      "TOOL_ASSIGNMENT_ALREADY_RETURNED": "E hermenshi aki ya a wordu debolví",
+      "ITEM_NOT_A_TOOL": "Solo item di tipo hermenshi por wordu asigná",
+      "USER_NOT_FIELD_WORKER": "E usuario skohí no ta un trahadó di kampo",
+      "TOOL_INCIDENT_REPORT_NOT_FOUND": "No a haña e reporte",
+      "TOOL_INCIDENT_ALREADY_RESOLVED": "E reporte aki ya a wordu resolví",
+      "TOOL_NOT_ASSIGNED_TO_YOU": "E hermenshi aki no ta na bo enkargo"
     }
   }
 }

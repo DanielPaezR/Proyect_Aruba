@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import type { Role } from "@prisma/client";
+import { Role } from "@prisma/client";
 import { ApiError } from "../utils/ApiError";
 import { ErrorCode } from "../utils/errorCodes";
 import { verifyAccessToken } from "../utils/jwt";
@@ -48,4 +48,19 @@ export function authorize(...roles: Role[]) {
 
     next();
   };
+}
+
+/**
+ * Gestión de inventario (herramientas/materiales) — separado a propósito de
+ * MANAGERS/isManagerRole: JEFE/SUPERVISOR gestionan proyectos, MERCADERISTA
+ * gestiona inventario; JEFE tiene acceso de escritura ademas por su rol de
+ * autoridad general (mismo patron que evidencias/facturas), SUPERVISOR no.
+ * SUPERVISOR y TRABAJADOR_CAMPO igual pueden LEER el catálogo (para saber
+ * qué existe al pedir materiales) — eso se gatea aparte con authenticate a
+ * secas, sin este guard.
+ */
+export const INVENTORY_ROLES: Role[] = [Role.MERCADERISTA, Role.JEFE];
+
+export function isInventoryRole(role: Role): boolean {
+  return INVENTORY_ROLES.includes(role);
 }

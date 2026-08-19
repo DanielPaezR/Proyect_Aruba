@@ -25,7 +25,8 @@
   "roles": {
     "JEFE": "Manager",
     "SUPERVISOR": "Supervisor",
-    "TRABAJADOR_CAMPO": "Field worker"
+    "TRABAJADOR_CAMPO": "Field worker",
+    "MERCADERISTA": "Merchandiser"
   },
   "nav": {
     "openMenu": "Open menu",
@@ -38,7 +39,11 @@
     "invoices": "Invoices",
     "users": "Users",
     "settings": "Settings",
-    "teamMap": "Team map"
+    "teamMap": "Team map",
+    "inventory": "Inventory",
+    "materialRequests": "Material requests",
+    "toolAssignments": "Tool assignments",
+    "toolIncidents": "Damage/loss reports"
   },
   "activityStatus": {
     "PENDIENTE": "Pending",
@@ -46,6 +51,12 @@
     "COMPLETADA": "Completed",
     "CANCELADA": "Cancelled",
     "OMITIDA": "Skipped"
+  },
+  "materialRequestStatus": {
+    "PENDIENTE": "Pending",
+    "APROBADA": "Approved",
+    "RECHAZADA": "Rejected",
+    "ENTREGADA": "Delivered"
   },
   "evidenceStatus": {
     "PENDIENTE": "Pending review",
@@ -87,7 +98,21 @@
       "CLIENT_NOT_FOUND": "Client not found",
       "CLIENT_HAS_PROJECTS": "A client with linked projects can't be deleted",
       "PROJECT_HAS_NO_CLIENT": "The project doesn't have a linked client — link one before recording payments",
-      "PAYMENT_NOT_FOUND": "Payment not found"
+      "PAYMENT_NOT_FOUND": "Payment not found",
+      "INVENTORY_ITEM_NOT_FOUND": "Inventory item not found",
+      "INVENTORY_ITEM_HAS_ACTIVE_ASSIGNMENTS": "Can't delete: this item has tool assignments (active or in its history)",
+      "INVENTORY_ITEM_HAS_PENDING_REQUESTS": "Can't delete: there are pending material requests for this item",
+      "INSUFFICIENT_STOCK": "Not enough stock for this quantity",
+      "MATERIAL_REQUEST_NOT_FOUND": "Material request not found",
+      "INVALID_MATERIAL_REQUEST_TRANSITION": "That status change isn't allowed for this request",
+      "MATERIAL_REQUEST_ITEM_REQUIRED": "You must pick a catalog item or enter a name",
+      "TOOL_ASSIGNMENT_NOT_FOUND": "Tool assignment not found",
+      "TOOL_ASSIGNMENT_ALREADY_RETURNED": "This tool was already returned",
+      "ITEM_NOT_A_TOOL": "Only tool-type items can be assigned",
+      "USER_NOT_FIELD_WORKER": "The selected user isn't a field worker",
+      "TOOL_INCIDENT_REPORT_NOT_FOUND": "Report not found",
+      "TOOL_INCIDENT_ALREADY_RESOLVED": "This report was already resolved",
+      "TOOL_NOT_ASSIGNED_TO_YOU": "This tool isn't assigned to you"
     }
   }
 }
