@@ -15,10 +15,20 @@ import {
 } from "./auth.validators";
 
 const REFRESH_COOKIE = "refreshToken";
+const IS_PRODUCTION = process.env.NODE_ENV === "production";
+// Frontend (Vercel) y backend (Railway) son dominios distintos: en produccion
+// esto es una peticion cross-site, y sameSite "lax" NO manda la cookie de
+// vuelta salvo en navegacion directa — cualquier recarga perdia la sesion.
+// "none" es obligatorio para cookies cross-site en navegadores modernos, pero
+// requiere secure: true (los navegadores rechazan "none" sin secure) — por
+// eso van atados a la misma condicion, no sueltos. En dev, cliente y server
+// corren los dos en localhost (mismo-site, distinto puerto) y "none" sin
+// secure directamente se rechazaria, asi que ahi se mantiene "lax".
+const REFRESH_COOKIE_SAME_SITE: "none" | "lax" = IS_PRODUCTION ? "none" : "lax";
 const REFRESH_COOKIE_OPTIONS = {
   httpOnly: true,
-  sameSite: "lax" as const,
-  secure: process.env.NODE_ENV === "production",
+  sameSite: REFRESH_COOKIE_SAME_SITE,
+  secure: IS_PRODUCTION,
   path: "/api/auth",
 };
 
