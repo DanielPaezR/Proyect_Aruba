@@ -148,6 +148,11 @@ export function Layout() {
                   {t("nav.users", { ns: "common" })}
                 </NavLink>
               )}
+              {isTopManagerRole(user.role) && hasFeature("USUARIOS") && (
+                <NavLink to="/payroll" className={navLinkClassName}>
+                  {t("nav.payroll", { ns: "common" })}
+                </NavLink>
+              )}
               {isTopManagerRole(user.role) && (
                 <NavLink to="/settings" className={navLinkClassName}>
                   {t("nav.settings", { ns: "common" })}

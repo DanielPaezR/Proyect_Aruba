@@ -1,0 +1,34 @@
+{
+  "title": "Liquidación mensual",
+  "generateSection": "Generar liquidación",
+  "workerLabel": "Trabajador",
+  "workerPlaceholder": "Selecciona un trabajador",
+  "periodStartLabel": "Desde",
+  "periodEndLabel": "Hasta",
+  "generateButton": "Generar liquidación",
+  "generating": "Generando...",
+  "breakdown": {
+    "title": "Desglose de la liquidación",
+    "forWorker": "Trabajador: {{name}}",
+    "period": "Período: {{start}} – {{end}}",
+    "normalHours": "Horas normales",
+    "overtimeHours": "Horas extra",
+    "advances": "Adelantos",
+    "deductions": "Descuentos",
+    "netPay": "Neto a pagar"
+  },
+  "listTitle": "Liquidaciones generadas",
+  "filterWorkerLabel": "Trabajador",
+  "filterAllWorkers": "Todos los trabajadores",
+  "filterStatusLabel": "Estado",
+  "filterAllStatuses": "Todos los estados",
+  "listEmpty": "Todavía no hay liquidaciones generadas",
+  "markPaidButton": "Marcar como pagada",
+  "markPaidTitle": "Marcar como pagada",
+  "markPaidMessage": "¿Confirmas que se le pagó {{amount}} a {{name}}? Esta acción no se puede deshacer.",
+  "paidOn": "Pagada el {{date}}",
+  "status": {
+    "BORRADOR": "Borrador",
+    "PAGADA": "Pagada"
+  }
+}

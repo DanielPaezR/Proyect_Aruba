@@ -169,6 +169,15 @@ enum SalaryAdjustmentType {
   DESCUENTO
 }
 
+// BORRADOR: recien generada, se puede volver a generar (ej. si se cargaron
+// mas marcaciones despues) sin restriccion. PAGADA: ya se le pago al
+// trabajador — a partir de ahi ese userId+periodo exacto queda bloqueado
+// para no duplicar el pago (ver generatePayroll en payroll.service.ts).
+enum PayrollStatus {
+  BORRADOR
+  PAGADA
+}
+
 // ---------- Modelos ----------
 
 model User {
@@ -232,6 +241,8 @@ model User {
   createdSalaryRaises      SalaryRaise[]          @relation("SalaryRaiseCreatedBy")
   salaryAdjustments        SalaryAdjustment[]     @relation("SalaryAdjustmentForUser")
   createdSalaryAdjustments SalaryAdjustment[]     @relation("SalaryAdjustmentCreatedBy")
+  payrollRuns              PayrollRun[]           @relation("PayrollRunForUser")
+  generatedPayrollRuns     PayrollRun[]           @relation("PayrollRunGeneratedBy")
   scoreEvents              WorkerScoreEvent[]     @relation("WorkerScoreEventForUser")
   createdScoreEvents       WorkerScoreEvent[]     @relation("WorkerScoreEventCreatedBy")
 
@@ -491,6 +502,43 @@ model SalaryAdjustment {
 
   @@index([userId, effectiveDate])
   @@map("salary_adjustments")
+}
+
+// Liquidacion mensual (Modulo 2.3): combina horas trabajadas (via
+// timeEntriesService.getSummary sobre [periodStart, periodEnd)) + tarifas de
+// User + SalaryAdjustment del mismo rango, en un solo snapshot inmutable —
+// una vez generada, el numero no se recalcula solo aunque cambien las
+// marcaciones despues (para eso se vuelve a generar, ver payroll.service.ts).
+// periodStart/periodEnd son dias calendario de Aruba, ambos inclusive tal
+// como los eligio el Administrador/Gerente (el service arma el rango
+// [start, end) exclusivo internamente al consultar, ver arubaDayRangeUtc).
+model PayrollRun {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation("PayrollRunForUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  periodStart DateTime
+  periodEnd   DateTime
+
+  normalMinutes   Int
+  overtimeMinutes Int
+  normalPay       Decimal @db.Decimal(10, 2)
+  overtimePay     Decimal @db.Decimal(10, 2)
+  totalAdvances   Decimal @db.Decimal(10, 2)
+  totalDeductions Decimal @db.Decimal(10, 2)
+  netPay          Decimal @db.Decimal(10, 2)
+
+  status PayrollStatus @default(BORRADOR)
+
+  generatedById String
+  generatedBy   User     @relation("PayrollRunGeneratedBy", fields: [generatedById], references: [id])
+  generatedAt   DateTime @default(now())
+
+  paidAt DateTime?
+  notes  String?
+
+  @@index([userId, periodStart])
+  @@map("payroll_runs")
 }
 
 // Evento de puntaje mensual (bonos/descuentos por incidentes). El puntaje de

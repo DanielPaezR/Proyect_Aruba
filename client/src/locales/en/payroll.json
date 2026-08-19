@@ -1,0 +1,34 @@
+{
+  "title": "Monthly payroll",
+  "generateSection": "Generate payroll",
+  "workerLabel": "Worker",
+  "workerPlaceholder": "Select a worker",
+  "periodStartLabel": "From",
+  "periodEndLabel": "To",
+  "generateButton": "Generate payroll",
+  "generating": "Generating...",
+  "breakdown": {
+    "title": "Payroll breakdown",
+    "forWorker": "Worker: {{name}}",
+    "period": "Period: {{start}} – {{end}}",
+    "normalHours": "Regular hours",
+    "overtimeHours": "Overtime hours",
+    "advances": "Advances",
+    "deductions": "Deductions",
+    "netPay": "Net pay"
+  },
+  "listTitle": "Generated payroll runs",
+  "filterWorkerLabel": "Worker",
+  "filterAllWorkers": "All workers",
+  "filterStatusLabel": "Status",
+  "filterAllStatuses": "All statuses",
+  "listEmpty": "No payroll runs generated yet",
+  "markPaidButton": "Mark as paid",
+  "markPaidTitle": "Mark as paid",
+  "markPaidMessage": "Confirm that {{name}} was paid {{amount}}? This action can't be undone.",
+  "paidOn": "Paid on {{date}}",
+  "status": {
+    "BORRADOR": "Draft",
+    "PAGADA": "Paid"
+  }
+}

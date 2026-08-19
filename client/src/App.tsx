@@ -14,6 +14,7 @@ import { MaterialRequestsPage } from "./pages/MaterialRequestsPage";
 import { MyActivitiesPage } from "./pages/MyActivitiesPage";
 import { MyHoursPage } from "./pages/MyHoursPage";
 import { MyToolsPage } from "./pages/MyToolsPage";
+import { PayrollPage } from "./pages/PayrollPage";
 import { PermissionsPage } from "./pages/PermissionsPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { ProjectChatPage } from "./pages/ProjectChatPage";
@@ -50,6 +51,7 @@ function App() {
               <Route path="/invoices" element={<InvoicesQueuePage />} />
               <Route path="/users" element={<UsersManagementPage />} />
               <Route path="/users/:userId" element={<WorkerProfilePage />} />
+              <Route path="/payroll" element={<PayrollPage />} />
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="/team-map" element={<TeamMapPage />} />
               <Route path="/agenda" element={<AgendaPage />} />

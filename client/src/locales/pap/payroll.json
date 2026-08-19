@@ -1,0 +1,34 @@
+{
+  "title": "Likidashon mensual",
+  "generateSection": "Genera likidashon",
+  "workerLabel": "Trahadó",
+  "workerPlaceholder": "Skohe un trahadó",
+  "periodStartLabel": "Foi",
+  "periodEndLabel": "Te",
+  "generateButton": "Genera likidashon",
+  "generating": "Ta genera...",
+  "breakdown": {
+    "title": "Detaye di e likidashon",
+    "forWorker": "Trahadó: {{name}}",
+    "period": "Periodo: {{start}} – {{end}}",
+    "normalHours": "Ora normal",
+    "overtimeHours": "Ora ekstra",
+    "advances": "Avansá",
+    "deductions": "Deskuento",
+    "netPay": "Neto pa paga"
+  },
+  "listTitle": "Likidashon generá",
+  "filterWorkerLabel": "Trahadó",
+  "filterAllWorkers": "Tur trahadó",
+  "filterStatusLabel": "Estado",
+  "filterAllStatuses": "Tur estado",
+  "listEmpty": "Ainda no tin likidashon generá",
+  "markPaidButton": "Marka komo pagá",
+  "markPaidTitle": "Marka komo pagá",
+  "markPaidMessage": "Bo ta konfirmá ku a paga {{amount}} na {{name}}? E akshon aki no por wordu bolbé atras.",
+  "paidOn": "Pagá dia {{date}}",
+  "status": {
+    "BORRADOR": "Buradó",
+    "PAGADA": "Pagá"
+  }
+}
