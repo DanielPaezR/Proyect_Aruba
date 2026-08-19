@@ -24,8 +24,8 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          <Route path="/login" element={<LoginPage />} />
           <Route element={<Layout />}>
-            <Route path="/login" element={<LoginPage />} />
             <Route element={<ProtectedRoute />}>
               <Route path="/" element={<HomeRedirect />} />
               <Route path="/dashboard" element={<SupervisorDashboardPage />} />

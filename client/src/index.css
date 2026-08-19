@@ -339,45 +339,111 @@ button {
   color: var(--text);
 }
 
-/* Login */
+/* Login — pantalla de marca fija (siempre oscura), independiente del tema
+   claro/oscuro del resto de la app: es la primera impresion de DECS, no debe
+   cambiar segun el sistema del usuario. */
 
 .login-page {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 24px 16px;
+  min-height: 100dvh;
 }
 
-.login-brand {
-  margin-bottom: 20px;
-  padding: 10px 20px;
-  border-radius: 12px;
-  background: #ffffff;
-  box-shadow: var(--shadow);
+/* El panel con foto solo tiene sentido en desktop (ver media query mas
+   abajo) — en mobile queda oculto y se muestra un logo chico en el topbar
+   del panel de formulario en su lugar. */
+.login-brand-panel {
+  display: none;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+}
+
+/* Oscurece la foto de fondo para que el logo y el texto blancos se lean bien
+   encima, sin importar que tan clara/oscura sea la foto que se use. */
+.login-brand-panel-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, rgba(17, 27, 41, 0.55) 0%, rgba(17, 27, 41, 0.85) 100%);
+}
+
+.login-brand-panel-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  text-align: center;
+  max-width: 360px;
 }
 
 .login-logo {
   display: block;
-  height: 40px;
+  width: min(220px, 60vw);
+  height: auto;
+}
+
+.login-brand-name {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  line-height: 1.35;
+}
+
+.login-form-panel {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--navy-900);
+  padding: 16px;
+}
+
+.login-form-panel-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+/* Solo visible en mobile, donde .login-brand-panel esta oculto — sin esto la
+   pantalla quedaria sin ninguna marca visible. */
+.login-mobile-logo {
+  height: 32px;
   width: auto;
 }
 
+.login-form-panel .language-switcher select {
+  background: var(--navy-700);
+  color: #ffffff;
+  border-color: var(--navy-700);
+}
+
 .login-form {
+  flex: 1;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 12px;
   width: 100%;
   max-width: 360px;
-  padding: 24px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--bg-subtle);
-  box-shadow: var(--shadow);
+  margin: 0 auto;
+  padding: 24px 8px;
+}
+
+.login-form h1 {
+  margin: 0;
+  color: #ffffff;
 }
 
 .login-subtitle {
   margin: 0 0 12px;
   font-size: 14px;
+  color: var(--slate-200);
 }
 
 .login-form label {
@@ -385,7 +451,7 @@ button {
   flex-direction: column;
   gap: 4px;
   font-size: 14px;
-  color: var(--text-h);
+  color: var(--slate-200);
 }
 
 .login-form input {
@@ -393,10 +459,14 @@ button {
   font-size: 16px;
   padding: 10px;
   border-radius: 6px;
-  border: 1px solid var(--border);
-  background: var(--bg);
-  color: var(--text-h);
+  border: 1px solid var(--navy-700);
+  background: var(--navy-700);
+  color: #ffffff;
   min-height: 44px;
+}
+
+.login-form input::placeholder {
+  color: var(--slate-600);
 }
 
 .login-form button {
@@ -404,9 +474,9 @@ button {
   padding: 12px;
   border-radius: 6px;
   border: none;
-  background: var(--btn-bg);
-  color: var(--btn-text);
-  font-weight: 600;
+  background: var(--lime-500);
+  color: var(--navy-900);
+  font-weight: 700;
   min-height: 44px;
 }
 
@@ -1659,10 +1729,37 @@ a.card-title:hover {
   }
 
   .login-page {
-    padding: 48px 16px;
+    flex-direction: row;
+  }
+
+  .login-brand-panel {
+    display: flex;
+    flex: 1;
+    min-height: 100dvh;
+  }
+
+  .login-logo {
+    width: min(320px, 30vw);
+  }
+
+  .login-brand-name {
+    font-size: 22px;
+    max-width: 420px;
+  }
+
+  .login-form-panel {
+    flex: 1;
+    padding: 24px 32px;
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
   }
 
   .login-form {
-    padding: 32px;
+    padding: 32px 8px;
+  }
+
+  /* La marca ya esta en el panel de foto — el logo chico del topbar solo es
+     para mobile. */
+  .login-mobile-logo {
+    display: none;
   }
 }

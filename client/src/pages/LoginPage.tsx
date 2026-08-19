@@ -3,6 +3,9 @@ import type { FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
+import loginBackground from "../assets/login-background.jpg";
+import logoUrl from "../assets/logo-header-transparent.png";
+import { LanguageSwitcher } from "../components/LanguageSwitcher";
 import { useAuth } from "../context/AuthContext";
 
 export function LoginPage() {
@@ -41,45 +44,60 @@ export function LoginPage() {
 
   return (
     <div className="login-page">
-      <div className="login-brand">
-        <img src="/logo_cropped.png" alt="DECS" className="login-logo" />
+      {/* Capas independientes (foto / overlay / logo / texto), no una sola
+          imagen compuesta: cuando llegue la foto final del cliente, alcanza
+          con reemplazar src/assets/login-background.jpg. */}
+      <div className="login-brand-panel" style={{ backgroundImage: `url(${loginBackground})` }}>
+        <div className="login-brand-panel-overlay" />
+        <div className="login-brand-panel-content">
+          <img src={logoUrl} alt="DECS" className="login-logo" />
+          <p className="login-brand-name">{t("login.brandTagline", { ns: "auth" })}</p>
+        </div>
       </div>
-      <form className="login-form" onSubmit={(event) => void handleSubmit(event)}>
-        <h1>{t("login.title", { ns: "auth" })}</h1>
-        <p className="login-subtitle">{t("login.subtitle", { ns: "auth" })}</p>
 
-        <label>
-          {t("login.email", { ns: "auth" })}
-          <input
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            autoComplete="username"
-            required
-          />
-        </label>
+      <div className="login-form-panel">
+        <div className="login-form-panel-topbar">
+          <img src={logoUrl} alt="DECS" className="login-mobile-logo" />
+          <LanguageSwitcher />
+        </div>
 
-        <label>
-          {t("login.password", { ns: "auth" })}
-          <input
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            autoComplete="current-password"
-            required
-          />
-        </label>
+        <form className="login-form" onSubmit={(event) => void handleSubmit(event)}>
+          <h1>{t("login.title", { ns: "auth" })}</h1>
+          <p className="login-subtitle">{t("login.subtitle", { ns: "auth" })}</p>
 
-        {errorMessage && (
-          <p className="form-error" role="alert">
-            {errorMessage}
-          </p>
-        )}
+          <label>
+            {t("login.email", { ns: "auth" })}
+            <input
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              autoComplete="username"
+              required
+            />
+          </label>
 
-        <button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? t("login.submitting", { ns: "auth" }) : t("login.submit", { ns: "auth" })}
-        </button>
-      </form>
+          <label>
+            {t("login.password", { ns: "auth" })}
+            <input
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              autoComplete="current-password"
+              required
+            />
+          </label>
+
+          {errorMessage && (
+            <p className="form-error" role="alert">
+              {errorMessage}
+            </p>
+          )}
+
+          <button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? t("login.submitting", { ns: "auth" }) : t("login.submit", { ns: "auth" })}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
