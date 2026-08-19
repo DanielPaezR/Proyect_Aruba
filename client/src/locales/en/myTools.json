@@ -1,0 +1,12 @@
+{
+  "title": "My tools",
+  "empty": "You have no tools assigned",
+  "assignedAtLabel": "Assigned on",
+  "reportButton": "Report damage/loss",
+  "reportFormTitle": "Report damage or loss",
+  "incidentTypeLabel": "Type",
+  "descriptionLabel": "Description",
+  "submit": "Send report",
+  "submitting": "Sending...",
+  "reportSent": "Report sent — the merchandiser will review it."
+}

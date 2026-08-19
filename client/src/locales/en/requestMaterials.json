@@ -1,0 +1,15 @@
+{
+  "title": "Request materials",
+  "formTitle": "New request",
+  "itemLabel": "Item",
+  "itemNotInCatalog": "Not in the catalog (specify)",
+  "freeTextLabel": "Item name",
+  "quantityLabel": "Quantity",
+  "reasonLabel": "Reason",
+  "submit": "Send request",
+  "submitting": "Sending...",
+  "submitSuccess": "Request sent.",
+  "myRequestsTitle": "My requests",
+  "myRequestsEmpty": "You haven't made any requests yet",
+  "resolutionNoteLabel": "Note"
+}

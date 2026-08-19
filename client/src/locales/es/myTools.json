@@ -1,0 +1,12 @@
+{
+  "title": "Mis herramientas",
+  "empty": "No tienes herramientas asignadas",
+  "assignedAtLabel": "Asignada el",
+  "reportButton": "Reportar daño/pérdida",
+  "reportFormTitle": "Reportar daño o pérdida",
+  "incidentTypeLabel": "Tipo",
+  "descriptionLabel": "Descripción",
+  "submit": "Enviar reporte",
+  "submitting": "Enviando...",
+  "reportSent": "Reporte enviado — el Mercaderista lo va a revisar."
+}

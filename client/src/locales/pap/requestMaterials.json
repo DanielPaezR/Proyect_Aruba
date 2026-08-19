@@ -1,0 +1,15 @@
+{
+  "title": "Pidi material",
+  "formTitle": "Solisitud nobo",
+  "itemLabel": "Item",
+  "itemNotInCatalog": "No ta den katalogo (spesifiká)",
+  "freeTextLabel": "Nomber di item",
+  "quantityLabel": "Kantidad",
+  "reasonLabel": "Motibu",
+  "submit": "Manda solisitud",
+  "submitting": "Ta manda...",
+  "submitSuccess": "Solisitud mandá.",
+  "myRequestsTitle": "Mi solisitudnan",
+  "myRequestsEmpty": "Ainda bo no a hasi ningun solisitud",
+  "resolutionNoteLabel": "Nota"
+}

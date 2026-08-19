@@ -47,6 +47,19 @@ export async function listMaterialRequests(filters: ListMaterialRequestsQuery) {
   });
 }
 
+/** Historial propio del trabajador/supervisor que pidio — mas reciente primero
+ * (a diferencia de la cola de trabajo, que es FIFO ascendente por createdAt). */
+export async function listMyMaterialRequests(requesterId: string, filters: ListMaterialRequestsQuery) {
+  return prisma.materialRequest.findMany({
+    where: {
+      requestedById: requesterId,
+      ...(filters.status ? { status: filters.status } : {}),
+    },
+    include: materialRequestInclude,
+    orderBy: { createdAt: "desc" },
+  });
+}
+
 export async function createMaterialRequest(requesterId: string, input: CreateMaterialRequestInput) {
   if (input.itemId) {
     const item = await prisma.inventoryItem.findUnique({ where: { id: input.itemId }, select: { id: true } });

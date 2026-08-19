@@ -1,0 +1,15 @@
+{
+  "title": "Solicitar materiales",
+  "formTitle": "Nueva solicitud",
+  "itemLabel": "Ítem",
+  "itemNotInCatalog": "No está en el catálogo (especificar)",
+  "freeTextLabel": "Nombre del ítem",
+  "quantityLabel": "Cantidad",
+  "reasonLabel": "Motivo",
+  "submit": "Enviar solicitud",
+  "submitting": "Enviando...",
+  "submitSuccess": "Solicitud enviada.",
+  "myRequestsTitle": "Mis solicitudes",
+  "myRequestsEmpty": "Todavía no hiciste ninguna solicitud",
+  "resolutionNoteLabel": "Nota"
+}

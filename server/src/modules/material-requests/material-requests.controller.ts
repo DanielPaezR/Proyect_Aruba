@@ -13,6 +13,12 @@ export const list = asyncHandler(async (req: Request, res: Response) => {
   res.json({ requests });
 });
 
+export const listMine = asyncHandler(async (req: Request, res: Response) => {
+  const filters = listMaterialRequestsQuerySchema.parse(req.query);
+  const requests = await materialRequestsService.listMyMaterialRequests(req.user!.id, filters);
+  res.json({ requests });
+});
+
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const input = createMaterialRequestSchema.parse(req.body);
   const request = await materialRequestsService.createMaterialRequest(req.user!.id, input);

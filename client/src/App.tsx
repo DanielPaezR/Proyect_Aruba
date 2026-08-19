@@ -11,10 +11,12 @@ import { InvoicesQueuePage } from "./pages/InvoicesQueuePage";
 import { LoginPage } from "./pages/LoginPage";
 import { MaterialRequestsPage } from "./pages/MaterialRequestsPage";
 import { MyActivitiesPage } from "./pages/MyActivitiesPage";
+import { MyToolsPage } from "./pages/MyToolsPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { ProjectChatPage } from "./pages/ProjectChatPage";
 import { ProjectDetailPage } from "./pages/ProjectDetailPage";
 import { ProjectsListPage } from "./pages/ProjectsListPage";
+import { RequestMaterialsPage } from "./pages/RequestMaterialsPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { SupervisorDashboardPage } from "./pages/SupervisorDashboardPage";
 import { TeamMapPage } from "./pages/TeamMapPage";
@@ -50,6 +52,8 @@ function App() {
               <Route path="/material-requests" element={<MaterialRequestsPage />} />
               <Route path="/tool-assignments" element={<ToolAssignmentsPage />} />
               <Route path="/tool-incidents" element={<ToolIncidentsPage />} />
+              <Route path="/my-tools" element={<MyToolsPage />} />
+              <Route path="/request-materials" element={<RequestMaterialsPage />} />
             </Route>
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

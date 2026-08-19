@@ -9,6 +9,11 @@ export const list = asyncHandler(async (req: Request, res: Response) => {
   res.json({ assignments });
 });
 
+export const listMine = asyncHandler(async (req: Request, res: Response) => {
+  const assignments = await toolAssignmentsService.listToolAssignments({ userId: req.user!.id, active: true });
+  res.json({ assignments });
+});
+
 export const create = asyncHandler(async (req: Request, res: Response) => {
   const input = createToolAssignmentSchema.parse(req.body);
   const assignment = await toolAssignmentsService.createToolAssignment(input);

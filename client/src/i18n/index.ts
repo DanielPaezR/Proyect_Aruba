@@ -20,6 +20,8 @@ import esInventory from "../locales/es/inventory.json";
 import esMaterialRequests from "../locales/es/materialRequests.json";
 import esToolAssignments from "../locales/es/toolAssignments.json";
 import esToolIncidents from "../locales/es/toolIncidents.json";
+import esMyTools from "../locales/es/myTools.json";
+import esRequestMaterials from "../locales/es/requestMaterials.json";
 import enCommon from "../locales/en/common.json";
 import enAuth from "../locales/en/auth.json";
 import enChat from "../locales/en/chat.json";
@@ -38,6 +40,8 @@ import enInventory from "../locales/en/inventory.json";
 import enMaterialRequests from "../locales/en/materialRequests.json";
 import enToolAssignments from "../locales/en/toolAssignments.json";
 import enToolIncidents from "../locales/en/toolIncidents.json";
+import enMyTools from "../locales/en/myTools.json";
+import enRequestMaterials from "../locales/en/requestMaterials.json";
 import papCommon from "../locales/pap/common.json";
 import papAuth from "../locales/pap/auth.json";
 import papChat from "../locales/pap/chat.json";
@@ -56,6 +60,8 @@ import papInventory from "../locales/pap/inventory.json";
 import papMaterialRequests from "../locales/pap/materialRequests.json";
 import papToolAssignments from "../locales/pap/toolAssignments.json";
 import papToolIncidents from "../locales/pap/toolIncidents.json";
+import papMyTools from "../locales/pap/myTools.json";
+import papRequestMaterials from "../locales/pap/requestMaterials.json";
 
 export const SUPPORTED_LANGUAGES = ["es", "en", "pap"] as const;
 export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
@@ -87,6 +93,8 @@ void i18n
         materialRequests: esMaterialRequests,
         toolAssignments: esToolAssignments,
         toolIncidents: esToolIncidents,
+        myTools: esMyTools,
+        requestMaterials: esRequestMaterials,
       },
       en: {
         common: enCommon,
@@ -107,6 +115,8 @@ void i18n
         materialRequests: enMaterialRequests,
         toolAssignments: enToolAssignments,
         toolIncidents: enToolIncidents,
+        myTools: enMyTools,
+        requestMaterials: enRequestMaterials,
       },
       pap: {
         common: papCommon,
@@ -127,6 +137,8 @@ void i18n
         materialRequests: papMaterialRequests,
         toolAssignments: papToolAssignments,
         toolIncidents: papToolIncidents,
+        myTools: papMyTools,
+        requestMaterials: papRequestMaterials,
       },
     },
     fallbackLng: "es",
@@ -150,6 +162,8 @@ void i18n
       "materialRequests",
       "toolAssignments",
       "toolIncidents",
+      "myTools",
+      "requestMaterials",
     ],
     defaultNS: "common",
     interpolation: { escapeValue: false },

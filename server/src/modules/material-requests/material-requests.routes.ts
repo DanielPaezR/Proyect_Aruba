@@ -9,6 +9,10 @@ materialRequestsRouter.use(authenticate);
 // Cola de trabajo de Mercaderista/Jefe.
 materialRequestsRouter.get("/", authorize(...INVENTORY_ROLES), materialRequestsController.list);
 
+// Historial propio: cualquier autenticado ve solo lo que el mismo pidio (el
+// service filtra por requestedById, no hay authorize a nivel de ruta).
+materialRequestsRouter.get("/mine", materialRequestsController.listMine);
+
 // Crear un pedido: no esta en la lista original de rutas del pedido, pero
 // sin esto no hay forma de que exista una solicitud que resolver — el modelo
 // ya preveía "trabajador o supervisor que pide" (ver schema.prisma). Abierto

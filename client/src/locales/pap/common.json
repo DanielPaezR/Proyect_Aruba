@@ -43,7 +43,9 @@
     "inventory": "Inventario",
     "materialRequests": "Solisitud di material",
     "toolAssignments": "Hermenshi asigná",
-    "toolIncidents": "Reporte di daño/perdida"
+    "toolIncidents": "Reporte di daño/perdida",
+    "myTools": "Mi hermenshi",
+    "requestMaterials": "Pidi material"
   },
   "activityStatus": {
     "PENDIENTE": "Pendiente",

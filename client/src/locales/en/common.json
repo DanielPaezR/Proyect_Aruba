@@ -43,7 +43,9 @@
     "inventory": "Inventory",
     "materialRequests": "Material requests",
     "toolAssignments": "Tool assignments",
-    "toolIncidents": "Damage/loss reports"
+    "toolIncidents": "Damage/loss reports",
+    "myTools": "My tools",
+    "requestMaterials": "Request materials"
   },
   "activityStatus": {
     "PENDIENTE": "Pending",
