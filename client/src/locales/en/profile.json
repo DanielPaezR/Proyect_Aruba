@@ -20,5 +20,13 @@
   "documentsEmpty": "You haven't uploaded any documents yet",
   "documentUploadedBy": "Uploaded by {{name}}",
   "documentDeleteTitle": "Delete document",
-  "documentDeleteMessage": "Are you sure you want to delete \"{{label}}\"? This action cannot be undone."
+  "documentDeleteMessage": "Are you sure you want to delete \"{{label}}\"? This action cannot be undone.",
+  "passwordSection": "Change password",
+  "currentPasswordLabel": "Current password",
+  "newPasswordLabel": "New password",
+  "confirmPasswordLabel": "Confirm new password",
+  "passwordMismatch": "The new passwords don't match",
+  "changePasswordButton": "Change password",
+  "changingPassword": "Changing...",
+  "passwordChanged": "Password updated"
 }

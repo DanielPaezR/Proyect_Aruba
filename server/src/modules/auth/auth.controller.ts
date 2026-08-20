@@ -4,12 +4,14 @@ import { ErrorCode } from "../../utils/errorCodes";
 import { asyncHandler } from "../../utils/asyncHandler";
 import * as authService from "./auth.service";
 import {
+  changePasswordSchema,
   createSalaryAdjustmentSchema,
   createScoreEventSchema,
   createUserSchema,
   getMonthlyScoreQuerySchema,
   getSalaryAdjustmentsQuerySchema,
   loginSchema,
+  resetUserPasswordSchema,
   updateHourlyRateSchema,
   updateLocaleSchema,
   updateMeSchema,
@@ -144,6 +146,18 @@ export const updateProfile = asyncHandler(async (req: Request, res: Response) =>
   const input = updateProfileSchema.parse(req.body);
   const user = await authService.updateProfile(req.user!.id, input, req.file);
   res.json({ user });
+});
+
+export const changePassword = asyncHandler(async (req: Request, res: Response) => {
+  const input = changePasswordSchema.parse(req.body);
+  await authService.changeOwnPassword(req.user!.id, input);
+  res.status(204).send();
+});
+
+export const resetUserPassword = asyncHandler(async (req: Request, res: Response) => {
+  const input = resetUserPasswordSchema.parse(req.body);
+  await authService.resetUserPassword(req.params.userId, input);
+  res.status(204).send();
 });
 
 export const updateHourlyRate = asyncHandler(async (req: Request, res: Response) => {

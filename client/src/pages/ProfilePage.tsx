@@ -33,6 +33,13 @@ export function ProfilePage() {
   const [isDeletingDoc, setIsDeletingDoc] = useState(false);
   const [deleteDocError, setDeleteDocError] = useState<string | null>(null);
 
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [passwordSuccess, setPasswordSuccess] = useState(false);
+
   async function loadDocuments(userId: string) {
     setIsLoadingDocuments(true);
     setDocumentsError(null);
@@ -125,6 +132,30 @@ export function ProfilePage() {
       setDeleteDocError(translateApiError(t, error));
     } finally {
       setIsDeletingDoc(false);
+    }
+  }
+
+  async function handleChangePassword(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setPasswordError(null);
+    setPasswordSuccess(false);
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError(t("passwordMismatch", { ns: "profile" }));
+      return;
+    }
+
+    setIsChangingPassword(true);
+    try {
+      await apiClient.patch("/auth/me/password", { currentPassword, newPassword });
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setPasswordSuccess(true);
+    } catch (error) {
+      setPasswordError(translateApiError(t, error));
+    } finally {
+      setIsChangingPassword(false);
     }
   }
 
@@ -253,6 +284,58 @@ export function ProfilePage() {
               ))}
             </ul>
           ))}
+      </section>
+
+      <section>
+        <h2 className="section-label">{t("passwordSection", { ns: "profile" })}</h2>
+
+        <form className="inline-form" onSubmit={(event) => void handleChangePassword(event)}>
+          <label>
+            {t("currentPasswordLabel", { ns: "profile" })}
+            <input
+              type="password"
+              value={currentPassword}
+              onChange={(event) => setCurrentPassword(event.target.value)}
+              required
+              minLength={1}
+            />
+          </label>
+          <label>
+            {t("newPasswordLabel", { ns: "profile" })}
+            <input
+              type="password"
+              value={newPassword}
+              onChange={(event) => setNewPassword(event.target.value)}
+              required
+              minLength={8}
+            />
+          </label>
+          <label>
+            {t("confirmPasswordLabel", { ns: "profile" })}
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(event) => setConfirmPassword(event.target.value)}
+              required
+              minLength={8}
+            />
+          </label>
+
+          {passwordError && (
+            <p className="form-error" role="alert">
+              {passwordError}
+            </p>
+          )}
+          {passwordSuccess && !passwordError && <p className="form-success">{t("passwordChanged", { ns: "profile" })}</p>}
+
+          <div className="form-actions">
+            <button type="submit" disabled={isChangingPassword}>
+              {isChangingPassword
+                ? t("changingPassword", { ns: "profile" })
+                : t("changePasswordButton", { ns: "profile" })}
+            </button>
+          </div>
+        </form>
       </section>
 
       {docToDelete && (

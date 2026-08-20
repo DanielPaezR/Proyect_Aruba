@@ -20,5 +20,13 @@
   "documentsEmpty": "Todavía no has subido documentos",
   "documentUploadedBy": "Subido por {{name}}",
   "documentDeleteTitle": "Eliminar documento",
-  "documentDeleteMessage": "¿Seguro que quieres eliminar \"{{label}}\"? Esta acción no se puede deshacer."
+  "documentDeleteMessage": "¿Seguro que quieres eliminar \"{{label}}\"? Esta acción no se puede deshacer.",
+  "passwordSection": "Cambiar contraseña",
+  "currentPasswordLabel": "Contraseña actual",
+  "newPasswordLabel": "Nueva contraseña",
+  "confirmPasswordLabel": "Confirmar nueva contraseña",
+  "passwordMismatch": "Las contraseñas nuevas no coinciden",
+  "changePasswordButton": "Cambiar contraseña",
+  "changingPassword": "Cambiando...",
+  "passwordChanged": "Contraseña actualizada"
 }

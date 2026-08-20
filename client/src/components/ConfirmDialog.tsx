@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
 interface ConfirmDialogProps {
@@ -8,6 +9,10 @@ interface ConfirmDialogProps {
   error?: string | null;
   onConfirm: () => void;
   onCancel: () => void;
+  /** Contenido extra entre el mensaje y las acciones (ej. un campo de nueva
+   * contraseña para "Restablecer contraseña") — opcional, la mayoria de usos
+   * son de solo confirmar/cancelar sin nada mas. */
+  children?: ReactNode;
 }
 
 /** Modal generico de confirmacion para acciones destructivas (borrar proyecto,
@@ -21,6 +26,7 @@ export function ConfirmDialog({
   error,
   onConfirm,
   onCancel,
+  children,
 }: ConfirmDialogProps) {
   const { t } = useTranslation("common");
 
@@ -35,6 +41,8 @@ export function ConfirmDialog({
       >
         <h2 id="confirm-dialog-title">{title}</h2>
         <p>{message}</p>
+
+        {children}
 
         {error && (
           <p className="form-error" role="alert">

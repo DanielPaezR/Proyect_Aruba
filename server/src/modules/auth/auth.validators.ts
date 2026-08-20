@@ -6,10 +6,15 @@ export const loginSchema = z.object({
   password: z.string().min(1),
 });
 
+// Mismo minimo de complejidad en todo lugar donde se fija una contraseña
+// nueva (alta de usuario, autoservicio, restablecer) — un solo lugar para
+// no dejar que alguno de los tres quede mas laxo por descuido.
+export const passwordSchema = z.string().min(8, "La contraseña debe tener al menos 8 caracteres");
+
 export const createUserSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
-  password: z.string().min(8, "La contraseña debe tener al menos 8 caracteres"),
+  password: passwordSchema,
   role: z.nativeEnum(Role),
   phone: z.string().optional(),
   hourlyRate: z.number().positive().optional(),
@@ -42,6 +47,21 @@ export const updateMeSchema = z.object({
 
 export const updateLocaleSchema = z.object({
   locale: z.nativeEnum(Locale),
+});
+
+// Autoservicio: cambiar la propia contraseña exige la actual (ver
+// auth.service.ts changeOwnPassword, que la valida con bcrypt.compare antes
+// de aceptar newPassword) — a diferencia de resetUserPasswordSchema, que es
+// ADMINISTRADOR/GERENTE restableciendo la de otro y no la necesita.
+export const changePasswordSchema = z.object({
+  currentPassword: z.string().min(1),
+  newPassword: passwordSchema,
+});
+
+// ADMINISTRADOR/GERENTE-only: restablecer la contraseña de otro usuario
+// (ej. se le olvido la suya) sin pedir la actual.
+export const resetUserPasswordSchema = z.object({
+  newPassword: passwordSchema,
 });
 
 // "phone" vacío borra el telefono (se guarda como null); si no se manda el
@@ -98,6 +118,8 @@ export type CreateUserInput = z.infer<typeof createUserSchema>;
 export type UpdateUserInput = z.infer<typeof updateUserSchema>;
 export type UpdateMeInput = z.infer<typeof updateMeSchema>;
 export type UpdateLocaleInput = z.infer<typeof updateLocaleSchema>;
+export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
+export type ResetUserPasswordInput = z.infer<typeof resetUserPasswordSchema>;
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 export type UpdateHourlyRateInput = z.infer<typeof updateHourlyRateSchema>;
 export type CreateScoreEventInput = z.infer<typeof createScoreEventSchema>;

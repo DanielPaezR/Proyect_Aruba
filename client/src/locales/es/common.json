@@ -89,6 +89,7 @@
     "generic": "Ocurrió un error inesperado. Intenta de nuevo.",
     "api": {
       "INVALID_CREDENTIALS": "Correo o contraseña incorrectos",
+      "INVALID_CURRENT_PASSWORD": "La contraseña actual no es correcta",
       "MISSING_TOKEN": "Debes iniciar sesión para continuar",
       "INVALID_TOKEN": "Tu sesión expiró, vuelve a iniciar sesión",
       "UNAUTHENTICATED": "Debes iniciar sesión para continuar",

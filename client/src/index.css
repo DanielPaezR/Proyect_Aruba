@@ -1041,6 +1041,29 @@ button {
   color: var(--text-h);
 }
 
+/* Mismo apilado label/input que .inline-form, para un campo suelto dentro de
+   un ConfirmDialog (ej. "Restablecer contraseña") que no amerita el resto
+   del padding/borde de .inline-form. */
+.modal-panel label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  color: var(--text-h);
+  margin: 12px 0;
+}
+
+.modal-panel input {
+  font-family: inherit;
+  font-size: 16px;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  min-height: 44px;
+}
+
 .inline-form input,
 .inline-form textarea,
 .inline-form select {

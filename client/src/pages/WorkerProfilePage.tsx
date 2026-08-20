@@ -106,6 +106,11 @@ export function WorkerProfilePage() {
   const [isReactivating, setIsReactivating] = useState(false);
   const [reactivateError, setReactivateError] = useState<string | null>(null);
 
+  const [isResetPasswordOpen, setIsResetPasswordOpen] = useState(false);
+  const [resetPasswordValue, setResetPasswordValue] = useState("");
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
+  const [resetPasswordError, setResetPasswordError] = useState<string | null>(null);
+
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false);
   const [photoError, setPhotoError] = useState<string | null>(null);
 
@@ -230,6 +235,27 @@ export function WorkerProfilePage() {
       setReactivateError(translateApiError(t, error));
     } finally {
       setIsReactivating(false);
+    }
+  }
+
+  async function handleResetPassword() {
+    if (!userId) {
+      return;
+    }
+    if (resetPasswordValue.length < 8) {
+      setResetPasswordError(t("profile.resetPasswordTooShort", { ns: "users" }));
+      return;
+    }
+    setResetPasswordError(null);
+    setIsResettingPassword(true);
+    try {
+      await apiClient.patch(`/auth/users/${userId}/reset-password`, { newPassword: resetPasswordValue });
+      setIsResetPasswordOpen(false);
+      setResetPasswordValue("");
+    } catch (error) {
+      setResetPasswordError(translateApiError(t, error));
+    } finally {
+      setIsResettingPassword(false);
     }
   }
 
@@ -495,6 +521,9 @@ export function WorkerProfilePage() {
             </label>
             <button type="button" onClick={openEdit}>
               {t("actions.edit", { ns: "common" })}
+            </button>
+            <button type="button" onClick={() => setIsResetPasswordOpen(true)}>
+              {t("profile.resetPasswordButton", { ns: "users" })}
             </button>
             {profile.user.isActive ? (
               <button type="button" className="danger-button" onClick={() => setIsDeactivateConfirmOpen(true)}>
@@ -1133,6 +1162,38 @@ export function WorkerProfilePage() {
             setDeactivateError(null);
           }}
         />
+      )}
+
+      {isResetPasswordOpen && (
+        <ConfirmDialog
+          title={t("profile.resetPasswordTitle", { ns: "users" })}
+          message={t("profile.resetPasswordMessage", { ns: "users", name: profile?.user.name ?? "" })}
+          confirmLabel={
+            isResettingPassword
+              ? t("profile.resetPasswordSubmitting", { ns: "users" })
+              : t("profile.resetPasswordSubmit", { ns: "users" })
+          }
+          isConfirming={isResettingPassword}
+          error={resetPasswordError}
+          onConfirm={() => void handleResetPassword()}
+          onCancel={() => {
+            setIsResetPasswordOpen(false);
+            setResetPasswordValue("");
+            setResetPasswordError(null);
+          }}
+        >
+          <label>
+            {t("profile.resetPasswordNewLabel", { ns: "users" })}
+            <input
+              type="password"
+              value={resetPasswordValue}
+              onChange={(event) => setResetPasswordValue(event.target.value)}
+              minLength={8}
+              required
+              autoFocus
+            />
+          </label>
+        </ConfirmDialog>
       )}
 
       {adjustmentToDelete && (

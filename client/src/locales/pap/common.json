@@ -89,6 +89,7 @@
     "generic": "A sosodé un eror inesperá. Purba di nobo.",
     "api": {
       "INVALID_CREDENTIALS": "Email òf password inkorekto",
+      "INVALID_CURRENT_PASSWORD": "E password aktual no ta korekto",
       "MISSING_TOKEN": "Mester drenta sesion pa sigui",
       "INVALID_TOKEN": "Bo sesion a kaduka, drenta bèk",
       "UNAUTHENTICATED": "Mester drenta sesion pa sigui",

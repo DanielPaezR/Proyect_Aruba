@@ -13,6 +13,10 @@ authRouter.post("/logout", authController.logout);
 authRouter.get("/me", authenticate, authController.me);
 authRouter.patch("/me/locale", authenticate, authController.updateLocale);
 authRouter.patch("/me/profile", authenticate, imageUpload.single("photo"), authController.updateProfile);
+// Autoservicio: cambiar la propia contraseña, exige la actual (ver
+// auth.service.ts changeOwnPassword). Distinto de /users/:userId/reset-password
+// (ADMINISTRADOR/GERENTE restableciendo la de otro, sin pedir la actual).
+authRouter.patch("/me/password", authenticate, authController.changePassword);
 // Autoservicio de telefono/especialidades — JSON plano, distinto de
 // /me/profile (multipart, telefono+foto). Ver comentario en auth.service.ts.
 // Nada de /me* lleva requireFeature: es autoservicio basico que cualquier
@@ -69,6 +73,16 @@ authRouter.patch(
   requireFeature(Feature.USUARIOS),
   authorize(Role.ADMINISTRADOR, Role.GERENTE),
   authController.reactivateUser,
+);
+
+// Restablecer la contraseña de otro usuario (se le olvido la suya): solo
+// Administrador/Gerente, sin pedir la contraseña actual.
+authRouter.patch(
+  "/users/:userId/reset-password",
+  authenticate,
+  requireFeature(Feature.USUARIOS),
+  authorize(Role.ADMINISTRADOR, Role.GERENTE),
+  authController.resetUserPassword,
 );
 
 // Foto de CUALQUIER trabajador, subida por un manager — distinto de

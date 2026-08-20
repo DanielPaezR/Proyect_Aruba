@@ -89,6 +89,7 @@
     "generic": "Something went wrong. Please try again.",
     "api": {
       "INVALID_CREDENTIALS": "Incorrect email or password",
+      "INVALID_CURRENT_PASSWORD": "The current password is incorrect",
       "MISSING_TOKEN": "Please log in to continue",
       "INVALID_TOKEN": "Your session expired, please log in again",
       "UNAUTHENTICATED": "Please log in to continue",

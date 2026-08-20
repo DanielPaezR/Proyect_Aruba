@@ -16,11 +16,13 @@ import { arubaMonthRangeUtc, arubaStartOfMonthUtc, arubaToday } from "../../util
 import { generateRefreshToken, hashRefreshToken, signAccessToken } from "../../utils/jwt";
 import * as timeEntriesService from "../time-entries/time-entries.service";
 import type {
+  ChangePasswordInput,
   CreateSalaryAdjustmentInput,
   CreateScoreEventInput,
   CreateUserInput,
   GetSalaryAdjustmentsQuery,
   LoginInput,
+  ResetUserPasswordInput,
   UpdateHourlyRateInput,
   UpdateMeInput,
   UpdateProfileInput,
@@ -434,6 +436,40 @@ export async function updateProfile(userId: string, input: UpdateProfileInput, p
     },
     select: PUBLIC_USER_FIELDS,
   });
+}
+
+/** Autoservicio: cualquier usuario cambia su propia contraseña, siempre que
+ * confirme la actual (bcrypt.compare) — sin esto, alguien con la sesion
+ * abierta de otro (dispositivo compartido, olvido cerrar sesion) podria
+ * tomar la cuenta con solo saber el email. No revoca sesiones/refresh
+ * tokens existentes: cambiar la contraseña no debe cerrarle la sesion actual
+ * al propio usuario, solo afecta logins futuros. */
+export async function changeOwnPassword(userId: string, input: ChangePasswordInput): Promise<void> {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) {
+    throw ApiError.notFound(ErrorCode.USER_NOT_FOUND, "Usuario no encontrado");
+  }
+
+  const currentMatches = await bcrypt.compare(input.currentPassword, user.passwordHash);
+  if (!currentMatches) {
+    throw ApiError.unauthorized(ErrorCode.INVALID_CURRENT_PASSWORD, "La contraseña actual no es correcta");
+  }
+
+  const passwordHash = await bcrypt.hash(input.newPassword, 12);
+  await prisma.user.update({ where: { id: userId }, data: { passwordHash } });
+}
+
+/** ADMINISTRADOR/GERENTE-only: restablece la contraseña de cualquier usuario
+ * sin pedir la actual (para cuando se le olvido la suya). Mismo hash/costo
+ * que createUser y changeOwnPassword. */
+export async function resetUserPassword(userId: string, input: ResetUserPasswordInput): Promise<void> {
+  const existing = await prisma.user.findUnique({ where: { id: userId }, select: { id: true } });
+  if (!existing) {
+    throw ApiError.notFound(ErrorCode.USER_NOT_FOUND, "Usuario no encontrado");
+  }
+
+  const passwordHash = await bcrypt.hash(input.newPassword, 12);
+  await prisma.user.update({ where: { id: userId }, data: { passwordHash } });
 }
 
 /**

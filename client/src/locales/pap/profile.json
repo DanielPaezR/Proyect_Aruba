@@ -20,5 +20,13 @@
   "documentsEmpty": "Ainda bo no a subi ningun dokumento",
   "documentUploadedBy": "Subí pa {{name}}",
   "documentDeleteTitle": "Elimina dokumento",
-  "documentDeleteMessage": "Bo ta sigur bo ke elimina \"{{label}}\"? E akshon aki no por wordu revertí."
+  "documentDeleteMessage": "Bo ta sigur bo ke elimina \"{{label}}\"? E akshon aki no por wordu revertí.",
+  "passwordSection": "Kambia password",
+  "currentPasswordLabel": "Password aktual",
+  "newPasswordLabel": "Password nobo",
+  "confirmPasswordLabel": "Konfirma password nobo",
+  "passwordMismatch": "E passwordnan nobo no ta koinsidí",
+  "changePasswordButton": "Kambia password",
+  "changingPassword": "Ta kambia...",
+  "passwordChanged": "Password actualisá"
 }
