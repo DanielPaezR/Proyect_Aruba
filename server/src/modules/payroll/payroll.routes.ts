@@ -12,6 +12,7 @@ export const payrollRouter = Router();
 
 payrollRouter.use(authenticate, requireFeature(Feature.USUARIOS), authorize(Role.ADMINISTRADOR, Role.GERENTE));
 
+payrollRouter.get("/preview", payrollController.preview);
 payrollRouter.post("/generate", payrollController.generate);
 payrollRouter.get("/", payrollController.list);
 payrollRouter.patch("/:id/mark-paid", payrollController.markPaid);

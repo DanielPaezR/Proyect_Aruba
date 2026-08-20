@@ -9,7 +9,9 @@ const dateStringSchema = z
 // "1 al 15 del mes") tal como los elige el Administrador/Gerente — el
 // service arma el rango [start, end) exclusivo internamente al consultar
 // getSummary()/SalaryAdjustment (ver arubaDayRangeUtc en utils/geo.ts).
-export const generatePayrollSchema = z
+// Misma forma para el preview (query, GET) y para generar (body, POST) — el
+// preview tiene que poder recrear exactamente el mismo calculo.
+const payrollPeriodSchema = z
   .object({
     userId: z.string().min(1),
     periodStart: dateStringSchema,
@@ -20,6 +22,9 @@ export const generatePayrollSchema = z
     path: ["periodEnd"],
   });
 
+export const previewPayrollQuerySchema = payrollPeriodSchema;
+export const generatePayrollSchema = payrollPeriodSchema;
+
 export const listPayrollQuerySchema = z.object({
   userId: z.string().optional(),
   status: z.nativeEnum(PayrollStatus).optional(),
@@ -27,5 +32,6 @@ export const listPayrollQuerySchema = z.object({
   to: dateStringSchema.optional(),
 });
 
+export type PreviewPayrollQuery = z.infer<typeof previewPayrollQuerySchema>;
 export type GeneratePayrollInput = z.infer<typeof generatePayrollSchema>;
 export type ListPayrollQuery = z.infer<typeof listPayrollQuerySchema>;

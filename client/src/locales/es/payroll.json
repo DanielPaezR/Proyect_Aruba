@@ -5,8 +5,10 @@
   "workerPlaceholder": "Selecciona un trabajador",
   "periodStartLabel": "Desde",
   "periodEndLabel": "Hasta",
-  "generateButton": "Generar liquidación",
-  "generating": "Generando...",
+  "previewButton": "Ver desglose",
+  "previewing": "Calculando...",
+  "confirmButton": "Confirmar y generar",
+  "confirming": "Generando...",
   "breakdown": {
     "title": "Desglose de la liquidación",
     "forWorker": "Trabajador: {{name}}",

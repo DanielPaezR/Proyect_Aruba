@@ -9,7 +9,7 @@ import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
 import { isTopManagerRole } from "../types/auth";
 import type { User } from "../types/auth";
-import type { PayrollRun, PayrollRunStatus } from "../types/payrollRun";
+import type { PayrollPreview, PayrollRun, PayrollRunStatus } from "../types/payrollRun";
 import { formatCurrency } from "../utils/formatCurrency";
 import { formatHoursFromMinutes } from "../utils/formatHours";
 
@@ -25,6 +25,12 @@ function firstOfMonthDateInputValue(): string {
   return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-01`;
 }
 
+interface PreviewParams {
+  userId: string;
+  periodStart: string;
+  periodEnd: string;
+}
+
 export function PayrollPage() {
   const { t } = useTranslation(["payroll", "common"]);
   const { user: currentUser } = useAuth();
@@ -35,9 +41,17 @@ export function PayrollPage() {
   const [selectedUserId, setSelectedUserId] = useState("");
   const [periodStart, setPeriodStart] = useState(firstOfMonthDateInputValue);
   const [periodEnd, setPeriodEnd] = useState(todayDateInputValue);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [generateError, setGenerateError] = useState<string | null>(null);
-  const [lastGenerated, setLastGenerated] = useState<PayrollRun | null>(null);
+
+  // El preview solo es valido para los parametros con los que se pidio
+  // (previewParams) — cualquier cambio en el form lo invalida (ver
+  // clearPreview), asi que "Confirmar y generar" nunca puede mandar un
+  // periodo/trabajador distinto al que la persona efectivamente vio en pantalla.
+  const [isPreviewing, setIsPreviewing] = useState(false);
+  const [previewError, setPreviewError] = useState<string | null>(null);
+  const [preview, setPreview] = useState<PayrollPreview | null>(null);
+  const [previewParams, setPreviewParams] = useState<PreviewParams | null>(null);
+  const [isConfirming, setIsConfirming] = useState(false);
+  const [confirmError, setConfirmError] = useState<string | null>(null);
 
   const [filterUserId, setFilterUserId] = useState("");
   const [filterStatus, setFilterStatus] = useState<PayrollRunStatus | "">("");
@@ -99,26 +113,63 @@ export function PayrollPage() {
     });
   }
 
-  async function handleGenerate(event: FormEvent<HTMLFormElement>) {
+  function clearPreview() {
+    setPreview(null);
+    setPreviewParams(null);
+    setPreviewError(null);
+    setConfirmError(null);
+  }
+
+  function handleWorkerChange(value: string) {
+    setSelectedUserId(value);
+    clearPreview();
+  }
+
+  function handlePeriodStartChange(value: string) {
+    setPeriodStart(value);
+    clearPreview();
+  }
+
+  function handlePeriodEndChange(value: string) {
+    setPeriodEnd(value);
+    clearPreview();
+  }
+
+  async function handlePreview(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!selectedUserId) {
       return;
     }
-    setGenerateError(null);
-    setIsGenerating(true);
+    const params: PreviewParams = { userId: selectedUserId, periodStart, periodEnd };
+    setPreviewError(null);
+    setIsPreviewing(true);
     try {
-      const response = await apiClient.post<{ payrollRun: PayrollRun }>("/payroll/generate", {
-        userId: selectedUserId,
-        periodStart,
-        periodEnd,
-      });
-      setLastGenerated(response.data.payrollRun);
+      const response = await apiClient.get<{ preview: PayrollPreview }>("/payroll/preview", { params });
+      setPreview(response.data.preview);
+      setPreviewParams(params);
+    } catch (error) {
+      setPreview(null);
+      setPreviewParams(null);
+      setPreviewError(translateApiError(t, error));
+    } finally {
+      setIsPreviewing(false);
+    }
+  }
+
+  async function handleConfirmGenerate() {
+    if (!previewParams) {
+      return;
+    }
+    setConfirmError(null);
+    setIsConfirming(true);
+    try {
+      await apiClient.post("/payroll/generate", previewParams);
+      clearPreview();
       await loadRuns();
     } catch (error) {
-      setLastGenerated(null);
-      setGenerateError(translateApiError(t, error));
+      setConfirmError(translateApiError(t, error));
     } finally {
-      setIsGenerating(false);
+      setIsConfirming(false);
     }
   }
 
@@ -131,9 +182,6 @@ export function PayrollPage() {
     try {
       await apiClient.patch(`/payroll/${runToMarkPaid.id}/mark-paid`);
       setRunToMarkPaid(null);
-      if (lastGenerated?.id === runToMarkPaid.id) {
-        setLastGenerated(null);
-      }
       await loadRuns();
     } catch (error) {
       setMarkPaidError(translateApiError(t, error));
@@ -156,10 +204,10 @@ export function PayrollPage() {
 
       <section>
         <h2 className="section-label">{t("generateSection")}</h2>
-        <form className="inline-form" onSubmit={(event) => void handleGenerate(event)}>
+        <form className="inline-form" onSubmit={(event) => void handlePreview(event)}>
           <label>
             {t("workerLabel")}
-            <select value={selectedUserId} onChange={(event) => setSelectedUserId(event.target.value)} required>
+            <select value={selectedUserId} onChange={(event) => handleWorkerChange(event.target.value)} required>
               <option value="">{t("workerPlaceholder")}</option>
               {users?.map((worker) => (
                 <option key={worker.id} value={worker.id}>
@@ -173,59 +221,82 @@ export function PayrollPage() {
             <input
               type="date"
               value={periodStart}
-              onChange={(event) => setPeriodStart(event.target.value)}
+              onChange={(event) => handlePeriodStartChange(event.target.value)}
               required
             />
           </label>
           <label>
             {t("periodEndLabel")}
-            <input type="date" value={periodEnd} onChange={(event) => setPeriodEnd(event.target.value)} required />
+            <input
+              type="date"
+              value={periodEnd}
+              onChange={(event) => handlePeriodEndChange(event.target.value)}
+              required
+            />
           </label>
-          {generateError && (
+          {previewError && (
             <p className="form-error" role="alert">
-              {generateError}
+              {previewError}
             </p>
           )}
           <div className="form-actions">
-            <button type="submit" disabled={isGenerating}>
-              {isGenerating ? t("generating") : t("generateButton")}
+            <button type="submit" disabled={isPreviewing}>
+              {isPreviewing ? t("previewing") : t("previewButton")}
             </button>
           </div>
         </form>
       </section>
 
-      {lastGenerated && (
+      {preview && (
         <section className="payroll-breakdown">
           <h2 className="section-label">{t("breakdown.title")}</h2>
-          <p className="card-meta">{t("breakdown.forWorker", { name: lastGenerated.user.name })}</p>
-          <p className="card-meta">{formatPeriod(lastGenerated)}</p>
+          <p className="card-meta">{t("breakdown.forWorker", { name: preview.user.name })}</p>
+          <p className="card-meta">
+            {t("breakdown.period", {
+              start: new Date(preview.periodStart).toLocaleDateString(),
+              end: new Date(preview.periodEnd).toLocaleDateString(),
+            })}
+          </p>
           <dl className="info-grid">
             <div>
               <dt>{t("breakdown.normalHours")}</dt>
               <dd>
-                {formatHoursFromMinutes(lastGenerated.normalMinutes)} — {formatCurrency(lastGenerated.normalPay)}
+                {formatHoursFromMinutes(preview.normalMinutes)} — {formatCurrency(preview.normalPay)}
               </dd>
             </div>
             <div>
               <dt>{t("breakdown.overtimeHours")}</dt>
               <dd>
-                {formatHoursFromMinutes(lastGenerated.overtimeMinutes)} — {formatCurrency(lastGenerated.overtimePay)}
+                {formatHoursFromMinutes(preview.overtimeMinutes)} — {formatCurrency(preview.overtimePay)}
               </dd>
             </div>
             <div>
               <dt>{t("breakdown.advances")}</dt>
-              <dd>-{formatCurrency(lastGenerated.totalAdvances)}</dd>
+              <dd>-{formatCurrency(preview.totalAdvances)}</dd>
             </div>
             <div>
               <dt>{t("breakdown.deductions")}</dt>
-              <dd>-{formatCurrency(lastGenerated.totalDeductions)}</dd>
+              <dd>-{formatCurrency(preview.totalDeductions)}</dd>
             </div>
           </dl>
           <div className="stat-card">
-            <span className="stat-card__value">{formatCurrency(lastGenerated.netPay)}</span>
+            <span className="stat-card__value">{formatCurrency(preview.netPay)}</span>
             <span className="stat-card__label">{t("breakdown.netPay")}</span>
           </div>
-          <span className="status-badge">{translateStatus(t, "payroll", "status", lastGenerated.status)}</span>
+
+          {confirmError && (
+            <p className="form-error" role="alert">
+              {confirmError}
+            </p>
+          )}
+          <div className="form-actions">
+            <button type="button" onClick={() => void handleConfirmGenerate()} disabled={isConfirming}>
+              {isConfirming ? t("confirming") : t("confirmButton")}
+            </button>
+            <button type="button" onClick={clearPreview} disabled={isConfirming}>
+              {t("actions.cancel", { ns: "common" })}
+            </button>
+          </div>
         </section>
       )}
 

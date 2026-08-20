@@ -1,7 +1,13 @@
 import type { Request, Response } from "express";
 import { asyncHandler } from "../../utils/asyncHandler";
 import * as payrollService from "./payroll.service";
-import { generatePayrollSchema, listPayrollQuerySchema } from "./payroll.validators";
+import { generatePayrollSchema, listPayrollQuerySchema, previewPayrollQuerySchema } from "./payroll.validators";
+
+export const preview = asyncHandler(async (req: Request, res: Response) => {
+  const query = previewPayrollQuerySchema.parse(req.query);
+  const preview = await payrollService.previewPayroll(query);
+  res.json({ preview });
+});
 
 export const generate = asyncHandler(async (req: Request, res: Response) => {
   const input = generatePayrollSchema.parse(req.body);

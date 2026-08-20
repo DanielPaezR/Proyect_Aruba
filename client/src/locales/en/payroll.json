@@ -5,8 +5,10 @@
   "workerPlaceholder": "Select a worker",
   "periodStartLabel": "From",
   "periodEndLabel": "To",
-  "generateButton": "Generate payroll",
-  "generating": "Generating...",
+  "previewButton": "Preview breakdown",
+  "previewing": "Calculating...",
+  "confirmButton": "Confirm and generate",
+  "confirming": "Generating...",
   "breakdown": {
     "title": "Payroll breakdown",
     "forWorker": "Worker: {{name}}",

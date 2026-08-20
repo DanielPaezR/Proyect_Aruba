@@ -5,8 +5,10 @@
   "workerPlaceholder": "Skohe un trahadó",
   "periodStartLabel": "Foi",
   "periodEndLabel": "Te",
-  "generateButton": "Genera likidashon",
-  "generating": "Ta genera...",
+  "previewButton": "Wak detaye",
+  "previewing": "Ta kalkulá...",
+  "confirmButton": "Konfirmá i genera",
+  "confirming": "Ta genera...",
   "breakdown": {
     "title": "Detaye di e likidashon",
     "forWorker": "Trahadó: {{name}}",
