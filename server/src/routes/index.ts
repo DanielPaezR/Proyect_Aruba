@@ -19,6 +19,7 @@ import { timeEntriesRouter } from "../modules/time-entries/time-entries.routes";
 import { toolAssignmentsRouter } from "../modules/tool-assignments/tool-assignments.routes";
 import { toolIncidentReportsRouter } from "../modules/tool-incident-reports/tool-incident-reports.routes";
 import { usersRouter } from "../modules/users/users.routes";
+import { vehiclesRouter } from "../modules/vehicles/vehicles.routes";
 
 export const apiRouter = Router();
 
@@ -42,3 +43,4 @@ apiRouter.use("/agenda-events", agendaEventsRouter);
 apiRouter.use("/permissions", permissionsRouter);
 apiRouter.use("/payroll", payrollRouter);
 apiRouter.use("/financial-history", financialHistoryRouter);
+apiRouter.use("/vehicles", vehiclesRouter);

@@ -47,6 +47,18 @@ enum ToolIncidentType {
   PERDIDA
 }
 
+enum VehicleStatus {
+  ACTIVO
+  MANTENIMIENTO
+  INACTIVO
+}
+
+enum VehicleIncidentType {
+  DANIO
+  MANTENIMIENTO
+  REPARACION
+}
+
 enum ProjectStatus {
   PLANIFICADO
   EN_PROGRESO
@@ -251,6 +263,10 @@ model User {
   resolvedMaterialRequests MaterialRequest[]    @relation("MaterialRequestResolvedBy")
   toolIncidentReports      ToolIncidentReport[] @relation("ToolIncidentReportedBy")
   agendaEvents             AgendaEvent[]        @relation("AgendaEventCreatedBy")
+
+  assignedVehicles         Vehicle[]               @relation("VehicleAssignedTo")
+  recordedFuelLogs         FuelLog[]               @relation("FuelLogRecordedBy")
+  reportedVehicleIncidents VehicleIncidentReport[] @relation("VehicleIncidentReportedBy")
 
   workerDocuments         WorkerDocument[] @relation("WorkerDocumentUser")
   uploadedWorkerDocuments WorkerDocument[] @relation("WorkerDocumentUploadedBy")
@@ -862,6 +878,101 @@ model ToolIncidentReport {
 
   @@index([toolAssignmentId])
   @@map("tool_incident_reports")
+}
+
+// Flota de la empresa (Fase 3, Modulo 3.3) — mismo patron de acceso que
+// ToolAssignment/ToolIncidentReport: un trabajador con un vehiculo a cargo
+// puede registrar tanqueadas/incidentes sobre el (ver vehicles.service.ts),
+// la gestion completa (CRUD, cola de revision) es de Administrador/Gerente/
+// Supervisor. A diferencia de InventoryItem, la asignacion no tiene su
+// propio modelo de historial — assignedToId vive directo en el vehiculo,
+// un vehiculo solo tiene un responsable principal a la vez.
+model Vehicle {
+  id    String @id @default(cuid())
+  plate String @unique
+
+  brand String
+  model String
+  year  Int
+
+  // VIN u otro numero de identificacion — opcional, no todos los vehiculos
+  // viejos de la flota lo tienen cargado.
+  identificationNumber String?
+
+  // Quien lo tiene a cargo principalmente. Nullable: un vehiculo puede estar
+  // sin asignar (recien comprado, o de uso compartido en oficina).
+  assignedToId String?
+  assignedTo   User?   @relation("VehicleAssignedTo", fields: [assignedToId], references: [id])
+
+  status VehicleStatus @default(ACTIVO)
+  notes  String?
+
+  fuelLogs        FuelLog[]
+  incidentReports VehicleIncidentReport[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("vehicles")
+}
+
+// Tanqueada — puro registro de gasto de combustible, sin edicion (si esta
+// mal, se corrige por gestion directo en la base, no hay UI/ruta de
+// edicion/borrado en esta primera version, mismo alcance que el pedido).
+model FuelLog {
+  id String @id @default(cuid())
+
+  vehicleId String
+  // Restrict a proposito, mismo criterio que ToolAssignment.item: nunca
+  // perder el historial de gasto de combustible al borrar un vehiculo.
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Restrict)
+
+  date DateTime
+  cost Decimal  @db.Decimal(10, 2)
+
+  // Nullable: no todos los recibos/estaciones traen litros exactos.
+  liters Decimal? @db.Decimal(10, 2)
+
+  odometerReading Int?
+
+  recordedById String
+  recordedBy   User   @relation("FuelLogRecordedBy", fields: [recordedById], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([vehicleId, date])
+  @@map("fuel_logs")
+}
+
+// Daño, mantenimiento o reparacion reportado sobre un vehiculo — mismo
+// espiritu que ToolIncidentReport, pero con foto opcional y costo opcional
+// (un ToolIncidentReport no tiene ninguno de los dos).
+model VehicleIncidentReport {
+  id String @id @default(cuid())
+
+  vehicleId String
+  vehicle   Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Restrict)
+
+  type        VehicleIncidentType
+  description String
+
+  cost Decimal? @db.Decimal(10, 2)
+
+  // Opcional: no todo incidente tiene foto (ej. un mantenimiento programado
+  // sin nada que fotografiar) — mismo patron de Cloudinary que el resto de
+  // la app (ver config/storage.ts).
+  photoUrl      String?
+  photoPublicId String?
+
+  reportedById String
+  reportedBy   User   @relation("VehicleIncidentReportedBy", fields: [reportedById], references: [id])
+
+  reportedAt     DateTime  @default(now())
+  resolvedAt     DateTime?
+  resolutionNote String?
+
+  @@index([vehicleId])
+  @@map("vehicle_incident_reports")
 }
 
 // Agenda compartida de Jefe/Supervisor: reuniones y pendientes generales de

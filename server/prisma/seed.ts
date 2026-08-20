@@ -85,6 +85,7 @@ const SEED_EVIDENCE_PUBLIC_ID = "seed-placeholder-evidence";
 const SEED_TOOL_ITEM_ID = "seed-inventory-taladro-demo";
 const SEED_MATERIAL_ITEM_ID = "seed-inventory-cable-demo";
 const SEED_TOOL_ASSIGNMENT_ID = "seed-tool-assignment-demo";
+const SEED_VEHICLE_ID = "seed-vehicle-demo";
 
 async function seedUsers(): Promise<Record<string, { id: string }>> {
   const usersByEmail: Record<string, { id: string }> = {};
@@ -256,10 +257,32 @@ async function seedInventory(usersByEmail: Record<string, { id: string }>) {
   console.log("Inventario de prueba (herramienta, material, y asignación) listo.");
 }
 
+async function seedVehicles(usersByEmail: Record<string, { id: string }>) {
+  const worker1 = usersByEmail[WORKER_EMAIL];
+
+  await prisma.vehicle.upsert({
+    where: { id: SEED_VEHICLE_ID },
+    update: {},
+    create: {
+      id: SEED_VEHICLE_ID,
+      plate: "AR-1234",
+      brand: "Toyota",
+      model: "Hilux",
+      year: 2021,
+      identificationNumber: "SEED-VIN-0001",
+      assignedToId: worker1.id,
+      notes: "Camioneta de prueba, asignada al trabajador de prueba.",
+    },
+  });
+
+  console.log("Vehículo de prueba (asignado al trabajador de prueba) listo.");
+}
+
 async function main() {
   const usersByEmail = await seedUsers();
   await seedDemoProject(usersByEmail);
   await seedInventory(usersByEmail);
+  await seedVehicles(usersByEmail);
 
   console.log("Cambia estas contraseñas después del primer inicio de sesión.");
 }
