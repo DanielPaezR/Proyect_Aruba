@@ -15,6 +15,7 @@ import { MaterialRequestsPage } from "./pages/MaterialRequestsPage";
 import { MyActivitiesPage } from "./pages/MyActivitiesPage";
 import { MyHoursPage } from "./pages/MyHoursPage";
 import { MyToolsPage } from "./pages/MyToolsPage";
+import { MyVehiclePage } from "./pages/MyVehiclePage";
 import { PayrollPage } from "./pages/PayrollPage";
 import { PermissionsPage } from "./pages/PermissionsPage";
 import { ProfilePage } from "./pages/ProfilePage";
@@ -28,6 +29,9 @@ import { TeamMapPage } from "./pages/TeamMapPage";
 import { ToolAssignmentsPage } from "./pages/ToolAssignmentsPage";
 import { ToolIncidentsPage } from "./pages/ToolIncidentsPage";
 import { UsersManagementPage } from "./pages/UsersManagementPage";
+import { VehicleDetailPage } from "./pages/VehicleDetailPage";
+import { VehicleIncidentsPage } from "./pages/VehicleIncidentsPage";
+import { VehiclesPage } from "./pages/VehiclesPage";
 import { WorkerProfilePage } from "./pages/WorkerProfilePage";
 
 function App() {
@@ -62,8 +66,12 @@ function App() {
               <Route path="/tool-assignments" element={<ToolAssignmentsPage />} />
               <Route path="/tool-incidents" element={<ToolIncidentsPage />} />
               <Route path="/my-tools" element={<MyToolsPage />} />
+              <Route path="/my-vehicle" element={<MyVehiclePage />} />
               <Route path="/request-materials" element={<RequestMaterialsPage />} />
               <Route path="/permissions" element={<PermissionsPage />} />
+              <Route path="/vehicles" element={<VehiclesPage />} />
+              <Route path="/vehicles/:vehicleId" element={<VehicleDetailPage />} />
+              <Route path="/vehicle-incidents" element={<VehicleIncidentsPage />} />
             </Route>
           </Route>
           <Route path="*" element={<Navigate to="/" replace />} />

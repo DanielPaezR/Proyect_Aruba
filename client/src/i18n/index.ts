@@ -27,6 +27,9 @@ import esHours from "../locales/es/hours.json";
 import esPermissions from "../locales/es/permissions.json";
 import esPayroll from "../locales/es/payroll.json";
 import esFinancialHistory from "../locales/es/financialHistory.json";
+import esVehicles from "../locales/es/vehicles.json";
+import esVehicleIncidents from "../locales/es/vehicleIncidents.json";
+import esMyVehicle from "../locales/es/myVehicle.json";
 import enCommon from "../locales/en/common.json";
 import enAuth from "../locales/en/auth.json";
 import enChat from "../locales/en/chat.json";
@@ -52,6 +55,9 @@ import enHours from "../locales/en/hours.json";
 import enPermissions from "../locales/en/permissions.json";
 import enPayroll from "../locales/en/payroll.json";
 import enFinancialHistory from "../locales/en/financialHistory.json";
+import enVehicles from "../locales/en/vehicles.json";
+import enVehicleIncidents from "../locales/en/vehicleIncidents.json";
+import enMyVehicle from "../locales/en/myVehicle.json";
 import papCommon from "../locales/pap/common.json";
 import papAuth from "../locales/pap/auth.json";
 import papChat from "../locales/pap/chat.json";
@@ -77,6 +83,9 @@ import papHours from "../locales/pap/hours.json";
 import papPermissions from "../locales/pap/permissions.json";
 import papPayroll from "../locales/pap/payroll.json";
 import papFinancialHistory from "../locales/pap/financialHistory.json";
+import papVehicles from "../locales/pap/vehicles.json";
+import papVehicleIncidents from "../locales/pap/vehicleIncidents.json";
+import papMyVehicle from "../locales/pap/myVehicle.json";
 
 export const SUPPORTED_LANGUAGES = ["es", "en", "pap"] as const;
 export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
@@ -115,6 +124,9 @@ void i18n
         permissions: esPermissions,
         payroll: esPayroll,
         financialHistory: esFinancialHistory,
+        vehicles: esVehicles,
+        vehicleIncidents: esVehicleIncidents,
+        myVehicle: esMyVehicle,
       },
       en: {
         common: enCommon,
@@ -142,6 +154,9 @@ void i18n
         permissions: enPermissions,
         payroll: enPayroll,
         financialHistory: enFinancialHistory,
+        vehicles: enVehicles,
+        vehicleIncidents: enVehicleIncidents,
+        myVehicle: enMyVehicle,
       },
       pap: {
         common: papCommon,
@@ -169,6 +184,9 @@ void i18n
         permissions: papPermissions,
         payroll: papPayroll,
         financialHistory: papFinancialHistory,
+        vehicles: papVehicles,
+        vehicleIncidents: papVehicleIncidents,
+        myVehicle: papMyVehicle,
       },
     },
     fallbackLng: "es",
@@ -199,6 +217,9 @@ void i18n
       "permissions",
       "payroll",
       "financialHistory",
+      "vehicles",
+      "vehicleIncidents",
+      "myVehicle",
     ],
     defaultNS: "common",
     interpolation: { escapeValue: false },

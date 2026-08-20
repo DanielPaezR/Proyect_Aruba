@@ -1,0 +1,11 @@
+{
+  "title": "Vehicle incidents",
+  "statusFilterLabel": "Status",
+  "statusFilterAll": "All",
+  "empty": "No incidents",
+  "resolveButton": "Resolve",
+  "resolveFormTitle": "Resolve incident",
+  "resolutionNoteLabel": "Note (optional)",
+  "resolveSubmit": "Confirm",
+  "resolveSubmitting": "Saving..."
+}

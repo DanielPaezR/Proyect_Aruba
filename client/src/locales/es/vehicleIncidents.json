@@ -1,0 +1,11 @@
+{
+  "title": "Incidentes de vehículos",
+  "statusFilterLabel": "Estado",
+  "statusFilterAll": "Todos",
+  "empty": "No hay incidentes",
+  "resolveButton": "Resolver",
+  "resolveFormTitle": "Resolver incidente",
+  "resolutionNoteLabel": "Nota (opcional)",
+  "resolveSubmit": "Confirmar",
+  "resolveSubmitting": "Guardando..."
+}

@@ -51,7 +51,10 @@
     "toolAssignments": "Tool assignments",
     "toolIncidents": "Damage/loss reports",
     "myTools": "My tools",
-    "requestMaterials": "Request materials"
+    "requestMaterials": "Request materials",
+    "vehicles": "Fleet",
+    "vehicleIncidents": "Vehicle incidents",
+    "myVehicle": "My vehicle"
   },
   "activityStatus": {
     "PENDIENTE": "Pending",
@@ -133,6 +136,12 @@
       "PAYROLL_RUN_NOT_FOUND": "Payroll run not found",
       "PAYROLL_RUN_ALREADY_PAID": "This payroll run is already marked as paid",
       "PAYROLL_PERIOD_ALREADY_PAID": "There's already a paid payroll run for this worker in this exact period",
+      "VEHICLE_NOT_FOUND": "Vehicle not found",
+      "VEHICLE_PLATE_TAKEN": "A vehicle with that plate already exists",
+      "VEHICLE_NOT_ASSIGNED_TO_YOU": "This vehicle isn't assigned to you",
+      "VEHICLE_HAS_RECORDS": "Can't delete: this vehicle has fuel logs or incidents on record",
+      "VEHICLE_INCIDENT_NOT_FOUND": "Report not found",
+      "VEHICLE_INCIDENT_ALREADY_RESOLVED": "This report was already resolved",
       "ALREADY_ON_LUNCH": "You're already on your lunch break",
       "NO_OPEN_LUNCH": "You don't have an open lunch break to end",
       "NO_OPEN_ENTRY_FOR_LUNCH": "You don't have an open clock-in to start a lunch break",

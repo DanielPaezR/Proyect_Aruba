@@ -1,0 +1,11 @@
+{
+  "title": "Insidente di vehíkulo",
+  "statusFilterLabel": "Estado",
+  "statusFilterAll": "Tur",
+  "empty": "No tin insidente",
+  "resolveButton": "Resolvé",
+  "resolveFormTitle": "Resolvé insidente",
+  "resolutionNoteLabel": "Nota (opshonal)",
+  "resolveSubmit": "Konfirmá",
+  "resolveSubmitting": "Ta warda..."
+}

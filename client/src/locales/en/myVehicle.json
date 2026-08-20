@@ -1,0 +1,21 @@
+{
+  "title": "My vehicle",
+  "empty": "You don't have a vehicle assigned",
+  "logFuelButton": "Log fuel",
+  "fuelFormTitle": "Log fuel",
+  "fuelDateLabel": "Date",
+  "fuelCostLabel": "Cost (AWG)",
+  "fuelLitersLabel": "Liters (optional)",
+  "odometerLabel": "Odometer (optional)",
+  "fuelLogSent": "Fuel log recorded.",
+  "reportButton": "Report damage/maintenance",
+  "reportFormTitle": "Report damage or maintenance",
+  "incidentTypeLabel": "Type",
+  "descriptionLabel": "Description",
+  "incidentCostLabel": "Cost (optional)",
+  "incidentCostPlaceholder": "If the cost is already known",
+  "photoLabel": "Photo (optional)",
+  "submit": "Submit",
+  "submitting": "Submitting...",
+  "incidentSent": "Report sent — management will review it."
+}

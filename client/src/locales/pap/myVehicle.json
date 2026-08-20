@@ -1,0 +1,21 @@
+{
+  "title": "Mi vehíkulo",
+  "empty": "Bo no tin un vehíkulo asigná",
+  "logFuelButton": "Registra tankeamentu",
+  "fuelFormTitle": "Registra tankeamentu",
+  "fuelDateLabel": "Fecha",
+  "fuelCostLabel": "Costo (AWG)",
+  "fuelLitersLabel": "Liter (opshonal)",
+  "odometerLabel": "Odómetro (opshonal)",
+  "fuelLogSent": "Tankeamentu registrá.",
+  "reportButton": "Reporta daño/mantenshon",
+  "reportFormTitle": "Reporta daño òf mantenshon",
+  "incidentTypeLabel": "Tipo",
+  "descriptionLabel": "Deskripshon",
+  "incidentCostLabel": "Costo (opshonal)",
+  "incidentCostPlaceholder": "Si e costo ya konosí",
+  "photoLabel": "Foto (opshonal)",
+  "submit": "Manda",
+  "submitting": "Ta manda...",
+  "incidentSent": "Reporte a wordu manda — gerencia lo bin revis'e."
+}

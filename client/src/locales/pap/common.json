@@ -51,7 +51,10 @@
     "toolAssignments": "Hermenshi asigná",
     "toolIncidents": "Reporte di daño/perdida",
     "myTools": "Mi hermenshi",
-    "requestMaterials": "Pidi material"
+    "requestMaterials": "Pidi material",
+    "vehicles": "Flota",
+    "vehicleIncidents": "Insidente di vehíkulo",
+    "myVehicle": "Mi vehíkulo"
   },
   "activityStatus": {
     "PENDIENTE": "Pendiente",
@@ -133,6 +136,12 @@
       "PAYROLL_RUN_NOT_FOUND": "No a haña e likidashon",
       "PAYROLL_RUN_ALREADY_PAID": "E likidashon aki ya ta marká komo pagá",
       "PAYROLL_PERIOD_ALREADY_PAID": "Ya tin un likidashon pagá pa e trahadó aki den e periodo eksakto aki",
+      "VEHICLE_NOT_FOUND": "No a haña e vehíkulo",
+      "VEHICLE_PLATE_TAKEN": "Ya tin un vehíkulo ku e placa ei",
+      "VEHICLE_NOT_ASSIGNED_TO_YOU": "E vehíkulo aki no ta na bo enkargo",
+      "VEHICLE_HAS_RECORDS": "No por elimina: e vehíkulo aki tin tankeamentu òf insidente registrá",
+      "VEHICLE_INCIDENT_NOT_FOUND": "No a haña e reporte",
+      "VEHICLE_INCIDENT_ALREADY_RESOLVED": "E reporte aki ya a wordu resolví",
       "ALREADY_ON_LUNCH": "Bo ta na bo almuerzo kaba",
       "NO_OPEN_LUNCH": "Bo no tin un almuerzo habrí pa finalisá",
       "NO_OPEN_ENTRY_FOR_LUNCH": "Bo no tin un entrada habrí pa marka almuerzo",

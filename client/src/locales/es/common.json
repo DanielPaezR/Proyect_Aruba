@@ -51,7 +51,10 @@
     "toolAssignments": "Herramientas asignadas",
     "toolIncidents": "Reportes de daño/pérdida",
     "myTools": "Mis herramientas",
-    "requestMaterials": "Solicitar materiales"
+    "requestMaterials": "Solicitar materiales",
+    "vehicles": "Flota",
+    "vehicleIncidents": "Incidentes de vehículos",
+    "myVehicle": "Mi vehículo"
   },
   "activityStatus": {
     "PENDIENTE": "Pendiente",
@@ -133,6 +136,12 @@
       "PAYROLL_RUN_NOT_FOUND": "No se encontró la liquidación",
       "PAYROLL_RUN_ALREADY_PAID": "Esta liquidación ya está marcada como pagada",
       "PAYROLL_PERIOD_ALREADY_PAID": "Ya existe una liquidación pagada para este trabajador en este período exacto",
+      "VEHICLE_NOT_FOUND": "No se encontró el vehículo",
+      "VEHICLE_PLATE_TAKEN": "Ya existe un vehículo con esa placa",
+      "VEHICLE_NOT_ASSIGNED_TO_YOU": "Este vehículo no está a tu cargo",
+      "VEHICLE_HAS_RECORDS": "No se puede eliminar: este vehículo tiene tanqueadas o incidentes registrados",
+      "VEHICLE_INCIDENT_NOT_FOUND": "No se encontró el reporte",
+      "VEHICLE_INCIDENT_ALREADY_RESOLVED": "Este reporte ya fue resuelto",
       "ALREADY_ON_LUNCH": "Ya estás en tu almuerzo",
       "NO_OPEN_LUNCH": "No tienes un almuerzo abierto para finalizar",
       "NO_OPEN_ENTRY_FOR_LUNCH": "No tienes una entrada abierta para marcar almuerzo",

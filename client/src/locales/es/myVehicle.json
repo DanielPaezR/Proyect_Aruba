@@ -1,0 +1,21 @@
+{
+  "title": "Mi vehículo",
+  "empty": "No tienes un vehículo asignado",
+  "logFuelButton": "Registrar tanqueada",
+  "fuelFormTitle": "Registrar tanqueada",
+  "fuelDateLabel": "Fecha",
+  "fuelCostLabel": "Costo (AWG)",
+  "fuelLitersLabel": "Litros (opcional)",
+  "odometerLabel": "Odómetro (opcional)",
+  "fuelLogSent": "Tanqueada registrada.",
+  "reportButton": "Reportar daño/mantenimiento",
+  "reportFormTitle": "Reportar daño o mantenimiento",
+  "incidentTypeLabel": "Tipo",
+  "descriptionLabel": "Descripción",
+  "incidentCostLabel": "Costo (opcional)",
+  "incidentCostPlaceholder": "Si ya se conoce el costo",
+  "photoLabel": "Foto (opcional)",
+  "submit": "Enviar",
+  "submitting": "Enviando...",
+  "incidentSent": "Reporte enviado — la gestión lo va a revisar."
+}

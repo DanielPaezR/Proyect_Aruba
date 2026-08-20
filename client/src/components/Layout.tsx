@@ -89,6 +89,11 @@ export function Layout() {
                 </NavLink>
               )}
               {user.role === "TRABAJADOR_CAMPO" && (
+                <NavLink to="/my-vehicle" className={navLinkClassName}>
+                  {t("nav.myVehicle", { ns: "common" })}
+                </NavLink>
+              )}
+              {user.role === "TRABAJADOR_CAMPO" && (
                 <NavLink to="/request-materials" className={navLinkClassName}>
                   {t("nav.requestMaterials", { ns: "common" })}
                 </NavLink>
@@ -136,6 +141,18 @@ export function Layout() {
               {isInventoryRole(user.role) && hasFeature("INVENTARIO") && (
                 <NavLink to="/tool-incidents" className={navLinkClassName}>
                   {t("nav.toolIncidents", { ns: "common" })}
+                </NavLink>
+              )}
+              {/* isManagerRole, no isInventoryRole: la flota queda fuera de
+                  Mercaderista a proposito (ver vehicles.routes.ts). */}
+              {isManagerRole(user.role) && hasFeature("INVENTARIO") && (
+                <NavLink to="/vehicles" className={navLinkClassName}>
+                  {t("nav.vehicles", { ns: "common" })}
+                </NavLink>
+              )}
+              {isManagerRole(user.role) && hasFeature("INVENTARIO") && (
+                <NavLink to="/vehicle-incidents" className={navLinkClassName}>
+                  {t("nav.vehicleIncidents", { ns: "common" })}
                 </NavLink>
               )}
               {isTopManagerRole(user.role) && hasFeature("FACTURAS") && (
