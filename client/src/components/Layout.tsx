@@ -48,8 +48,11 @@ export function Layout() {
             </button>
           )}
           <div className="brand">
-            <img src="/logo-header-transparent.png" alt="" className="brand-logo-img" />
-            <span className="app-name">{t("app.name", { ns: "common" })}</span>
+            <img
+              src="/logo-header-transparent.png"
+              alt={t("app.name", { ns: "common" })}
+              className="brand-logo-img"
+            />
           </div>
         </div>
       </header>
