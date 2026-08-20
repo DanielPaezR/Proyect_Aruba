@@ -26,6 +26,10 @@ import type { Activity, ActivityStatus } from "../types/activity";
 import type { Evidence } from "../types/evidence";
 import type { ProjectWorkType } from "../types/project";
 import { resolveMapsUrl } from "../utils/mapsUrl";
+import { MediaFilePreview } from "./MediaFilePreview";
+import { MediaLightbox } from "./MediaLightbox";
+import type { LightboxMedia } from "./MediaLightbox";
+import { MediaThumb } from "./MediaThumb";
 
 function formatScheduledDate(iso: string): string {
   return new Date(iso).toLocaleString(undefined, {
@@ -97,6 +101,8 @@ export function MyActivityCard({ activity, onActivityUpdated }: MyActivityCardPr
   const [evidences, setEvidences] = useState<Evidence[] | null>(null);
   const [isLoadingEvidences, setIsLoadingEvidences] = useState(false);
   const [evidencesError, setEvidencesError] = useState<string | null>(null);
+
+  const [lightboxMedia, setLightboxMedia] = useState<LightboxMedia | null>(null);
 
   const nextStatus = nextStatusFor(activity.status);
   const isSkippable = SKIPPABLE_STATUSES.includes(activity.status);
@@ -216,10 +222,18 @@ export function MyActivityCard({ activity, onActivityUpdated }: MyActivityCardPr
     <li className="card">
       <div className="activity-reference">
         {activity.referenceImageUrl ? (
-          <img
-            src={activity.referenceImageUrl}
+          <MediaThumb
+            url={activity.referenceImageUrl}
+            mediaType={activity.referenceMediaType}
             alt={t("referenceImageAlt", { ns: "activities" })}
             className="activity-reference-image"
+            onClick={() =>
+              setLightboxMedia({
+                url: activity.referenceImageUrl as string,
+                mediaType: activity.referenceMediaType,
+                alt: t("referenceImageAlt", { ns: "activities" }),
+              })
+            }
           />
         ) : (
           <div className="activity-reference-placeholder">
@@ -366,8 +380,9 @@ export function MyActivityCard({ activity, onActivityUpdated }: MyActivityCardPr
           <h2>{t("mine.uploadFormTitle", { ns: "activities" })}</h2>
           <label>
             {t("mine.imageLabel", { ns: "activities" })}
-            <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleFileChange} required />
+            <input type="file" accept="image/*,video/*" onChange={handleFileChange} required />
           </label>
+          {selectedFile && <MediaFilePreview file={selectedFile} />}
           <label>
             {t("mine.descriptionLabel", { ns: "activities" })}
             <textarea
@@ -415,9 +430,18 @@ export function MyActivityCard({ activity, onActivityUpdated }: MyActivityCardPr
             ) : (
               evidences.map((evidence) => (
                 <div key={evidence.id} className="evidence-row">
-                  <a href={evidence.imageUrl} target="_blank" rel="noreferrer">
-                    <img src={evidence.imageUrl} alt={evidence.description ?? ""} className="evidence-thumb" />
-                  </a>
+                  <MediaThumb
+                    url={evidence.imageUrl}
+                    mediaType={evidence.mediaType}
+                    alt={evidence.description ?? ""}
+                    onClick={() =>
+                      setLightboxMedia({
+                        url: evidence.imageUrl,
+                        mediaType: evidence.mediaType,
+                        alt: evidence.description ?? "",
+                      })
+                    }
+                  />
                   <span className="status-badge">{translateStatus(t, "common", "evidenceStatus", evidence.status)}</span>
                   {evidence.uploadedById === user?.id && evidence.status === "PENDIENTE" && (
                     <button
@@ -436,6 +460,8 @@ export function MyActivityCard({ activity, onActivityUpdated }: MyActivityCardPr
             ))}
         </div>
       )}
+
+      <MediaLightbox media={lightboxMedia} onClose={() => setLightboxMedia(null)} />
     </li>
   );
 }

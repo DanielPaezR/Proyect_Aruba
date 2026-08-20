@@ -25,9 +25,10 @@ export const VEHICLE_INCIDENT_PHOTOS_FOLDER = "decs/vehicle-incidents";
 
 const ALLOWED_MIME_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 
-/** Generico: cualquier campo de imagen (evidencias, imagen de referencia de
- * actividad, etc.) pasa por el mismo multer — memoryStorage, mismo limite y
- * mismos tipos permitidos. */
+/** Generico: cualquier campo de SOLO imagen (foto de perfil, foto de
+ * incidente de vehiculo, etc.) pasa por el mismo multer — memoryStorage,
+ * mismo limite y mismos tipos permitidos. Evidencias e imagen de referencia
+ * de actividad usan mediaUpload (abajo), que ademas acepta video. */
 export const imageUpload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 8 * 1024 * 1024 },
@@ -46,6 +47,50 @@ export const imageUpload = multer({
   },
 });
 
+const VIDEO_MIME_TYPES = new Set(["video/mp4", "video/quicktime"]);
+const ALLOWED_MEDIA_MIME_TYPES = new Set([...ALLOWED_MIME_TYPES, ...VIDEO_MIME_TYPES]);
+
+const MAX_IMAGE_SIZE_BYTES = 8 * 1024 * 1024;
+const MAX_VIDEO_SIZE_BYTES = 50 * 1024 * 1024;
+
+export function isVideoMimeType(mimetype: string): boolean {
+  return VIDEO_MIME_TYPES.has(mimetype);
+}
+
+/** Evidencias e imagen de referencia de actividad: imagen O video (MP4,
+ * QuickTime/MOV) — a diferencia de imageUpload, que se mantiene solo-imagen
+ * para el resto de subidas. El limite de multer usa el maximo (video,
+ * 50MB); el limite mas chico de imagen (8MB) se valida aparte con
+ * ensureMediaWithinSizeLimit, porque multer no soporta un limite
+ * condicional por mimetype en un solo middleware. */
+export const mediaUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: MAX_VIDEO_SIZE_BYTES },
+  fileFilter: (_req, file, cb) => {
+    if (!ALLOWED_MEDIA_MIME_TYPES.has(file.mimetype)) {
+      cb(
+        new ApiError(
+          400,
+          ErrorCode.UNSUPPORTED_MEDIA_TYPE,
+          "Formato no soportado (usa JPEG, PNG, WEBP, MP4 o MOV)",
+        ),
+      );
+      return;
+    }
+    cb(null, true);
+  },
+});
+
+/** Si el archivo que paso el fileFilter de mediaUpload es una imagen (no
+ * video), reaplica el limite de 8MB que multer no pudo aplicar solo (ver
+ * comentario de mediaUpload). Se llama despues de multer, antes de subir a
+ * Cloudinary. */
+export function ensureMediaWithinSizeLimit(file: Express.Multer.File): void {
+  if (!isVideoMimeType(file.mimetype) && file.buffer.length > MAX_IMAGE_SIZE_BYTES) {
+    throw new ApiError(400, ErrorCode.UPLOAD_ERROR, "La imagen no puede pesar más de 8MB");
+  }
+}
+
 export interface UploadedImage {
   url: string;
   publicId: string;
@@ -56,14 +101,19 @@ export interface UploadedImage {
  * de imagenes de referencia de actividades (u otro tipo que se agregue mas
  * adelante) dentro de la misma cuenta. "publicId" fijo es solo para el seed
  * (idempotente: volver a correrlo pisa el mismo asset en vez de duplicarlo);
- * las subidas reales de usuarios usan un public_id autogenerado.
+ * las subidas reales de usuarios usan un public_id autogenerado. "resourceType"
+ * default "image" (todos los llamadores existentes); evidencias/referencia de
+ * actividad lo pasan explicito segun el mimetype recibido (ver isVideoMimeType).
  */
-export function uploadImage(buffer: Buffer, options: { folder: string; publicId?: string }): Promise<UploadedImage> {
+export function uploadImage(
+  buffer: Buffer,
+  options: { folder: string; publicId?: string; resourceType?: "image" | "video" },
+): Promise<UploadedImage> {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
       {
         folder: options.folder,
-        resource_type: "image",
+        resource_type: options.resourceType ?? "image",
         ...(options.publicId ? { public_id: options.publicId, overwrite: true } : {}),
       },
       (error?: UploadApiErrorResponse, result?: UploadApiResponse) => {
@@ -78,10 +128,14 @@ export function uploadImage(buffer: Buffer, options: { folder: string; publicId?
   });
 }
 
-export async function deleteImage(publicId: string): Promise<void> {
+/** resourceType default "image" (todos los llamadores existentes, que solo
+ * manejan fotos); evidencias/referencia de actividad lo pasan explicito
+ * segun el mediaType guardado — Cloudinary no encuentra el asset para
+ * destruirlo si el resource_type no coincide con el que se uso al subirlo. */
+export async function deleteImage(publicId: string, resourceType: "image" | "video" = "image"): Promise<void> {
   // invalidate: true - sin esto, destroy() borra el asset de Cloudinary pero
   // el cache del CDN puede seguir sirviendo la imagen vieja por un rato.
-  await cloudinary.uploader.destroy(publicId, { invalidate: true });
+  await cloudinary.uploader.destroy(publicId, { resource_type: resourceType, invalidate: true });
 }
 
 export const INVOICES_FOLDER = "decs/invoices";

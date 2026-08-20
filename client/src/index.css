@@ -1160,6 +1160,11 @@ button {
   object-fit: cover;
 }
 
+.activity-reference .media-thumb-button {
+  display: block;
+  width: 100%;
+}
+
 .activity-reference-placeholder {
   display: flex;
   align-items: center;
@@ -1436,6 +1441,35 @@ a.card-title:hover {
   object-fit: cover;
   border-radius: 8px;
   border: 1px solid var(--border);
+}
+
+.media-thumb-button {
+  position: relative;
+  display: inline-block;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  line-height: 0;
+}
+
+.media-thumb-wrapper {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+  margin-top: 8px;
+}
+
+.media-thumb-video-badge {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+  pointer-events: none;
 }
 
 .activity-actions {
@@ -1773,6 +1807,50 @@ a.card-title:hover {
   justify-content: flex-end;
   gap: 8px;
   margin-top: 20px;
+}
+
+.media-lightbox-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  z-index: 200;
+}
+
+.media-lightbox-content {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.media-lightbox-media {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100vh - 64px);
+  border-radius: 8px;
+}
+
+.media-lightbox-close {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  border: none;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  cursor: pointer;
+  z-index: 201;
+}
+
+.media-lightbox-close:hover {
+  background: rgba(255, 255, 255, 0.22);
 }
 
 .modal-actions button {

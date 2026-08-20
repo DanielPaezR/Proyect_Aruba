@@ -4,6 +4,9 @@ import { useTranslation } from "react-i18next";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { translateStatus } from "../i18n/statusLabel";
+import { MediaLightbox } from "./MediaLightbox";
+import type { LightboxMedia } from "./MediaLightbox";
+import { MediaThumb } from "./MediaThumb";
 import type { EvidenceWithActivity } from "../types/evidence";
 
 interface EvidenceReviewItemProps {
@@ -21,6 +24,7 @@ export function EvidenceReviewItem({ evidence, onReviewed }: EvidenceReviewItemP
   const [rejectComment, setRejectComment] = useState("");
   const [isRejecting, setIsRejecting] = useState(false);
   const [reviewError, setReviewError] = useState<string | null>(null);
+  const [lightboxMedia, setLightboxMedia] = useState<LightboxMedia | null>(null);
 
   async function handleApprove() {
     setReviewError(null);
@@ -59,9 +63,15 @@ export function EvidenceReviewItem({ evidence, onReviewed }: EvidenceReviewItemP
 
   return (
     <div className="evidence-review-item">
-      <a href={evidence.imageUrl} target="_blank" rel="noreferrer">
-        <img src={evidence.imageUrl} alt={evidence.description ?? ""} className="evidence-thumb" />
-      </a>
+      <MediaThumb
+        url={evidence.imageUrl}
+        mediaType={evidence.mediaType}
+        alt={evidence.description ?? ""}
+        onClick={() =>
+          setLightboxMedia({ url: evidence.imageUrl, mediaType: evidence.mediaType, alt: evidence.description ?? "" })
+        }
+      />
+      <MediaLightbox media={lightboxMedia} onClose={() => setLightboxMedia(null)} />
 
       <div className="evidence-review-item-content">
         <div className="card-header">

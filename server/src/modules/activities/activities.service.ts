@@ -1,6 +1,12 @@
-import { ActivityStatus, EvidenceStatus, Role } from "@prisma/client";
+import { ActivityStatus, EvidenceStatus, MediaType, Role } from "@prisma/client";
 import { prisma } from "../../config/prisma";
-import { ACTIVITY_REFERENCE_IMAGES_FOLDER, deleteImage, uploadImage } from "../../config/storage";
+import {
+  ACTIVITY_REFERENCE_IMAGES_FOLDER,
+  deleteImage,
+  ensureMediaWithinSizeLimit,
+  isVideoMimeType,
+  uploadImage,
+} from "../../config/storage";
 import { ApiError } from "../../utils/ApiError";
 import { ErrorCode } from "../../utils/errorCodes";
 import { sendPushToUser } from "../../utils/push";
@@ -110,10 +116,17 @@ export async function createActivity(
 
   let referenceImageUrl: string | undefined;
   let referenceImagePublicId: string | undefined;
+  let referenceMediaType: MediaType | undefined;
   if (referenceImage) {
-    const uploaded = await uploadImage(referenceImage.buffer, { folder: ACTIVITY_REFERENCE_IMAGES_FOLDER });
+    ensureMediaWithinSizeLimit(referenceImage);
+    const isVideo = isVideoMimeType(referenceImage.mimetype);
+    const uploaded = await uploadImage(referenceImage.buffer, {
+      folder: ACTIVITY_REFERENCE_IMAGES_FOLDER,
+      resourceType: isVideo ? "video" : "image",
+    });
     referenceImageUrl = uploaded.url;
     referenceImagePublicId = uploaded.publicId;
+    referenceMediaType = isVideo ? MediaType.VIDEO : MediaType.IMAGEN;
   }
 
   return prisma.activity.create({
@@ -124,6 +137,7 @@ export async function createActivity(
       scheduledDate: input.scheduledDate,
       referenceImageUrl,
       referenceImagePublicId,
+      referenceMediaType,
       assignments: input.assignedUserIds?.length
         ? { create: input.assignedUserIds.map((userId) => ({ userId })) }
         : undefined,
@@ -142,17 +156,30 @@ export async function updateActivity(
     throw ApiError.notFound(ErrorCode.ACTIVITY_NOT_FOUND, "Actividad no encontrada");
   }
 
-  let imageFields: { referenceImageUrl?: string; referenceImagePublicId?: string } = {};
+  let imageFields: {
+    referenceImageUrl?: string;
+    referenceImagePublicId?: string;
+    referenceMediaType?: MediaType;
+  } = {};
   if (referenceImage) {
-    const uploaded = await uploadImage(referenceImage.buffer, { folder: ACTIVITY_REFERENCE_IMAGES_FOLDER });
-    imageFields = { referenceImageUrl: uploaded.url, referenceImagePublicId: uploaded.publicId };
+    ensureMediaWithinSizeLimit(referenceImage);
+    const isVideo = isVideoMimeType(referenceImage.mimetype);
+    const uploaded = await uploadImage(referenceImage.buffer, {
+      folder: ACTIVITY_REFERENCE_IMAGES_FOLDER,
+      resourceType: isVideo ? "video" : "image",
+    });
+    imageFields = {
+      referenceImageUrl: uploaded.url,
+      referenceImagePublicId: uploaded.publicId,
+      referenceMediaType: isVideo ? MediaType.VIDEO : MediaType.IMAGEN,
+    };
 
     if (existing.referenceImagePublicId) {
       // Best-effort, mismo patron que evidences.service.ts: la fila ya se va
       // a actualizar igual, un fallo limpiando la imagen vieja de Cloudinary
       // no debe tumbar la respuesta.
       try {
-        await deleteImage(existing.referenceImagePublicId);
+        await deleteImage(existing.referenceImagePublicId, existing.referenceMediaType === MediaType.VIDEO ? "video" : "image");
       } catch (error) {
         console.error(
           `No se pudo borrar la imagen de referencia anterior (public_id ${existing.referenceImagePublicId}):`,

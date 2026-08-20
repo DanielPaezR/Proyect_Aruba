@@ -83,6 +83,16 @@ enum EvidenceStatus {
   RECHAZADA
 }
 
+// Para que el cliente sepa como renderizar un archivo subido (imagen vs
+// video, ej. Evidence.imageUrl o Activity.referenceImageUrl) sin adivinar
+// por la extension de la URL de Cloudinary. Nullable en ambos usos: filas
+// sembradas antes de esta migracion no lo tienen — el cliente cae a IMAGEN
+// cuando es null (todo lo subido antes de este cambio era foto).
+enum MediaType {
+  IMAGEN
+  VIDEO
+}
+
 enum PunchType {
   ENTRADA
   ALMUERZO_INICIO
@@ -374,6 +384,8 @@ model Activity {
   // no la van a tener.
   referenceImageUrl      String?
   referenceImagePublicId String?
+  // Null = imagen (todo lo subido antes de esta migracion) o sin archivo.
+  referenceMediaType     MediaType?
 
   // Se completan solo cuando status pasa a OMITIDA (ver PATCH /skip). No se
   // limpian automaticamente si despues se reprograma (vuelve a PENDIENTE) —
@@ -592,6 +604,8 @@ model Evidence {
   // (cloudinary.uploader.destroy). Nullable: evidencias sembradas antes de la
   // migracion a Cloudinary no lo tienen.
   imagePublicId String?
+  // Null = imagen (evidencias sembradas antes de esta migracion).
+  mediaType     MediaType?
   description   String?
   status        EvidenceStatus @default(PENDIENTE)
 

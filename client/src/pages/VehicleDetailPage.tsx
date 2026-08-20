@@ -3,6 +3,9 @@ import { useTranslation } from "react-i18next";
 import { Navigate, useParams } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
+import { MediaLightbox } from "../components/MediaLightbox";
+import type { LightboxMedia } from "../components/MediaLightbox";
+import { MediaThumb } from "../components/MediaThumb";
 import { PageHeader } from "../components/PageHeader";
 import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
@@ -40,6 +43,8 @@ export function VehicleDetailPage() {
   const [incidents, setIncidents] = useState<VehicleIncidentReport[] | null>(null);
   const [isLoadingIncidents, setIsLoadingIncidents] = useState(true);
   const [incidentsError, setIncidentsError] = useState<string | null>(null);
+
+  const [lightboxMedia, setLightboxMedia] = useState<LightboxMedia | null>(null);
 
   async function loadVehicle(id: string) {
     setIsLoading(true);
@@ -232,9 +237,13 @@ export function VehicleDetailPage() {
                         </span>
                       )}
                       {incident.photoUrl && (
-                        <a href={incident.photoUrl} target="_blank" rel="noreferrer">
-                          <img src={incident.photoUrl} alt={t("incidentPhotoAlt")} className="evidence-thumb" />
-                        </a>
+                        <MediaThumb
+                          url={incident.photoUrl}
+                          alt={t("incidentPhotoAlt")}
+                          onClick={() =>
+                            setLightboxMedia({ url: incident.photoUrl as string, alt: t("incidentPhotoAlt") })
+                          }
+                        />
                       )}
                       {incident.resolvedAt && (
                         <p className="card-description">
@@ -249,6 +258,8 @@ export function VehicleDetailPage() {
           </section>
         </>
       )}
+
+      <MediaLightbox media={lightboxMedia} onClose={() => setLightboxMedia(null)} />
     </div>
   );
 }

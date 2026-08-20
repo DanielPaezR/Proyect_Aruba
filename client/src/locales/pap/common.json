@@ -75,6 +75,9 @@
     "RECHAZADA": "Rechasá"
   },
   "loading": "Ta karga...",
+  "mediaLightbox": {
+    "close": "Sera"
+  },
   "errors": {
     "generic": "A sosodé un eror inesperá. Purba di nobo.",
     "api": {
@@ -95,6 +98,7 @@
       "EVIDENCE_DELETE_FORBIDDEN": "Bo no por elimina e evidensia aki",
       "IMAGE_REQUIRED": "Skohe un imagen pa subi",
       "UNSUPPORTED_IMAGE_TYPE": "Formato di imagen no ta soportá (usa JPEG, PNG òf WEBP)",
+      "UNSUPPORTED_MEDIA_TYPE": "Formato no ta soportá (usa JPEG, PNG, WEBP, MP4 òf MOV)",
       "UPLOAD_ERROR": "A sosodé un eror ora di subi e archivo",
       "VALIDATION_ERROR": "Verifiká e datonan ku bo a hisa",
       "INTERNAL_ERROR": "Eror di server, purba mas lat",

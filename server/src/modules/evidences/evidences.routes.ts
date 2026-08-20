@@ -2,7 +2,7 @@ import { Router } from "express";
 import { Feature, Role } from "@prisma/client";
 import { authenticate, authorize } from "../../middleware/auth.middleware";
 import { requireFeature } from "../../middleware/requireFeature.middleware";
-import { imageUpload } from "../../config/storage";
+import { mediaUpload } from "../../config/storage";
 import * as evidencesController from "./evidences.controller";
 
 const MANAGERS = [Role.ADMINISTRADOR, Role.GERENTE, Role.SUPERVISOR];
@@ -14,7 +14,7 @@ export const activityEvidencesRouter = Router({ mergeParams: true });
 
 activityEvidencesRouter.use(authenticate);
 activityEvidencesRouter.get("/", evidencesController.listForActivity);
-activityEvidencesRouter.post("/", imageUpload.single("image"), evidencesController.upload);
+activityEvidencesRouter.post("/", mediaUpload.single("image"), evidencesController.upload);
 
 /** Se monta en /api/evidences — cola de revision, con su "portón" propio.
  * TRABAJADOR_CAMPO igual puede llegar al DELETE (borrar su propia evidencia

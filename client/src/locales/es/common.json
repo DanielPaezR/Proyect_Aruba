@@ -75,6 +75,9 @@
     "RECHAZADA": "Rechazada"
   },
   "loading": "Cargando...",
+  "mediaLightbox": {
+    "close": "Cerrar"
+  },
   "errors": {
     "generic": "Ocurrió un error inesperado. Intenta de nuevo.",
     "api": {
@@ -95,6 +98,7 @@
       "EVIDENCE_DELETE_FORBIDDEN": "No puedes eliminar esta evidencia",
       "IMAGE_REQUIRED": "Selecciona una imagen para subir",
       "UNSUPPORTED_IMAGE_TYPE": "Formato de imagen no soportado (usa JPEG, PNG o WEBP)",
+      "UNSUPPORTED_MEDIA_TYPE": "Formato no soportado (usa JPEG, PNG, WEBP, MP4 o MOV)",
       "UPLOAD_ERROR": "Ocurrió un error al subir el archivo",
       "VALIDATION_ERROR": "Revisa los datos ingresados",
       "INTERNAL_ERROR": "Error del servidor, intenta más tarde",

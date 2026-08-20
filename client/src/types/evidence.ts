@@ -1,3 +1,5 @@
+import type { MediaType } from "./media";
+
 export const EVIDENCE_STATUSES = ["PENDIENTE", "APROBADA", "RECHAZADA"] as const;
 export type EvidenceStatus = (typeof EVIDENCE_STATUSES)[number];
 
@@ -7,6 +9,8 @@ export interface Evidence {
   uploadedById: string;
   uploadedBy: { id: string; name: string };
   imageUrl: string;
+  /** null = evidencia sembrada antes de la migracion de MediaType — tratar como IMAGEN. */
+  mediaType: MediaType | null;
   description: string | null;
   status: EvidenceStatus;
   reviewedById: string | null;

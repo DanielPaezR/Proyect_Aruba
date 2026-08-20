@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { Role } from "@prisma/client";
 import { authenticate, authorize } from "../../middleware/auth.middleware";
-import { imageUpload } from "../../config/storage";
+import { mediaUpload } from "../../config/storage";
 import { activityEvidencesRouter } from "../evidences/evidences.routes";
 import * as activitiesController from "./activities.controller";
 
@@ -15,7 +15,7 @@ projectActivitiesRouter.get("/", activitiesController.listForProject);
 projectActivitiesRouter.post(
   "/",
   authorize(...MANAGERS),
-  imageUpload.single("referenceImage"),
+  mediaUpload.single("referenceImage"),
   activitiesController.create,
 );
 
@@ -32,7 +32,7 @@ activitiesRouter.get("/:activityId", activitiesController.getOne);
 activitiesRouter.patch(
   "/:activityId",
   authorize(...MANAGERS),
-  imageUpload.single("referenceImage"),
+  mediaUpload.single("referenceImage"),
   activitiesController.update,
 );
 activitiesRouter.delete("/:activityId", authorize(...MANAGERS), activitiesController.remove);

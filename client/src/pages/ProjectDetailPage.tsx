@@ -8,6 +8,10 @@ import { apiClient } from "../api/client";
 import { AssignWorkersPanel } from "../components/AssignWorkersPanel";
 import { ClientPicker } from "../components/ClientPicker";
 import { ConfirmDialog } from "../components/ConfirmDialog";
+import { MediaFilePreview } from "../components/MediaFilePreview";
+import { MediaLightbox } from "../components/MediaLightbox";
+import type { LightboxMedia } from "../components/MediaLightbox";
+import { MediaThumb } from "../components/MediaThumb";
 import { PageHeader } from "../components/PageHeader";
 import { ProjectChatSection } from "../components/ProjectChatSection";
 import { ProjectInvoicesSection } from "../components/ProjectInvoicesSection";
@@ -120,6 +124,8 @@ export function ProjectDetailPage() {
   const [activityDeleteError, setActivityDeleteError] = useState<string | null>(null);
 
   const [assigningActivityId, setAssigningActivityId] = useState<string | null>(null);
+
+  const [lightboxMedia, setLightboxMedia] = useState<LightboxMedia | null>(null);
 
   async function loadProject(id: string) {
     setIsLoading(true);
@@ -643,8 +649,9 @@ export function ProjectDetailPage() {
               </label>
               <label>
                 {t("referenceImageLabel", { ns: "activities" })}
-                <input type="file" accept="image/jpeg,image/png,image/webp" onChange={handleReferenceImageChange} />
+                <input type="file" accept="image/*,video/*" onChange={handleReferenceImageChange} />
               </label>
+              {referenceImage && <MediaFilePreview file={referenceImage} />}
               {/* PENDIENTE: campo de materiales necesarios para esta actividad
                   (items del catálogo de inventario + cantidad estimada) — depende
                   del modulo de inventario, que se esta construyendo aparte.
@@ -690,13 +697,18 @@ export function ProjectDetailPage() {
                     </p>
                   )}
                   {activity.referenceImageUrl && (
-                    <a href={activity.referenceImageUrl} target="_blank" rel="noreferrer">
-                      <img
-                        src={activity.referenceImageUrl}
-                        alt={t("referenceImageAlt", { ns: "activities" })}
-                        className="evidence-thumb"
-                      />
-                    </a>
+                    <MediaThumb
+                      url={activity.referenceImageUrl}
+                      mediaType={activity.referenceMediaType}
+                      alt={t("referenceImageAlt", { ns: "activities" })}
+                      onClick={() =>
+                        setLightboxMedia({
+                          url: activity.referenceImageUrl as string,
+                          mediaType: activity.referenceMediaType,
+                          alt: t("referenceImageAlt", { ns: "activities" }),
+                        })
+                      }
+                    />
                   )}
                   <span className="card-meta">
                     {activity.assignments.length === 0
@@ -774,12 +786,9 @@ export function ProjectDetailPage() {
                       </label>
                       <label>
                         {t("referenceImageLabel", { ns: "activities" })}
-                        <input
-                          type="file"
-                          accept="image/jpeg,image/png,image/webp"
-                          onChange={handleActivityEditImageChange}
-                        />
+                        <input type="file" accept="image/*,video/*" onChange={handleActivityEditImageChange} />
                       </label>
+                      {activityEditForm.referenceImage && <MediaFilePreview file={activityEditForm.referenceImage} />}
                       {/* PENDIENTE: mismo campo de materiales necesarios que falta
                           en el form de creacion, ver comentario mas arriba. */}
                       {activityEditError && (
@@ -855,6 +864,8 @@ export function ProjectDetailPage() {
           }}
         />
       )}
+
+      <MediaLightbox media={lightboxMedia} onClose={() => setLightboxMedia(null)} />
     </div>
   );
 }

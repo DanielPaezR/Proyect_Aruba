@@ -75,6 +75,9 @@
     "RECHAZADA": "Rejected"
   },
   "loading": "Loading...",
+  "mediaLightbox": {
+    "close": "Close"
+  },
   "errors": {
     "generic": "Something went wrong. Please try again.",
     "api": {
@@ -95,6 +98,7 @@
       "EVIDENCE_DELETE_FORBIDDEN": "You can't delete this evidence",
       "IMAGE_REQUIRED": "Select an image to upload",
       "UNSUPPORTED_IMAGE_TYPE": "Unsupported image format (use JPEG, PNG or WEBP)",
+      "UNSUPPORTED_MEDIA_TYPE": "Unsupported format (use JPEG, PNG, WEBP, MP4 or MOV)",
       "UPLOAD_ERROR": "Something went wrong uploading the file",
       "VALIDATION_ERROR": "Please check the submitted data",
       "INTERNAL_ERROR": "Server error, please try again later",

@@ -1,3 +1,4 @@
+import type { MediaType } from "./media";
 import type { ProjectWorkType } from "./project";
 
 export const ACTIVITY_STATUSES = ["PENDIENTE", "EN_PROGRESO", "COMPLETADA", "CANCELADA", "OMITIDA"] as const;
@@ -26,6 +27,8 @@ export interface Activity {
    * (que hay que hacer) — distinta de las evidencias que sube el trabajador (que se hizo). */
   referenceImageUrl: string | null;
   referenceImagePublicId: string | null;
+  /** null = actividad sembrada antes de la migracion de MediaType — tratar como IMAGEN. */
+  referenceMediaType: MediaType | null;
   projectId: string;
   createdAt: string;
   updatedAt: string;

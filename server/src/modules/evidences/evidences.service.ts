@@ -1,6 +1,12 @@
-import { EvidenceStatus, Role } from "@prisma/client";
+import { EvidenceStatus, MediaType, Role } from "@prisma/client";
 import { prisma } from "../../config/prisma";
-import { deleteImage, EVIDENCES_FOLDER, uploadImage } from "../../config/storage";
+import {
+  deleteImage,
+  ensureMediaWithinSizeLimit,
+  EVIDENCES_FOLDER,
+  isVideoMimeType,
+  uploadImage,
+} from "../../config/storage";
 import { ApiError } from "../../utils/ApiError";
 import { ErrorCode } from "../../utils/errorCodes";
 
@@ -80,8 +86,13 @@ export async function uploadEvidence(
   description?: string,
 ) {
   await ensureActivityAccess(user, activityId);
+  ensureMediaWithinSizeLimit(file);
 
-  const uploaded = await uploadImage(file.buffer, { folder: EVIDENCES_FOLDER });
+  const isVideo = isVideoMimeType(file.mimetype);
+  const uploaded = await uploadImage(file.buffer, {
+    folder: EVIDENCES_FOLDER,
+    resourceType: isVideo ? "video" : "image",
+  });
 
   return prisma.evidence.create({
     data: {
@@ -89,6 +100,7 @@ export async function uploadEvidence(
       uploadedById: user.id,
       imageUrl: uploaded.url,
       imagePublicId: uploaded.publicId,
+      mediaType: isVideo ? MediaType.VIDEO : MediaType.IMAGEN,
       description,
     },
     include: evidenceInclude,
@@ -137,7 +149,7 @@ export async function deleteEvidence(user: AuthUser, evidenceId: string) {
     // limpiando Cloudinary no debe tumbar la respuesta. Evidencias sembradas
     // antes de esta migracion no tienen imagePublicId, no hay nada que borrar ahi.
     try {
-      await deleteImage(evidence.imagePublicId);
+      await deleteImage(evidence.imagePublicId, evidence.mediaType === MediaType.VIDEO ? "video" : "image");
     } catch (error) {
       console.error(`No se pudo borrar la imagen de Cloudinary (public_id ${evidence.imagePublicId}):`, error);
     }

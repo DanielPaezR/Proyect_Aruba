@@ -4,6 +4,9 @@ import { useTranslation } from "react-i18next";
 import { Navigate } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
+import { MediaLightbox } from "../components/MediaLightbox";
+import type { LightboxMedia } from "../components/MediaLightbox";
+import { MediaThumb } from "../components/MediaThumb";
 import { PageHeader } from "../components/PageHeader";
 import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
@@ -36,6 +39,8 @@ export function VehicleIncidentsPage() {
   const [resolutionNote, setResolutionNote] = useState("");
   const [isResolving, setIsResolving] = useState(false);
   const [resolveError, setResolveError] = useState<string | null>(null);
+
+  const [lightboxMedia, setLightboxMedia] = useState<LightboxMedia | null>(null);
 
   async function loadReports() {
     setIsLoading(true);
@@ -143,9 +148,13 @@ export function VehicleIncidentsPage() {
                   </span>
                 )}
                 {report.photoUrl && (
-                  <a href={report.photoUrl} target="_blank" rel="noreferrer">
-                    <img src={report.photoUrl} alt={t("incidentPhotoAlt", { ns: "vehicles" })} className="evidence-thumb" />
-                  </a>
+                  <MediaThumb
+                    url={report.photoUrl}
+                    alt={t("incidentPhotoAlt", { ns: "vehicles" })}
+                    onClick={() =>
+                      setLightboxMedia({ url: report.photoUrl as string, alt: t("incidentPhotoAlt", { ns: "vehicles" }) })
+                    }
+                  />
                 )}
 
                 {report.resolvedAt ? (
@@ -187,6 +196,8 @@ export function VehicleIncidentsPage() {
             ))}
           </ul>
         ))}
+
+      <MediaLightbox media={lightboxMedia} onClose={() => setLightboxMedia(null)} />
     </div>
   );
 }
