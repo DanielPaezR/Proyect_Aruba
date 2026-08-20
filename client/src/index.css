@@ -709,6 +709,22 @@ button {
   color: var(--text);
 }
 
+/* Balance del historial financiero: fondo suave verde/rojo (mismos tokens
+   que el resto de la app usa para positivo/negativo, ej. status-badge y
+   form-error) — nunca texto de color directo sobre bg-subtle, ver el
+   comentario de accesibilidad junto a --lime-500 mas arriba en este archivo. */
+.stat-card--positive {
+  background: var(--accent-bg);
+}
+
+.stat-card--negative {
+  background: var(--danger-bg);
+}
+
+.stat-card--negative .stat-card__value {
+  color: var(--danger);
+}
+
 .stat-card__trend {
   font-size: 12px;
   color: var(--text);

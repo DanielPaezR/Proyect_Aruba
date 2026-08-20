@@ -7,6 +7,7 @@ import { AgendaPage } from "./pages/AgendaPage";
 import { ClientDetailPage } from "./pages/ClientDetailPage";
 import { ClientsListPage } from "./pages/ClientsListPage";
 import { EvidencesReviewPage } from "./pages/EvidencesReviewPage";
+import { FinancialHistoryPage } from "./pages/FinancialHistoryPage";
 import { InventoryPage } from "./pages/InventoryPage";
 import { InvoicesQueuePage } from "./pages/InvoicesQueuePage";
 import { LoginPage } from "./pages/LoginPage";
@@ -52,6 +53,7 @@ function App() {
               <Route path="/users" element={<UsersManagementPage />} />
               <Route path="/users/:userId" element={<WorkerProfilePage />} />
               <Route path="/payroll" element={<PayrollPage />} />
+              <Route path="/financial-history" element={<FinancialHistoryPage />} />
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="/team-map" element={<TeamMapPage />} />
               <Route path="/agenda" element={<AgendaPage />} />

@@ -153,6 +153,13 @@ export function Layout() {
                   {t("nav.payroll", { ns: "common" })}
                 </NavLink>
               )}
+              {/* Sin hasFeature a proposito: combina datos de sueldo y de cliente,
+                  no encaja en ninguna Feature individual (ver financial-history.routes.ts). */}
+              {isTopManagerRole(user.role) && (
+                <NavLink to="/financial-history" className={navLinkClassName}>
+                  {t("nav.financialHistory", { ns: "common" })}
+                </NavLink>
+              )}
               {isTopManagerRole(user.role) && (
                 <NavLink to="/settings" className={navLinkClassName}>
                   {t("nav.settings", { ns: "common" })}

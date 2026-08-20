@@ -1,0 +1,33 @@
+{
+  "title": "Historial financiero",
+  "filters": {
+    "fromLabel": "Desde",
+    "toLabel": "Hasta",
+    "projectLabel": "Proyecto",
+    "allProjects": "Todos los proyectos",
+    "clientLabel": "Cliente",
+    "allClients": "Todos los clientes",
+    "workerLabel": "Trabajador",
+    "allWorkers": "Todos los trabajadores",
+    "typeLabel": "Tipo",
+    "allTypes": "Todos",
+    "typeIncome": "Ingresos",
+    "typeExpense": "Egresos"
+  },
+  "summary": {
+    "income": "Ingresos",
+    "expense": "Egresos",
+    "balance": "Balance"
+  },
+  "type": {
+    "INGRESO": "Ingreso",
+    "EGRESO": "Egreso"
+  },
+  "entry": {
+    "income": "{{project}} — {{client}}",
+    "noClient": "Sin cliente vinculado",
+    "expense": "{{worker}} — período {{start}} al {{end}}",
+    "movementBy": "Por {{name}}"
+  },
+  "listEmpty": "No hay movimientos en el rango seleccionado"
+}

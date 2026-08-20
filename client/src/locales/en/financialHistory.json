@@ -1,0 +1,33 @@
+{
+  "title": "Financial history",
+  "filters": {
+    "fromLabel": "From",
+    "toLabel": "To",
+    "projectLabel": "Project",
+    "allProjects": "All projects",
+    "clientLabel": "Client",
+    "allClients": "All clients",
+    "workerLabel": "Worker",
+    "allWorkers": "All workers",
+    "typeLabel": "Type",
+    "allTypes": "All",
+    "typeIncome": "Income",
+    "typeExpense": "Expenses"
+  },
+  "summary": {
+    "income": "Income",
+    "expense": "Expenses",
+    "balance": "Balance"
+  },
+  "type": {
+    "INGRESO": "Income",
+    "EGRESO": "Expense"
+  },
+  "entry": {
+    "income": "{{project}} — {{client}}",
+    "noClient": "No linked client",
+    "expense": "{{worker}} — period {{start}} to {{end}}",
+    "movementBy": "By {{name}}"
+  },
+  "listEmpty": "No movements in the selected range"
+}

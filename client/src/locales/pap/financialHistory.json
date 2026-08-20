@@ -1,0 +1,33 @@
+{
+  "title": "Historial finansiero",
+  "filters": {
+    "fromLabel": "Foi",
+    "toLabel": "Te",
+    "projectLabel": "Proyekto",
+    "allProjects": "Tur proyekto",
+    "clientLabel": "Kliente",
+    "allClients": "Tur kliente",
+    "workerLabel": "Trahadó",
+    "allWorkers": "Tur trahadó",
+    "typeLabel": "Tipo",
+    "allTypes": "Tur",
+    "typeIncome": "Entrada",
+    "typeExpense": "Gasto"
+  },
+  "summary": {
+    "income": "Entrada",
+    "expense": "Gasto",
+    "balance": "Balans"
+  },
+  "type": {
+    "INGRESO": "Entrada",
+    "EGRESO": "Gasto"
+  },
+  "entry": {
+    "income": "{{project}} — {{client}}",
+    "noClient": "Sin kliente vinkulá",
+    "expense": "{{worker}} — periodo {{start}} te {{end}}",
+    "movementBy": "Pa {{name}}"
+  },
+  "listEmpty": "No tin movementu den e rango skohí"
+}

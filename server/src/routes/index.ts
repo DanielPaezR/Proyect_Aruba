@@ -5,6 +5,7 @@ import { agendaEventsRouter } from "../modules/agenda-events/agenda-events.route
 import { clientsRouter } from "../modules/clients/clients.routes";
 import { dashboardRouter } from "../modules/dashboard/dashboard.routes";
 import { evidencesRouter } from "../modules/evidences/evidences.routes";
+import { financialHistoryRouter } from "../modules/financial-history/financial-history.routes";
 import { inventoryRouter } from "../modules/inventory/inventory.routes";
 import { invoicesRouter } from "../modules/invoices/invoices.routes";
 import { materialRequestsRouter } from "../modules/material-requests/material-requests.routes";
@@ -40,3 +41,4 @@ apiRouter.use("/tool-incident-reports", toolIncidentReportsRouter);
 apiRouter.use("/agenda-events", agendaEventsRouter);
 apiRouter.use("/permissions", permissionsRouter);
 apiRouter.use("/payroll", payrollRouter);
+apiRouter.use("/financial-history", financialHistoryRouter);
