@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { AlertTriangle, BadgeCheck, CheckCircle2, Clock, Minus, Trophy, TrendingDown, TrendingUp } from "lucide-react";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
+import { PageHeader } from "../components/PageHeader";
 import { translateStatus } from "../i18n/statusLabel";
 import type { ProjectPriority } from "../types/project";
 
@@ -93,15 +95,27 @@ export function SupervisorDashboardPage() {
     return null;
   }
 
+  const activitiesTrend =
+    data.stats.completedActivitiesThisWeek > data.stats.completedActivitiesLastWeek
+      ? "up"
+      : data.stats.completedActivitiesThisWeek < data.stats.completedActivitiesLastWeek
+        ? "down"
+        : "flat";
+  const ActivitiesTrendIcon = activitiesTrend === "up" ? TrendingUp : activitiesTrend === "down" ? TrendingDown : Minus;
+
   return (
     <div className="dashboard">
-      <h1>{t("supervisor.title", { ns: "dashboard" })}</h1>
+      <PageHeader title={t("supervisor.title", { ns: "dashboard" })} />
 
       <div className="stat-grid">
         <div className="stat-card">
-          <span className="stat-card__value">{data.stats.completedActivitiesThisWeek}</span>
+          <div className="stat-card__icon">
+            <CheckCircle2 size={20} aria-hidden="true" />
+          </div>
           <span className="stat-card__label">{t("supervisor.stats.completedActivities", { ns: "dashboard" })}</span>
-          <span className="stat-card__trend">
+          <span className="stat-card__value">{data.stats.completedActivitiesThisWeek}</span>
+          <span className={`stat-card__trend stat-card__trend--${activitiesTrend}`}>
+            <ActivitiesTrendIcon size={14} aria-hidden="true" />
             {t("supervisor.stats.completedActivitiesTrend", {
               ns: "dashboard",
               count: data.stats.completedActivitiesLastWeek,
@@ -110,13 +124,20 @@ export function SupervisorDashboardPage() {
         </div>
 
         <div className="stat-card">
+          <div className="stat-card__icon stat-card__icon--neutral">
+            <Clock size={20} aria-hidden="true" />
+          </div>
+          <span className="stat-card__label">{t("supervisor.stats.teamHours", { ns: "dashboard" })}</span>
           <span className="stat-card__value">
             {t("supervisor.stats.hoursValue", { ns: "dashboard", hours: data.stats.teamHoursThisWeek })}
           </span>
-          <span className="stat-card__label">{t("supervisor.stats.teamHours", { ns: "dashboard" })}</span>
         </div>
 
         <div className="stat-card">
+          <div className="stat-card__icon">
+            <BadgeCheck size={20} aria-hidden="true" />
+          </div>
+          <span className="stat-card__label">{t("supervisor.stats.approvalRate", { ns: "dashboard" })}</span>
           {data.stats.evidenceApprovalRate === null ? (
             <span className="stat-card__value stat-card__value--empty">
               {t("supervisor.stats.noDataYet", { ns: "dashboard" })}
@@ -124,10 +145,12 @@ export function SupervisorDashboardPage() {
           ) : (
             <span className="stat-card__value">{data.stats.evidenceApprovalRate}%</span>
           )}
-          <span className="stat-card__label">{t("supervisor.stats.approvalRate", { ns: "dashboard" })}</span>
         </div>
 
         <div className="stat-card">
+          <div className="stat-card__icon stat-card__icon--alert">
+            <AlertTriangle size={20} aria-hidden="true" />
+          </div>
           <span className="stat-card__label">{t("supervisor.stats.activeProjects", { ns: "dashboard" })}</span>
           <div className="priority-breakdown">
             {PRIORITY_LEVELS.map((level) => (
@@ -145,6 +168,9 @@ export function SupervisorDashboardPage() {
         </div>
 
         <div className="stat-card">
+          <div className="stat-card__icon">
+            <Trophy size={20} aria-hidden="true" />
+          </div>
           <span className="stat-card__label">{t("supervisor.stats.topWorkers", { ns: "dashboard" })}</span>
           {data.stats.topWorkersThisWeek.length === 0 ? (
             <span className="stat-card__value stat-card__value--empty">

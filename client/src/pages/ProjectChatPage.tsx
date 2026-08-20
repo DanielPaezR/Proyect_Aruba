@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { useLocation, useParams } from "react-router-dom";
-import { BackButton } from "../components/BackButton";
 import { ChatPanel } from "../components/ChatPanel";
+import { PageHeader } from "../components/PageHeader";
 
 interface ProjectChatLocationState {
   projectName?: string;
@@ -25,8 +25,7 @@ export function ProjectChatPage() {
 
   return (
     <div className="project-chat-page">
-      <BackButton />
-      <h1>{projectName ? t("pageTitleWithProject", { name: projectName }) : t("pageTitle")}</h1>
+      <PageHeader title={projectName ? t("pageTitleWithProject", { name: projectName }) : t("pageTitle")} back={{}} />
       <ChatPanel projectId={projectId} />
     </div>
   );

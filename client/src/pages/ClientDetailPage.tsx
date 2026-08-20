@@ -4,8 +4,8 @@ import { useTranslation } from "react-i18next";
 import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
-import { BackButton } from "../components/BackButton";
 import { ConfirmDialog } from "../components/ConfirmDialog";
+import { PageHeader } from "../components/PageHeader";
 import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
 import { isManagerRole, isTopManagerRole } from "../types/auth";
@@ -148,7 +148,23 @@ export function ClientDetailPage() {
 
   return (
     <div className="client-detail-page">
-      <BackButton to="/clients" label={t("title", { ns: "clients" })} />
+      <PageHeader
+        title={client?.name ?? t("title", { ns: "clients" })}
+        back={{ to: "/clients", label: t("title", { ns: "clients" }) }}
+      >
+        {client && (
+          <div className="card-actions">
+            <button type="button" onClick={openEdit}>
+              {t("actions.edit", { ns: "common" })}
+            </button>
+            {isTopManagerRole(user.role) && (
+              <button type="button" className="danger-button" onClick={() => setIsDeleteOpen(true)}>
+                {t("actions.delete", { ns: "common" })}
+              </button>
+            )}
+          </div>
+        )}
+      </PageHeader>
 
       {isLoading && <p className="page-loading">{t("loading", { ns: "common" })}</p>}
 
@@ -160,20 +176,6 @@ export function ClientDetailPage() {
 
       {!isLoading && !errorMessage && client && (
         <>
-          <div className="page-header">
-            <h1>{client.name}</h1>
-            <div className="card-actions">
-              <button type="button" onClick={openEdit}>
-                {t("actions.edit", { ns: "common" })}
-              </button>
-              {isTopManagerRole(user.role) && (
-                <button type="button" className="danger-button" onClick={() => setIsDeleteOpen(true)}>
-                  {t("actions.delete", { ns: "common" })}
-                </button>
-              )}
-            </div>
-          </div>
-
           {isEditOpen && editForm && (
             <form className="inline-form" onSubmit={(event) => void handleUpdate(event)}>
               <h2>{t("editFormTitle", { ns: "clients" })}</h2>

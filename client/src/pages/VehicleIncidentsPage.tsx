@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Navigate } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
+import { PageHeader } from "../components/PageHeader";
 import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
 import { isManagerRole } from "../types/auth";
@@ -95,9 +96,7 @@ export function VehicleIncidentsPage() {
 
   return (
     <div className="vehicle-incidents-page">
-      <div className="page-header">
-        <h1>{t("title")}</h1>
-      </div>
+      <PageHeader title={t("title")} />
 
       <label className="status-filter">
         {t("statusFilterLabel")}

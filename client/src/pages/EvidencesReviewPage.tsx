@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
+import { PageHeader } from "../components/PageHeader";
 import { ProjectEvidenceGroup } from "../components/ProjectEvidenceGroup";
 import type { ActivityGroup } from "../components/ProjectEvidenceGroup";
 import { translateStatus } from "../i18n/statusLabel";
@@ -96,8 +97,7 @@ export function EvidencesReviewPage() {
 
   return (
     <div className="evidences-page">
-      <div className="page-header">
-        <h1>{t("title", { ns: "evidences" })}</h1>
+      <PageHeader title={t("title", { ns: "evidences" })}>
         <label className="status-filter">
           {t("statusFilterLabel", { ns: "evidences" })}
           <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as StatusFilter)}>
@@ -109,7 +109,7 @@ export function EvidencesReviewPage() {
             ))}
           </select>
         </label>
-      </div>
+      </PageHeader>
 
       {isLoading && <p className="page-loading">{t("loading", { ns: "common" })}</p>}
 

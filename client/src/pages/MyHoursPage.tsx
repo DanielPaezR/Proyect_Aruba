@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Clock, Coffee, Wallet, Zap } from "lucide-react";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
+import { PageHeader } from "../components/PageHeader";
 import { formatCurrency } from "../utils/formatCurrency";
 import { formatHoursFromMinutes } from "../utils/formatHours";
 import type { PunchType, TodayTimeStatus } from "../types/timeEntry";
@@ -52,9 +54,7 @@ export function MyHoursPage() {
 
   return (
     <div className="my-hours-page">
-      <div className="page-header">
-        <h1>{t("title", { ns: "hours" })}</h1>
-      </div>
+      <PageHeader title={t("title", { ns: "hours" })} />
 
       {status === undefined && <p className="page-loading">{t("loading", { ns: "common" })}</p>}
 
@@ -89,21 +89,33 @@ export function MyHoursPage() {
 
           <div className="stat-grid">
             <div className="stat-card">
-              <span className="stat-card__value">{formatHoursFromMinutes(status.workedMinutes)}</span>
+              <div className="stat-card__icon stat-card__icon--neutral">
+                <Clock size={20} aria-hidden="true" />
+              </div>
               <span className="stat-card__label">{t("stats.workedToday", { ns: "hours" })}</span>
+              <span className="stat-card__value">{formatHoursFromMinutes(status.workedMinutes)}</span>
             </div>
             <div className="stat-card">
-              <span className="stat-card__value">{formatHoursFromMinutes(status.overtimeMinutes)}</span>
+              <div className="stat-card__icon stat-card__icon--alert">
+                <Zap size={20} aria-hidden="true" />
+              </div>
               <span className="stat-card__label">{t("stats.overtimeToday", { ns: "hours" })}</span>
+              <span className="stat-card__value">{formatHoursFromMinutes(status.overtimeMinutes)}</span>
             </div>
             <div className="stat-card">
-              <span className="stat-card__value">{formatHoursFromMinutes(status.lunchMinutes)}</span>
+              <div className="stat-card__icon stat-card__icon--neutral">
+                <Coffee size={20} aria-hidden="true" />
+              </div>
               <span className="stat-card__label">{t("stats.lunchToday", { ns: "hours" })}</span>
+              <span className="stat-card__value">{formatHoursFromMinutes(status.lunchMinutes)}</span>
             </div>
             {status.earningsEstimate !== null && (
               <div className="stat-card">
-                <span className="stat-card__value">{formatCurrency(status.earningsEstimate)}</span>
+                <div className="stat-card__icon">
+                  <Wallet size={20} aria-hidden="true" />
+                </div>
                 <span className="stat-card__label">{t("stats.earningsToday", { ns: "hours" })}</span>
+                <span className="stat-card__value">{formatCurrency(status.earningsEstimate)}</span>
               </div>
             )}
           </div>

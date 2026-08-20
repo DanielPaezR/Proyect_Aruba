@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Navigate } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
+import { PageHeader } from "../components/PageHeader";
 import { useAuth } from "../context/AuthContext";
 import { isTopManagerRole } from "../types/auth";
 import type { CompanySettings } from "../types/settings";
@@ -112,9 +113,7 @@ export function SettingsPage() {
 
   return (
     <div className="settings-page">
-      <div className="page-header">
-        <h1>{t("title", { ns: "settings" })}</h1>
-      </div>
+      <PageHeader title={t("title", { ns: "settings" })} />
 
       {isLoading && <p className="page-loading">{t("loading", { ns: "common" })}</p>}
 

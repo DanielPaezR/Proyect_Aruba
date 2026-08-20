@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Link, Navigate } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
+import { PageHeader } from "../components/PageHeader";
 import { useAuth } from "../context/AuthContext";
 import { ROLES, isTopManagerRole } from "../types/auth";
 import type { User, UserRole } from "../types/auth";
@@ -88,12 +89,11 @@ export function UsersManagementPage() {
 
   return (
     <div className="users-page">
-      <div className="page-header">
-        <h1>{t("title", { ns: "users" })}</h1>
+      <PageHeader title={t("title", { ns: "users" })}>
         <button type="button" onClick={() => setIsFormOpen((open) => !open)}>
           {t("create.button", { ns: "users" })}
         </button>
-      </div>
+      </PageHeader>
 
       {isFormOpen && (
         <form className="inline-form" onSubmit={(event) => void handleCreate(event)}>

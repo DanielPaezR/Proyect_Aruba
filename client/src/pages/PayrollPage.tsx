@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import type { FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Navigate } from "react-router-dom";
+import { Wallet } from "lucide-react";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { ConfirmDialog } from "../components/ConfirmDialog";
+import { PageHeader } from "../components/PageHeader";
 import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
 import { isTopManagerRole } from "../types/auth";
@@ -192,9 +194,7 @@ export function PayrollPage() {
 
   return (
     <div className="payroll-page">
-      <div className="page-header">
-        <h1>{t("title")}</h1>
-      </div>
+      <PageHeader title={t("title")} />
 
       {usersError && (
         <p className="form-error" role="alert">
@@ -280,8 +280,11 @@ export function PayrollPage() {
             </div>
           </dl>
           <div className="stat-card">
-            <span className="stat-card__value">{formatCurrency(preview.netPay)}</span>
+            <div className="stat-card__icon">
+              <Wallet size={20} aria-hidden="true" />
+            </div>
             <span className="stat-card__label">{t("breakdown.netPay")}</span>
+            <span className="stat-card__value">{formatCurrency(preview.netPay)}</span>
           </div>
 
           {confirmError && (

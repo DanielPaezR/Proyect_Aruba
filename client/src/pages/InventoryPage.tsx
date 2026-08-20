@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { ConfirmDialog } from "../components/ConfirmDialog";
+import { PageHeader } from "../components/PageHeader";
 import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
 import { isInventoryRole } from "../types/auth";
@@ -143,10 +144,9 @@ export function InventoryPage() {
 
   return (
     <div className="inventory-page">
-      <div className="page-header">
-        <h1>{t("title", { ns: "inventory" })}</h1>
+      <PageHeader title={t("title", { ns: "inventory" })}>
         {canManage && <button type="button" onClick={openCreateForm}>{t("createButton", { ns: "inventory" })}</button>}
-      </div>
+      </PageHeader>
 
       <label className="status-filter">
         {t("typeFilterLabel", { ns: "inventory" })}

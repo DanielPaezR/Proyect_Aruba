@@ -3,6 +3,7 @@ import type { FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
+import { PageHeader } from "../components/PageHeader";
 import { translateStatus } from "../i18n/statusLabel";
 import { TOOL_INCIDENT_TYPES } from "../types/inventory";
 import type { ToolAssignment, ToolIncidentType } from "../types/inventory";
@@ -74,9 +75,7 @@ export function MyToolsPage() {
 
   return (
     <div className="my-tools-page">
-      <div className="page-header">
-        <h1>{t("title", { ns: "myTools" })}</h1>
-      </div>
+      <PageHeader title={t("title", { ns: "myTools" })} />
 
       {isLoading && <p className="page-loading">{t("loading", { ns: "common" })}</p>}
 

@@ -3,6 +3,7 @@ import type { ChangeEvent, FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
+import { PageHeader } from "../components/PageHeader";
 import { translateStatus } from "../i18n/statusLabel";
 import { VEHICLE_INCIDENT_TYPES } from "../types/vehicle";
 import type { Vehicle, VehicleIncidentType } from "../types/vehicle";
@@ -132,9 +133,7 @@ export function MyVehiclePage() {
 
   return (
     <div className="my-vehicle-page">
-      <div className="page-header">
-        <h1>{t("title")}</h1>
-      </div>
+      <PageHeader title={t("title")} />
 
       {isLoading && <p className="page-loading">{t("loading", { ns: "common" })}</p>}
 

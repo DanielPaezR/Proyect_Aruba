@@ -4,8 +4,8 @@ import { useTranslation } from "react-i18next";
 import { Link, Navigate, useParams } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
-import { BackButton } from "../components/BackButton";
 import { ConfirmDialog } from "../components/ConfirmDialog";
+import { PageHeader } from "../components/PageHeader";
 import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
 import { isManagerRole, isTopManagerRole } from "../types/auth";
@@ -457,19 +457,10 @@ export function WorkerProfilePage() {
 
   return (
     <div className="worker-profile-page">
-      <BackButton to="/users" label={t("title", { ns: "users" })} />
-
-      {isLoading && <p className="page-loading">{t("loading", { ns: "common" })}</p>}
-
-      {!isLoading && errorMessage && (
-        <p className="form-error" role="alert">
-          {errorMessage}
-        </p>
-      )}
-
-      {!isLoading && !errorMessage && profile && (
-        <>
-          <div className="page-header">
+      <PageHeader
+        back={{ to: "/users", label: t("title", { ns: "users" }) }}
+        content={
+          profile ? (
             <div className="worker-profile-identity">
               {profile.user.photoUrl ? (
                 <img src={profile.user.photoUrl} alt="" className="profile-photo-preview" />
@@ -484,36 +475,51 @@ export function WorkerProfilePage() {
                 </span>
               </div>
             </div>
-            {isTopManager && (
-              <div className="card-actions">
-                <label>
-                  {isUploadingPhoto ? t("profile.uploadingPhoto", { ns: "users" }) : t("profile.changePhotoButton", { ns: "users" })}
-                  <input
-                    type="file"
-                    accept="image/jpeg,image/png,image/webp"
-                    onChange={(event) => void handlePhotoChange(event)}
-                    disabled={isUploadingPhoto}
-                    hidden
-                  />
-                </label>
-                <button type="button" onClick={openEdit}>
-                  {t("actions.edit", { ns: "common" })}
-                </button>
-                {profile.user.isActive ? (
-                  <button type="button" className="danger-button" onClick={() => setIsDeactivateConfirmOpen(true)}>
-                    {t("profile.deactivateButton", { ns: "users" })}
-                  </button>
-                ) : (
-                  <button type="button" onClick={() => void handleReactivate()} disabled={isReactivating}>
-                    {isReactivating
-                      ? t("profile.reactivating", { ns: "users" })
-                      : t("profile.reactivateButton", { ns: "users" })}
-                  </button>
-                )}
-              </div>
+          ) : (
+            <h1>{t("title", { ns: "users" })}</h1>
+          )
+        }
+      >
+        {profile && isTopManager && (
+          <div className="card-actions">
+            <label>
+              {isUploadingPhoto ? t("profile.uploadingPhoto", { ns: "users" }) : t("profile.changePhotoButton", { ns: "users" })}
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={(event) => void handlePhotoChange(event)}
+                disabled={isUploadingPhoto}
+                hidden
+              />
+            </label>
+            <button type="button" onClick={openEdit}>
+              {t("actions.edit", { ns: "common" })}
+            </button>
+            {profile.user.isActive ? (
+              <button type="button" className="danger-button" onClick={() => setIsDeactivateConfirmOpen(true)}>
+                {t("profile.deactivateButton", { ns: "users" })}
+              </button>
+            ) : (
+              <button type="button" onClick={() => void handleReactivate()} disabled={isReactivating}>
+                {isReactivating
+                  ? t("profile.reactivating", { ns: "users" })
+                  : t("profile.reactivateButton", { ns: "users" })}
+              </button>
             )}
           </div>
+        )}
+      </PageHeader>
 
+      {isLoading && <p className="page-loading">{t("loading", { ns: "common" })}</p>}
+
+      {!isLoading && errorMessage && (
+        <p className="form-error" role="alert">
+          {errorMessage}
+        </p>
+      )}
+
+      {!isLoading && !errorMessage && profile && (
+        <>
           {isTopManager && photoError && (
             <p className="form-error" role="alert">
               {photoError}

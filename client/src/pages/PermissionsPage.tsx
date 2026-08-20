@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Navigate } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
+import { PageHeader } from "../components/PageHeader";
 import { useAuth } from "../context/AuthContext";
 import type { User, UserRole } from "../types/auth";
 import { FEATURES } from "../types/permissions";
@@ -96,9 +97,7 @@ export function PermissionsPage() {
 
   return (
     <div className="permissions-page">
-      <div className="page-header">
-        <h1>{t("title", { ns: "permissions" })}</h1>
-      </div>
+      <PageHeader title={t("title", { ns: "permissions" })} />
       <p className="form-hint">{t("hint", { ns: "permissions" })}</p>
 
       {isLoading && <p className="page-loading">{t("loading", { ns: "common" })}</p>}

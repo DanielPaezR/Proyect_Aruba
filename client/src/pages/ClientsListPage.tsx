@@ -4,6 +4,7 @@ import { Link, Navigate } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { CreateClientModal } from "../components/CreateClientModal";
+import { PageHeader } from "../components/PageHeader";
 import { useAuth } from "../context/AuthContext";
 import { isManagerRole } from "../types/auth";
 import type { Client } from "../types/client";
@@ -51,12 +52,11 @@ export function ClientsListPage() {
 
   return (
     <div className="clients-page">
-      <div className="page-header">
-        <h1>{t("title", { ns: "clients" })}</h1>
+      <PageHeader title={t("title", { ns: "clients" })}>
         <button type="button" onClick={() => setIsCreateModalOpen(true)}>
           {t("createButton", { ns: "clients" })}
         </button>
-      </div>
+      </PageHeader>
 
       {isLoading && <p className="page-loading">{t("loading", { ns: "common" })}</p>}
 

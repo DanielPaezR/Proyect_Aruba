@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Navigate, useParams } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
-import { BackButton } from "../components/BackButton";
+import { PageHeader } from "../components/PageHeader";
 import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
 import { isManagerRole } from "../types/auth";
@@ -107,7 +107,12 @@ export function VehicleDetailPage() {
 
   return (
     <div className="vehicle-detail-page">
-      <BackButton to="/vehicles" label={t("title")} />
+      <PageHeader
+        title={vehicle ? `${vehicle.plate} — ${vehicle.brand} ${vehicle.model}` : t("title")}
+        back={{ to: "/vehicles", label: t("title") }}
+      >
+        {vehicle && <span className="status-badge">{translateStatus(t, "vehicles", "status", vehicle.status)}</span>}
+      </PageHeader>
 
       {isLoading && <p className="page-loading">{t("loading", { ns: "common" })}</p>}
 
@@ -121,13 +126,6 @@ export function VehicleDetailPage() {
 
       {!isLoading && !loadError && vehicle && (
         <>
-          <div className="page-header">
-            <h1>
-              {vehicle.plate} — {vehicle.brand} {vehicle.model}
-            </h1>
-            <span className="status-badge">{translateStatus(t, "vehicles", "status", vehicle.status)}</span>
-          </div>
-
           <section>
             <h2 className="section-label">{t("detailsSection")}</h2>
             <dl className="info-grid">

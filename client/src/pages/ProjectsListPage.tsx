@@ -7,6 +7,7 @@ import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { ClientPicker } from "../components/ClientPicker";
 import { ConfirmDialog } from "../components/ConfirmDialog";
+import { PageHeader } from "../components/PageHeader";
 import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
 import { isManagerRole, isTopManagerRole } from "../types/auth";
@@ -141,14 +142,13 @@ export function ProjectsListPage() {
 
   return (
     <div className="projects-page">
-      <div className="page-header">
-        <h1>{t("title", { ns: "projects" })}</h1>
+      <PageHeader title={t("title", { ns: "projects" })}>
         {canManage && (
           <button type="button" onClick={() => setIsFormOpen((open) => !open)}>
             {t("create.button", { ns: "projects" })}
           </button>
         )}
-      </div>
+      </PageHeader>
 
       <div className="search-bar">
         <input

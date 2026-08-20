@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Navigate } from "react-router-dom";
+import { Scale, TrendingDown, TrendingUp } from "lucide-react";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
+import { PageHeader } from "../components/PageHeader";
 import { useAuth } from "../context/AuthContext";
 import type { Client } from "../types/client";
 import type { FinancialHistoryEntry, FinancialHistoryResponse, FinancialMovementType } from "../types/financialHistory";
@@ -113,9 +115,7 @@ export function FinancialHistoryPage() {
 
   return (
     <div className="financial-history-page">
-      <div className="page-header">
-        <h1>{t("title")}</h1>
-      </div>
+      <PageHeader title={t("title")} />
 
       {filtersError && (
         <p className="form-error" role="alert">
@@ -180,16 +180,25 @@ export function FinancialHistoryPage() {
       {history && (
         <div className="stat-grid">
           <div className="stat-card">
-            <span className="stat-card__value">{formatCurrency(history.totalIngresos)}</span>
+            <div className="stat-card__icon">
+              <TrendingUp size={20} aria-hidden="true" />
+            </div>
             <span className="stat-card__label">{t("summary.income")}</span>
+            <span className="stat-card__value">{formatCurrency(history.totalIngresos)}</span>
           </div>
           <div className="stat-card">
-            <span className="stat-card__value">{formatCurrency(history.totalEgresos)}</span>
+            <div className="stat-card__icon stat-card__icon--alert">
+              <TrendingDown size={20} aria-hidden="true" />
+            </div>
             <span className="stat-card__label">{t("summary.expense")}</span>
+            <span className="stat-card__value">{formatCurrency(history.totalEgresos)}</span>
           </div>
           <div className={`stat-card ${balance >= 0 ? "stat-card--positive" : "stat-card--negative"}`}>
-            <span className="stat-card__value">{formatCurrency(history.balance)}</span>
+            <div className="stat-card__icon stat-card__icon--neutral">
+              <Scale size={20} aria-hidden="true" />
+            </div>
             <span className="stat-card__label">{t("summary.balance")}</span>
+            <span className="stat-card__value">{formatCurrency(history.balance)}</span>
           </div>
         </div>
       )}

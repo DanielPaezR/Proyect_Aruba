@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Navigate } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
+import { PageHeader } from "../components/PageHeader";
 import { useAuth } from "../context/AuthContext";
 import { isInventoryRole } from "../types/auth";
 import type { User } from "../types/auth";
@@ -114,12 +115,11 @@ export function ToolAssignmentsPage() {
 
   return (
     <div className="tool-assignments-page">
-      <div className="page-header">
-        <h1>{t("title", { ns: "toolAssignments" })}</h1>
+      <PageHeader title={t("title", { ns: "toolAssignments" })}>
         <button type="button" onClick={() => setIsFormOpen((open) => !open)}>
           {t("createButton", { ns: "toolAssignments" })}
         </button>
-      </div>
+      </PageHeader>
 
       <label className="status-filter">
         <input type="checkbox" checked={showActiveOnly} onChange={(event) => setShowActiveOnly(event.target.checked)} />

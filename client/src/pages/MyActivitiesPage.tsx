@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Camera, CheckCircle2, Clock, Flame } from "lucide-react";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { MyActivityCard } from "../components/MyActivityCard";
+import { PageHeader } from "../components/PageHeader";
 import type { Activity } from "../types/activity";
 
 interface WorkerStats {
@@ -76,30 +78,41 @@ export function MyActivitiesPage() {
 
   return (
     <div className="my-activities-page">
-      <div className="page-header">
-        <h1>{t("mine.title", { ns: "activities" })}</h1>
-      </div>
+      <PageHeader title={t("mine.title", { ns: "activities" })} />
 
       {workerStats && (
         <div className="stat-grid">
           <div className="stat-card">
+            <div className="stat-card__icon stat-card__icon--neutral">
+              <Clock size={20} aria-hidden="true" />
+            </div>
+            <span className="stat-card__label">{t("mine.stats.hoursThisWeek", { ns: "activities" })}</span>
             <span className="stat-card__value">
               {t("mine.stats.hoursValue", { ns: "activities", hours: workerStats.hoursThisWeek })}
             </span>
-            <span className="stat-card__label">{t("mine.stats.hoursThisWeek", { ns: "activities" })}</span>
           </div>
 
           <div className="stat-card">
-            <span className="stat-card__value">{workerStats.completedActivitiesThisMonth}</span>
+            <div className="stat-card__icon">
+              <CheckCircle2 size={20} aria-hidden="true" />
+            </div>
             <span className="stat-card__label">{t("mine.stats.completedThisMonth", { ns: "activities" })}</span>
+            <span className="stat-card__value">{workerStats.completedActivitiesThisMonth}</span>
           </div>
 
           <div className="stat-card">
-            <span className="stat-card__value">{workerStats.pendingEvidencesCount}</span>
+            <div className="stat-card__icon stat-card__icon--alert">
+              <Camera size={20} aria-hidden="true" />
+            </div>
             <span className="stat-card__label">{t("mine.stats.pendingEvidences", { ns: "activities" })}</span>
+            <span className="stat-card__value">{workerStats.pendingEvidencesCount}</span>
           </div>
 
           <div className="stat-card">
+            <div className="stat-card__icon">
+              <Flame size={20} aria-hidden="true" />
+            </div>
+            <span className="stat-card__label">{t("mine.stats.streak", { ns: "activities" })}</span>
             {workerStats.punchStreak === 0 ? (
               <span className="stat-card__value stat-card__value--empty">
                 {t("mine.stats.streakEmpty", { ns: "activities" })}
@@ -109,7 +122,6 @@ export function MyActivitiesPage() {
                 {t("mine.stats.streakValue", { ns: "activities", count: workerStats.punchStreak })}
               </span>
             )}
-            <span className="stat-card__label">{t("mine.stats.streak", { ns: "activities" })}</span>
           </div>
         </div>
       )}

@@ -110,10 +110,15 @@ button {
 
 /* App shell */
 
+/* Alto fijo a la ventana (no min-height): .app-content de abajo es el UNICO
+   contenedor que hace scroll (overflow-y), asi el topbar y el titulo de
+   pagina (.page-title-bar, sticky dentro de .app-content) quedan siempre a
+   la vista sin importar que tan larga sea la lista de la pantalla actual. */
 .app-shell {
-  min-height: 100svh;
+  height: 100svh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .topbar {
@@ -123,6 +128,10 @@ button {
   gap: 12px;
   padding: 10px 16px;
   background: var(--navy-900);
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 30;
 }
 
 .topbar-start {
@@ -337,6 +346,12 @@ button {
 
 .app-content {
   flex: 1;
+  /* min-height:0 es necesario para que un item flex con overflow-y:auto
+     pueda encogerse por debajo de su contenido en vez de forzar al padre
+     (.app-shell, height fija) a desbordarse — sin esto la pagina entera
+     (topbar incluido) volveria a hacer scroll junto con el body. */
+  min-height: 0;
+  overflow-y: auto;
   width: 100%;
   max-width: 960px;
   margin: 0 auto;
@@ -676,23 +691,66 @@ button {
 
 .stat-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 16px;
   margin-bottom: 32px;
 }
 
 .stat-card {
-  padding: 14px 16px;
+  padding: 16px;
   border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--bg-subtle);
+  border-radius: 12px;
+  background: var(--bg);
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
+  box-shadow: rgba(0, 0, 0, 0.04) 0 1px 3px;
+  /* Hover sutil (leve elevacion) aunque la tarjeta no siempre lleve a
+     ningun lado — se siente "viva"/interactiva igual, mismo criterio que
+     .card en el resto de la app. */
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+/* Icono en circulo de color de marca — mismo par solido+alto-contraste que
+   ya usan status-badge--success/--warning/priority-cell--high (ver
+   comentario de accesibilidad de --lime-500/--gold-500 mas arriba: nunca
+   como texto plano, si como fondo solido con navy-900/blanco encima). */
+.stat-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--lime-500);
+  color: var(--navy-900);
+  flex-shrink: 0;
+}
+
+.stat-card__icon--alert {
+  background: var(--gold-500);
+}
+
+.stat-card__icon--neutral {
+  background: var(--navy-700);
+  color: #ffffff;
+}
+
+.stat-card__label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text);
 }
 
 .stat-card__value {
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 700;
   color: var(--text-h);
   line-height: 1.1;
@@ -701,11 +759,6 @@ button {
 .stat-card__value--empty {
   font-size: 16px;
   font-weight: 600;
-  color: var(--text);
-}
-
-.stat-card__label {
-  font-size: 13px;
   color: var(--text);
 }
 
@@ -725,9 +778,27 @@ button {
   color: var(--danger);
 }
 
+/* Flecha de tendencia (arriba/abajo) sobre color, texto en tono neutro —
+   la forma de la flecha ya comunica la direccion, el color es refuerzo, no
+   la unica señal (y evita usar lime-500 como texto plano, ver arriba). */
 .stat-card__trend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   font-size: 12px;
   color: var(--text);
+}
+
+.stat-card__trend svg {
+  flex-shrink: 0;
+}
+
+.stat-card__trend--up svg {
+  color: var(--lime-500);
+}
+
+.stat-card__trend--down svg {
+  color: var(--danger);
 }
 
 .stat-card__list {
@@ -794,6 +865,49 @@ button {
   margin-bottom: 24px;
 }
 
+/* Titulo real de cada pantalla (ver componente PageHeader) — sticky dentro
+   de .app-content mientras el resto de la pagina hace scroll. Distinto de
+   la clase ".page-header" de arriba: esa sigue siendo el utilitario neutro
+   que varias paginas reusan para sub-secciones colapsables (ej.
+   WorkerProfilePage), volverla sticky habria hecho que cada sub-titulo
+   compita por el mismo top:0.
+   El margin negativo + padding equivalente estira la barra hasta el borde
+   del padding de .app-content (que es quien hace scroll), para que quede
+   pegada arriba sin el hueco que dejaria el padding del contenedor — con
+   su propio fondo para tapar la lista que sigue de largo debajo. */
+.page-title-bar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  margin: -20px -16px 24px;
+  padding: 20px 16px 16px;
+  background: var(--bg-page);
+  border-bottom: 1px solid var(--border);
+}
+
+.page-title-bar__main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.page-title-bar__main h1 {
+  min-width: 0;
+}
+
+.page-title-bar__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+}
+
 .project-detail-page section,
 .worker-profile-page section {
   margin-bottom: 32px;
@@ -853,7 +967,8 @@ button {
   min-height: 44px;
 }
 
-.page-header button {
+.page-header button,
+.page-title-bar__actions button {
   padding: 10px 16px;
   border-radius: 6px;
   border: none;
@@ -1899,6 +2014,32 @@ a.card-title:hover {
 
   .app-content {
     padding: 32px 24px;
+  }
+
+  .page-title-bar {
+    margin: -32px -24px 32px;
+    padding: 32px 24px 20px;
+  }
+
+  /* Mas aire y tarjetas mas grandes en desktop — en mobile quedan
+     comprimidas por espacio, aca hay lugar de sobra. */
+  .stat-grid {
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+  }
+
+  .stat-card {
+    padding: 22px;
+    gap: 10px;
+  }
+
+  .stat-card__icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .stat-card__value {
+    font-size: 34px;
   }
 
   .login-page {

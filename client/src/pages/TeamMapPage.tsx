@@ -8,6 +8,7 @@ import { useTranslation } from "react-i18next";
 import { Link, Navigate } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
+import { PageHeader } from "../components/PageHeader";
 import { TimeEntryCard } from "../components/TimeEntryCard";
 import { WorkerHistoryPanel } from "../components/WorkerHistoryPanel";
 import { useAuth } from "../context/AuthContext";
@@ -191,9 +192,7 @@ export function TeamMapPage() {
 
   return (
     <div className="team-map-page">
-      <div className="page-header">
-        <h1>{t("title", { ns: "teamMap" })}</h1>
-      </div>
+      <PageHeader title={t("title", { ns: "teamMap" })} />
 
       <p className="form-hint">{t("disclaimer", { ns: "teamMap" })}</p>
 

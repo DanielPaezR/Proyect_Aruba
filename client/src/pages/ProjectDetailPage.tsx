@@ -6,9 +6,9 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { AssignWorkersPanel } from "../components/AssignWorkersPanel";
-import { BackButton } from "../components/BackButton";
 import { ClientPicker } from "../components/ClientPicker";
 import { ConfirmDialog } from "../components/ConfirmDialog";
+import { PageHeader } from "../components/PageHeader";
 import { ProjectChatSection } from "../components/ProjectChatSection";
 import { ProjectInvoicesSection } from "../components/ProjectInvoicesSection";
 import { ProjectPaymentsSection } from "../components/ProjectPaymentsSection";
@@ -310,7 +310,38 @@ export function ProjectDetailPage() {
 
   return (
     <div className="project-detail-page">
-      <BackButton to="/projects" label={t("title", { ns: "projects" })} />
+      <PageHeader
+        back={{ to: "/projects", label: t("title", { ns: "projects" }) }}
+        content={
+          project ? (
+            <div>
+              <h1>{project.name}</h1>
+              <span className="status-badge">{translateStatus(t, "projects", "status", project.status)}</span>
+            </div>
+          ) : (
+            <h1>{t("title", { ns: "projects" })}</h1>
+          )
+        }
+      >
+        {project && (
+          <div className="card-actions">
+            <Link to={`/projects/${projectId}/chat`} state={{ projectName: project.name }}>
+              <MessageCircle size={16} aria-hidden="true" />
+              {t("detail.chatButton", { ns: "projects" })}
+            </Link>
+            {canManage && (
+              <button type="button" onClick={openProjectEdit}>
+                {t("actions.edit", { ns: "common" })}
+              </button>
+            )}
+            {canDeleteProject && (
+              <button type="button" className="danger-button" onClick={() => setIsProjectDeleteOpen(true)}>
+                {t("actions.delete", { ns: "common" })}
+              </button>
+            )}
+          </div>
+        )}
+      </PageHeader>
 
       {isLoading && <p className="page-loading">{t("loading", { ns: "common" })}</p>}
 
@@ -322,29 +353,6 @@ export function ProjectDetailPage() {
 
       {!isLoading && !errorMessage && project && (
         <>
-          <div className="page-header">
-            <div>
-              <h1>{project.name}</h1>
-              <span className="status-badge">{translateStatus(t, "projects", "status", project.status)}</span>
-            </div>
-            <div className="card-actions">
-              <Link to={`/projects/${projectId}/chat`} state={{ projectName: project.name }}>
-                <MessageCircle size={16} aria-hidden="true" />
-                {t("detail.chatButton", { ns: "projects" })}
-              </Link>
-              {canManage && (
-                <button type="button" onClick={openProjectEdit}>
-                  {t("actions.edit", { ns: "common" })}
-                </button>
-              )}
-              {canDeleteProject && (
-                <button type="button" className="danger-button" onClick={() => setIsProjectDeleteOpen(true)}>
-                  {t("actions.delete", { ns: "common" })}
-                </button>
-              )}
-            </div>
-          </div>
-
           {project.description && <p className="card-description">{project.description}</p>}
 
           {isProjectEditOpen && projectEditForm && (

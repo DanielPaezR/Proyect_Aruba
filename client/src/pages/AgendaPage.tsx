@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight, Hammer, Users } from "lucide-react";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { ConfirmDialog } from "../components/ConfirmDialog";
+import { PageHeader } from "../components/PageHeader";
 import { useAuth } from "../context/AuthContext";
 import { isManagerRole, isTopManagerRole } from "../types/auth";
 import { AGENDA_EVENT_TYPES } from "../types/agenda";
@@ -237,12 +238,11 @@ export function AgendaPage() {
 
   return (
     <div className="agenda-page">
-      <div className="page-header">
-        <h1>{t("title", { ns: "agenda" })}</h1>
+      <PageHeader title={t("title", { ns: "agenda" })}>
         <button type="button" onClick={openCreateForm}>
           {t("createButton", { ns: "agenda" })}
         </button>
-      </div>
+      </PageHeader>
 
       <p className="agenda-shared-note">{t("sharedNote", { ns: "agenda" })}</p>
 

@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { ConfirmDialog } from "../components/ConfirmDialog";
+import { PageHeader } from "../components/PageHeader";
 import { useAuth } from "../context/AuthContext";
 import type { WorkerDocument } from "../types/workerDocument";
 
@@ -130,9 +131,7 @@ export function ProfilePage() {
 
   return (
     <div className="profile-page">
-      <div className="page-header">
-        <h1>{t("title", { ns: "profile" })}</h1>
-      </div>
+      <PageHeader title={t("title", { ns: "profile" })} />
 
       <form className="inline-form" onSubmit={(event) => void handleSave(event)}>
         <div className="profile-photo-row">
