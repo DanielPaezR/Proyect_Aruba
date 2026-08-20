@@ -33,7 +33,7 @@
   --sans: system-ui, "Segoe UI", Roboto, sans-serif;
 
   font: 16px/145% var(--sans);
-  color-scheme: light dark;
+  color-scheme: light;
   color: var(--text);
   background: var(--bg-page);
   font-synthesis: none;
@@ -42,8 +42,13 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Tema oscuro (ver ThemeContext.tsx): se aplica cuando el sistema operativo
+   prefiere oscuro y el usuario no eligio "Claro" a mano (":not([data-theme=
+   light])"), o siempre que eligio "Oscuro" explicitamente (bloque de abajo,
+   fuera del media query — gana sin importar el SO). Preferencia "Sistema" =
+   no se setea data-theme en <html>, asi que decide este media query solo. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     /* En fondo oscuro la relacion de contraste se invierte: navy-700 se
        pierde contra un fondo ya oscuro (~1.3:1), pero lime-500 SI funciona
        bien como texto/boton sobre navy-900 (~8.5:1). */
@@ -61,7 +66,26 @@
     --danger-bg: rgba(248, 113, 113, 0.12);
     --shadow:
       rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+    color-scheme: dark;
   }
+}
+
+:root[data-theme="dark"] {
+  --text: #a9b4bf;
+  --text-h: #f2f4f6;
+  --bg: #1c2b3f;
+  --bg-page: #0d1420;
+  --bg-subtle: #17263c;
+  --border: #34455c;
+  --accent: var(--lime-500);
+  --accent-bg: rgba(141, 198, 63, 0.22);
+  --btn-bg: var(--lime-500);
+  --btn-text: var(--navy-900);
+  --danger: #f87171;
+  --danger-bg: rgba(248, 113, 113, 0.12);
+  --shadow:
+    rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+  color-scheme: dark;
 }
 
 * {
@@ -290,7 +314,8 @@ button {
   gap: 8px;
 }
 
-.drawer-footer-actions .language-switcher select {
+.drawer-footer-actions .language-switcher select,
+.drawer-footer-actions .theme-switcher select {
   background: var(--navy-700);
   color: #ffffff;
   border-color: rgba(255, 255, 255, 0.3);
@@ -311,7 +336,8 @@ button {
   background: rgba(255, 255, 255, 0.1);
 }
 
-.language-switcher select {
+.language-switcher select,
+.theme-switcher select {
   font-family: inherit;
   font-size: 16px;
   padding: 6px 8px;
@@ -1625,6 +1651,28 @@ a.card-title:hover {
   background: var(--danger-bg);
 }
 
+.chat-link {
+  position: relative;
+}
+
+.unread-badge {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--danger);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .salary-panel {
   margin-top: 16px;
   padding-top: 16px;
@@ -1832,6 +1880,15 @@ a.card-title:hover {
   border-radius: 8px;
 }
 
+.media-lightbox-pdf {
+  display: block;
+  width: min(90vw, 900px);
+  height: calc(100vh - 64px);
+  border: none;
+  border-radius: 8px;
+  background: #fff;
+}
+
 .media-lightbox-close {
   position: fixed;
   top: 16px;
@@ -1908,6 +1965,62 @@ a.card-title:hover {
    pero atenuado y con badge para distinguirlo de un vistazo. */
 .worker-summary-card--inactive {
   opacity: 0.6;
+}
+
+/* Documentos del trabajador (WorkerDocument) — mismo patron fila
+   miniatura+info que .worker-summary-card, pero clicable (abre
+   MediaLightbox) y con miniatura real para imagen vs icono grande de tipo
+   de archivo para PDF (no hay preview real posible ahi). */
+.document-card__open {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+}
+
+.document-card__thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.document-card__thumb--pdf {
+  background: var(--navy-700);
+  color: #ffffff;
+}
+
+.document-card__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.document-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.document-card__info .card-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.document-card__info .card-meta {
+  margin-top: 0;
 }
 
 .worker-profile-identity {

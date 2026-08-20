@@ -22,6 +22,12 @@
     "en": "English",
     "pap": "Papiamento"
   },
+  "theme": {
+    "label": "Theme",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark"
+  },
   "roles": {
     "GERENTE": "General Manager",
     "ADMINISTRADOR": "Administrator",
@@ -76,7 +82,8 @@
   },
   "loading": "Loading...",
   "mediaLightbox": {
-    "close": "Close"
+    "close": "Close",
+    "pdfTitle": "PDF document"
   },
   "errors": {
     "generic": "Something went wrong. Please try again.",

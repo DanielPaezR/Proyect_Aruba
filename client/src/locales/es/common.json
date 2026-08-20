@@ -22,6 +22,12 @@
     "en": "Inglés",
     "pap": "Papiamento"
   },
+  "theme": {
+    "label": "Tema",
+    "system": "Sistema",
+    "light": "Claro",
+    "dark": "Oscuro"
+  },
   "roles": {
     "GERENTE": "Gerente",
     "ADMINISTRADOR": "Administrador",
@@ -76,7 +82,8 @@
   },
   "loading": "Cargando...",
   "mediaLightbox": {
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "pdfTitle": "Documento PDF"
   },
   "errors": {
     "generic": "Ocurrió un error inesperado. Intenta de nuevo.",

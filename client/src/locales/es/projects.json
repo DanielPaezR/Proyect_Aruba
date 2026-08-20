@@ -46,6 +46,8 @@
   "noResults": "Ningún proyecto coincide con los filtros",
   "activitiesCount_one": "{{count}} actividad",
   "activitiesCount_other": "{{count}} actividades",
+  "unreadCount_one": "{{count}} mensaje sin leer",
+  "unreadCount_other": "{{count}} mensajes sin leer",
   "status": {
     "PLANIFICADO": "Planificado",
     "EN_PROGRESO": "En progreso",

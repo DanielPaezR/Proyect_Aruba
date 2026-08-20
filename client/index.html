@@ -2,6 +2,23 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      // Aplica el data-theme guardado ANTES de que se cargue el CSS/React,
+      // para que el primer paint ya salga con el tema correcto (sin esto,
+      // se veria un flash del tema por defecto seguido de un salto al
+      // elegido). "system" (o sin preferencia guardada) no setea el
+      // atributo: decide el media query prefers-color-scheme de index.css.
+      (function () {
+        try {
+          var theme = localStorage.getItem("theme");
+          if (theme === "light" || theme === "dark") {
+            document.documentElement.setAttribute("data-theme", theme);
+          }
+        } catch (error) {
+          /* localStorage inaccesible (modo privado estricto, etc.) — cae al tema por defecto. */
+        }
+      })();
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />

@@ -28,7 +28,7 @@ export async function canAccessProject(user: AuthUser, projectId: string): Promi
 }
 
 export async function listProjects(user: AuthUser, filters: { status?: ProjectStatus }) {
-  return prisma.project.findMany({
+  const projects = await prisma.project.findMany({
     where: {
       ...visibilityWhere(user),
       ...(filters.status ? { status: filters.status } : {}),
@@ -36,6 +36,49 @@ export async function listProjects(user: AuthUser, filters: { status?: ProjectSt
     include: { _count: { select: { activities: true } } },
     orderBy: { createdAt: "desc" },
   });
+
+  const unreadCounts = await getUnreadChatCounts(
+    user.id,
+    projects.map((project) => project.id),
+  );
+
+  return projects.map((project) => ({
+    ...project,
+    unreadMessageCount: unreadCounts.get(project.id) ?? 0,
+  }));
+}
+
+/** Mensajes de chat de otros usuarios, posteriores a la ultima vez que este
+ * usuario abrio el chat de cada proyecto (ver ChatReadState, actualizado en
+ * chat.gateway.ts al unirse a la sala). Sin fila de ChatReadState = nunca lo
+ * abrio, todo mensaje de otro cuenta como no leido. Consulta por proyecto
+ * (no una sola agregada) porque cada proyecto tiene su propio lastReadAt;
+ * para el numero de proyectos que maneja un usuario esto es simple y rapido,
+ * no vale la pena una query raw para evitar el N+1. */
+async function getUnreadChatCounts(userId: string, projectIds: string[]): Promise<Map<string, number>> {
+  if (projectIds.length === 0) {
+    return new Map();
+  }
+
+  const readStates = await prisma.chatReadState.findMany({
+    where: { userId, projectId: { in: projectIds } },
+    select: { projectId: true, lastReadAt: true },
+  });
+  const lastReadByProject = new Map(readStates.map((state) => [state.projectId, state.lastReadAt]));
+
+  const counts = await Promise.all(
+    projectIds.map((projectId) =>
+      prisma.chatMessage.count({
+        where: {
+          projectId,
+          senderId: { not: userId },
+          createdAt: { gt: lastReadByProject.get(projectId) ?? new Date(0) },
+        },
+      }),
+    ),
+  );
+
+  return new Map(projectIds.map((projectId, index) => [projectId, counts[index]]));
 }
 
 export async function getProject(user: AuthUser, projectId: string) {

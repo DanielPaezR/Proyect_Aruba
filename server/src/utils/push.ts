@@ -7,7 +7,10 @@ import { webpush } from "../config/webpush";
  * una fallo con 404/410 el navegador ya la invalido (desinstalo la app,
  * revoco el permiso...) y se borra en vez de reintentar contra un endpoint
  * muerto; cualquier otro error solo se loguea, no debe tumbar al caller. */
-export async function sendPushToUser(userId: string, payload: { title: string; body: string }): Promise<void> {
+export async function sendPushToUser(
+  userId: string,
+  payload: { title: string; body: string; url?: string },
+): Promise<void> {
   const subscriptions = await prisma.pushSubscription.findMany({ where: { userId } });
   if (subscriptions.length === 0) {
     return;

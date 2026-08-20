@@ -46,6 +46,8 @@
   "noResults": "Ningun proyekto ta koinsidi ku e filternan",
   "activitiesCount_one": "{{count}} aktividat",
   "activitiesCount_other": "{{count}} aktividatnan",
+  "unreadCount_one": "{{count}} mensahe no lei",
+  "unreadCount_other": "{{count}} mensahenan no lei",
   "status": {
     "PLANIFICADO": "Planiá",
     "EN_PROGRESO": "Na progreso",

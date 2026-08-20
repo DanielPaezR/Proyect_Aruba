@@ -66,6 +66,9 @@ export interface Project extends ProjectOperationalFields {
   createdAt: string;
   updatedAt: string;
   _count?: { activities: number };
+  /** Mensajes de chat de otros usuarios posteriores a la ultima vez que este
+   * usuario abrio el chat de este proyecto — ver GET /api/projects. */
+  unreadMessageCount?: number;
 }
 
 /** Forma de GET /api/projects/:projectId — incluye las actividades completas, no un conteo. */

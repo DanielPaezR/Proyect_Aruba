@@ -329,9 +329,17 @@ export function ProjectsListPage() {
                   </span>
                 </Link>
                 <div className="card-actions">
-                  <Link to={`/projects/${project.id}/chat`} state={{ projectName: project.name }}>
+                  <Link to={`/projects/${project.id}/chat`} state={{ projectName: project.name }} className="chat-link">
                     <MessageCircle size={16} aria-hidden="true" />
                     {t("chatButton", { ns: "projects" })}
+                    {!!project.unreadMessageCount && (
+                      <span
+                        className="unread-badge"
+                        aria-label={t("unreadCount", { ns: "projects", count: project.unreadMessageCount })}
+                      >
+                        {project.unreadMessageCount > 9 ? "9+" : project.unreadMessageCount}
+                      </span>
+                    )}
                   </Link>
                   {isTopManagerRole(user.role) && (
                     <button type="button" className="danger-button" onClick={() => setProjectToDelete(project)}>

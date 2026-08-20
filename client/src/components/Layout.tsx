@@ -7,6 +7,7 @@ import { useGeofenceCheck } from "../hooks/useGeofenceCheck";
 import { isInventoryRole, isManagerRole, isTimeTrackingRole, isTopManagerRole } from "../types/auth";
 import type { Feature } from "../types/permissions";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { ThemeSwitcher } from "./ThemeSwitcher";
 
 function navLinkClassName({ isActive }: { isActive: boolean }) {
   return isActive ? "active" : undefined;
@@ -195,6 +196,7 @@ export function Layout() {
               </NavLink>
               <div className="drawer-footer-actions">
                 <LanguageSwitcher />
+                <ThemeSwitcher />
                 <button type="button" className="drawer-logout-button" onClick={() => void logout()}>
                   {t("actions.logout", { ns: "common" })}
                 </button>

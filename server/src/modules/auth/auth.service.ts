@@ -629,7 +629,7 @@ export async function uploadWorkerDocument(
     throw ApiError.notFound(ErrorCode.USER_NOT_FOUND, "Usuario no encontrado");
   }
 
-  const uploaded = await uploadDocumentFile(file.buffer);
+  const uploaded = await uploadDocumentFile(file.buffer, file.mimetype);
 
   return prisma.workerDocument.create({
     data: {
@@ -637,6 +637,8 @@ export async function uploadWorkerDocument(
       label: input.label,
       fileUrl: uploaded.url,
       filePublicId: uploaded.publicId,
+      fileSize: uploaded.bytes,
+      mimeType: file.mimetype,
       uploadedById: requester.id,
     },
     include: workerDocumentInclude,

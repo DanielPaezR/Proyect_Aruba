@@ -255,6 +255,7 @@ model User {
   recordedPayments         Payment[]              @relation("PaymentRecordedBy")
   skippedActivities        Activity[]             @relation("ActivitySkippedBy")
   chatMessages             ChatMessage[]
+  chatReadStates           ChatReadState[]
   refreshTokens            RefreshToken[]
   pushSubscriptions        PushSubscription[]
   punchReminderLogs        PunchReminderLog[]
@@ -361,6 +362,7 @@ model Project {
   invoices         Invoice[]
   payments         Payment[]
   chatMessages     ChatMessage[]
+  chatReadStates   ChatReadState[]
   materialRequests MaterialRequest[]
 
   createdAt DateTime @default(now())
@@ -709,6 +711,29 @@ model ChatMessage {
   @@map("chat_messages")
 }
 
+// Hasta donde leyo cada usuario el chat de cada proyecto — una fila por
+// usuario+proyecto. Se actualiza (upsert) cuando el usuario se une a la sala
+// de Socket.IO de ese proyecto (ver chat.gateway.ts handleJoin, que es lo que
+// dispara al abrir ChatPanel) y para todos los que ya estan conectados a la
+// sala cuando llega un mensaje nuevo (ya lo "vieron" en vivo). Sirve para
+// calcular el contador de no leidos en GET /api/projects (ver
+// projects.service.ts) sin depender de que el cliente mantenga un socket
+// abierto fuera de la pantalla de chat.
+model ChatReadState {
+  id String @id @default(cuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  lastReadAt DateTime @default(now())
+
+  @@unique([userId, projectId])
+  @@map("chat_read_states")
+}
+
 // Fila unica (singleton, id fijo = 1) con la configuracion de la empresa para
 // marcado automatico por geocerca. officeLatitude/officeLongitude quedan null
 // hasta que el ADMINISTRADOR/GERENTE configure la ubicacion real desde /api/settings — no hay
@@ -1030,6 +1055,15 @@ model WorkerDocument {
   label        String
   fileUrl      String
   filePublicId String
+
+  // Tamaño en bytes (viene de "bytes" en la respuesta de Cloudinary al
+  // subir, ver uploadDocumentFile) y mimetype original del archivo (ver
+  // Express.Multer.File.mimetype) — nullable: documentos sembrados antes de
+  // esta migracion no los tienen. El cliente los usa para mostrar el
+  // tamaño formateado y elegir icono/lightbox (PDF vs imagen); sin
+  // mimeType cae a detectar la extension de fileUrl.
+  fileSize Int?
+  mimeType String?
 
   uploadedById String
   uploadedBy   User   @relation("WorkerDocumentUploadedBy", fields: [uploadedById], references: [id])

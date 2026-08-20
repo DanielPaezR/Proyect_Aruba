@@ -6,6 +6,7 @@ import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { PageHeader } from "../components/PageHeader";
+import { WorkerDocumentCard } from "../components/WorkerDocumentCard";
 import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
 import { isManagerRole, isTopManagerRole } from "../types/auth";
@@ -1104,23 +1105,14 @@ export function WorkerProfilePage() {
               ) : (
                 <ul className="card-list">
                   {documents.map((document) => (
-                    <li key={document.id} className="card">
-                      <div className="card-header">
-                        <a href={document.fileUrl} target="_blank" rel="noreferrer" className="card-title">
-                          {document.label}
-                        </a>
-                      </div>
-                      <span className="card-meta">
-                        {t("profile.documentUploadedBy", { ns: "users", name: document.uploadedBy.name })}
-                      </span>
-                      {(isTopManager || document.uploadedById === currentUser.id) && (
-                        <div className="card-actions">
-                          <button type="button" className="danger-button" onClick={() => setDocToDelete(document)}>
-                            {t("actions.delete", { ns: "common" })}
-                          </button>
-                        </div>
-                      )}
-                    </li>
+                    <WorkerDocumentCard
+                      key={document.id}
+                      document={document}
+                      uploadedByText={t("profile.documentUploadedBy", { ns: "users", name: document.uploadedBy.name })}
+                      canDelete={isTopManager || document.uploadedById === currentUser.id}
+                      deleteLabel={t("actions.delete", { ns: "common" })}
+                      onDelete={() => setDocToDelete(document)}
+                    />
                   ))}
                 </ul>
               ))}

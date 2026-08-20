@@ -5,6 +5,7 @@ import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import { PageHeader } from "../components/PageHeader";
+import { WorkerDocumentCard } from "../components/WorkerDocumentCard";
 import { useAuth } from "../context/AuthContext";
 import type { WorkerDocument } from "../types/workerDocument";
 
@@ -241,23 +242,14 @@ export function ProfilePage() {
           ) : (
             <ul className="card-list">
               {documents.map((document) => (
-                <li key={document.id} className="card">
-                  <div className="card-header">
-                    <a href={document.fileUrl} target="_blank" rel="noreferrer" className="card-title">
-                      {document.label}
-                    </a>
-                  </div>
-                  <span className="card-meta">
-                    {t("documentUploadedBy", { ns: "profile", name: document.uploadedBy.name })}
-                  </span>
-                  {document.uploadedById === user.id && (
-                    <div className="card-actions">
-                      <button type="button" className="danger-button" onClick={() => setDocToDelete(document)}>
-                        {t("actions.delete", { ns: "common" })}
-                      </button>
-                    </div>
-                  )}
-                </li>
+                <WorkerDocumentCard
+                  key={document.id}
+                  document={document}
+                  uploadedByText={t("documentUploadedBy", { ns: "profile", name: document.uploadedBy.name })}
+                  canDelete={document.uploadedById === user.id}
+                  deleteLabel={t("actions.delete", { ns: "common" })}
+                  onDelete={() => setDocToDelete(document)}
+                />
               ))}
             </ul>
           ))}

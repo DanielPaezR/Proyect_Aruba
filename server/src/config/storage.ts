@@ -196,19 +196,42 @@ export const documentUpload = multer({
   },
 });
 
+export interface UploadedDocumentFile extends UploadedImage {
+  /** Tamaño en bytes, tal como lo devuelve Cloudinary — se persiste en
+   * WorkerDocument.fileSize (ver auth.service.ts uploadWorkerDocument). */
+  bytes: number;
+}
+
+/** Subir un Buffer "pelado" (sin nombre de archivo) a un resource_type "raw"
+ * sin indicar "format" hace que Cloudinary no sepa que tipo de archivo es:
+ * lo sirve como application/octet-stream con Content-Disposition: attachment
+ * (fuerza descarga), lo que rompe mostrarlo en un <iframe>. Mapear el
+ * mimetype a la extension esperada por Cloudinary evita eso — con format
+ * seteado, sirve el Content-Type correcto y lo deja embeber inline. */
+const DOCUMENT_MIME_TO_FORMAT: Record<string, string> = {
+  "application/pdf": "pdf",
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+};
+
 /** Sube como resource_type "raw" (igual que las facturas): no es una imagen
  * que Cloudinary deba transformar, solo un archivo que se sirve tal cual —
- * mismo tratamiento para la foto escaneada de una cedula que para un PDF. */
-export function uploadDocumentFile(buffer: Buffer): Promise<UploadedImage> {
+ * mismo tratamiento para la foto escaneada de una cedula que para un PDF.
+ * "mimetype" (de Express.Multer.File) fija el "format" de Cloudinary para
+ * que la URL resultante sirva el Content-Type correcto (ver comentario de
+ * DOCUMENT_MIME_TO_FORMAT). */
+export function uploadDocumentFile(buffer: Buffer, mimetype: string): Promise<UploadedDocumentFile> {
   return new Promise((resolve, reject) => {
+    const format = DOCUMENT_MIME_TO_FORMAT[mimetype];
     const uploadStream = cloudinary.uploader.upload_stream(
-      { folder: WORKER_DOCUMENTS_FOLDER, resource_type: "raw" },
+      { folder: WORKER_DOCUMENTS_FOLDER, resource_type: "raw", ...(format ? { format } : {}) },
       (error?: UploadApiErrorResponse, result?: UploadApiResponse) => {
         if (error || !result) {
           reject(error ?? new Error("Cloudinary no devolvió resultado al subir el documento"));
           return;
         }
-        resolve({ url: result.secure_url, publicId: result.public_id });
+        resolve({ url: result.secure_url, publicId: result.public_id, bytes: result.bytes });
       },
     );
     uploadStream.end(buffer);

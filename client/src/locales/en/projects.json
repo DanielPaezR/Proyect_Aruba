@@ -46,6 +46,8 @@
   "noResults": "No projects match the filters",
   "activitiesCount_one": "{{count}} activity",
   "activitiesCount_other": "{{count}} activities",
+  "unreadCount_one": "{{count}} unread message",
+  "unreadCount_other": "{{count}} unread messages",
   "status": {
     "PLANIFICADO": "Planned",
     "EN_PROGRESO": "In progress",

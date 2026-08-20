@@ -22,6 +22,12 @@
     "en": "Ingles",
     "pap": "Papiamento"
   },
+  "theme": {
+    "label": "Tema",
+    "system": "Sistema",
+    "light": "Kla",
+    "dark": "Skur"
+  },
   "roles": {
     "GERENTE": "Gerente",
     "ADMINISTRADOR": "Administradó",
@@ -76,7 +82,8 @@
   },
   "loading": "Ta karga...",
   "mediaLightbox": {
-    "close": "Sera"
+    "close": "Sera",
+    "pdfTitle": "Dokumento PDF"
   },
   "errors": {
     "generic": "A sosodé un eror inesperá. Purba di nobo.",
