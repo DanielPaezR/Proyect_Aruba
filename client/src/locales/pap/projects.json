@@ -41,7 +41,9 @@
   "empty": "Ainda no tin proyekto",
   "chatButton": "Chat",
   "searchPlaceholder": "Buska proyekto pa nòmber...",
-  "noResults": "Ningun proyekto ta koinsidi ku e búsqueda",
+  "statusFilterLabel": "Estado",
+  "statusFilterAll": "Tur",
+  "noResults": "Ningun proyekto ta koinsidi ku e filternan",
   "activitiesCount_one": "{{count}} aktividat",
   "activitiesCount_other": "{{count}} aktividatnan",
   "status": {

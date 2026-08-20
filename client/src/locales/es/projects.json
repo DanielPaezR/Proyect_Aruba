@@ -41,7 +41,9 @@
   "empty": "Todavía no hay proyectos",
   "chatButton": "Chat",
   "searchPlaceholder": "Buscar proyecto por nombre...",
-  "noResults": "Ningún proyecto coincide con la búsqueda",
+  "statusFilterLabel": "Estado",
+  "statusFilterAll": "Todos",
+  "noResults": "Ningún proyecto coincide con los filtros",
   "activitiesCount_one": "{{count}} actividad",
   "activitiesCount_other": "{{count}} actividades",
   "status": {

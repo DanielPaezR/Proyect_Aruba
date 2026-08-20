@@ -41,7 +41,9 @@
   "empty": "No projects yet",
   "chatButton": "Chat",
   "searchPlaceholder": "Search project by name...",
-  "noResults": "No projects match your search",
+  "statusFilterLabel": "Status",
+  "statusFilterAll": "All",
+  "noResults": "No projects match the filters",
   "activitiesCount_one": "{{count}} activity",
   "activitiesCount_other": "{{count}} activities",
   "status": {

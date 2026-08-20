@@ -955,6 +955,23 @@ button {
   margin-bottom: 16px;
 }
 
+/* Buscador + filtro por estado combinados en una sola fila (ej.
+   ProjectsListPage) — en una pantalla angosta se envuelven en dos filas via
+   flex-wrap, en vez de superponerse. */
+.list-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 16px;
+  margin-bottom: 16px;
+}
+
+.list-filters .search-bar {
+  flex: 1;
+  min-width: 200px;
+  margin-bottom: 0;
+}
+
 .search-bar input {
   width: 100%;
   font-family: inherit;

@@ -11,8 +11,14 @@ import { PageHeader } from "../components/PageHeader";
 import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
 import { isManagerRole, isTopManagerRole } from "../types/auth";
-import { PROJECT_PRIORITIES, PROJECT_PROPERTY_TYPES, PROJECT_SECTORS, PROJECT_WORK_TYPES } from "../types/project";
-import type { Project } from "../types/project";
+import {
+  PROJECT_PRIORITIES,
+  PROJECT_PROPERTY_TYPES,
+  PROJECT_SECTORS,
+  PROJECT_STATUSES,
+  PROJECT_WORK_TYPES,
+} from "../types/project";
+import type { Project, ProjectStatus } from "../types/project";
 import { isValidGoogleMapsUrl } from "../utils/mapsUrl";
 
 export function ProjectsListPage() {
@@ -23,6 +29,7 @@ export function ProjectsListPage() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState<ProjectStatus | "">("");
 
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [name, setName] = useState("");
@@ -67,11 +74,14 @@ export function ProjectsListPage() {
 
   const canManage = isManagerRole(user.role);
 
-  // Filtra por nombre (client-side, sin endpoint nuevo) y ordena alfabetico
+  // Filtra por nombre y por estado a la vez (client-side, sin endpoint
+  // nuevo — ambos filtros se combinan con AND) y ordena alfabetico
   // descendente por defecto.
   const visibleProjects = (projects ?? [])
     .filter((project) => project.name.toLowerCase().includes(searchTerm.trim().toLowerCase()))
+    .filter((project) => statusFilter === "" || project.status === statusFilter)
     .sort((a, b) => b.name.localeCompare(a.name));
+  const hasActiveFilters = searchTerm.trim() !== "" || statusFilter !== "";
 
   function resetForm() {
     setName("");
@@ -150,14 +160,27 @@ export function ProjectsListPage() {
         )}
       </PageHeader>
 
-      <div className="search-bar">
-        <input
-          type="search"
-          value={searchTerm}
-          onChange={(event) => setSearchTerm(event.target.value)}
-          placeholder={t("searchPlaceholder", { ns: "projects" })}
-          aria-label={t("searchPlaceholder", { ns: "projects" })}
-        />
+      <div className="list-filters">
+        <div className="search-bar">
+          <input
+            type="search"
+            value={searchTerm}
+            onChange={(event) => setSearchTerm(event.target.value)}
+            placeholder={t("searchPlaceholder", { ns: "projects" })}
+            aria-label={t("searchPlaceholder", { ns: "projects" })}
+          />
+        </div>
+        <label className="status-filter">
+          {t("statusFilterLabel", { ns: "projects" })}
+          <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value as ProjectStatus | "")}>
+            <option value="">{t("statusFilterAll", { ns: "projects" })}</option>
+            {PROJECT_STATUSES.map((value) => (
+              <option key={value} value={value}>
+                {translateStatus(t, "projects", "status", value)}
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
 
       {canManage && isFormOpen && (
@@ -290,7 +313,7 @@ export function ProjectsListPage() {
         !errorMessage &&
         projects &&
         (visibleProjects.length === 0 ? (
-          <p>{t(searchTerm ? "noResults" : "empty", { ns: "projects" })}</p>
+          <p>{t(hasActiveFilters ? "noResults" : "empty", { ns: "projects" })}</p>
         ) : (
           <ul className="card-list">
             {visibleProjects.map((project) => (
