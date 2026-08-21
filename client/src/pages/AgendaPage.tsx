@@ -9,6 +9,7 @@ import { ConfirmDialog } from "../components/ConfirmDialog";
 import { PageHeader } from "../components/PageHeader";
 import { useAuth } from "../context/AuthContext";
 import { isManagerRole, isTopManagerRole } from "../types/auth";
+import type { User } from "../types/auth";
 import { AGENDA_EVENT_TYPES } from "../types/agenda";
 import type { AgendaEvent, AgendaEventType, ScheduledActivity } from "../types/agenda";
 
@@ -20,6 +21,7 @@ interface EventFormState {
   startAt: string;
   endAt: string;
   type: AgendaEventType;
+  participantIds: string[];
 }
 
 const EMPTY_FORM: EventFormState = {
@@ -28,6 +30,7 @@ const EMPTY_FORM: EventFormState = {
   startAt: "",
   endAt: "",
   type: "REUNION",
+  participantIds: [],
 };
 
 function pad(n: number): string {
@@ -85,6 +88,8 @@ export function AgendaPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
 
+  const [users, setUsers] = useState<User[] | null>(null);
+
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingEventId, setEditingEventId] = useState<string | null>(null);
   const [form, setForm] = useState<EventFormState>(EMPTY_FORM);
@@ -119,6 +124,21 @@ export function AgendaPage() {
     void loadAgenda();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [from.getTime(), to.getTime()]);
+
+  useEffect(() => {
+    apiClient
+      .get<{ users: User[] }>("/auth/users")
+      .then((response) => setUsers(response.data.users))
+      .catch(() => setUsers([]));
+  }, []);
+
+  // Candidatos para el selector de participantes: Administrador/Gerente/
+  // Supervisor activos (los unicos roles con acceso a la Agenda), sin
+  // contarse a si mismo (el creador ya ve su propio evento).
+  const participantCandidates = useMemo(
+    () => (users ?? []).filter((candidate) => isManagerRole(candidate.role) && candidate.isActive && candidate.id !== user?.id),
+    [users, user?.id],
+  );
 
   function goToPrevious() {
     setRefDate((current) =>
@@ -155,9 +175,19 @@ export function AgendaPage() {
       startAt: toLocalInputValue(new Date(event.startAt)),
       endAt: event.endAt ? toLocalInputValue(new Date(event.endAt)) : "",
       type: event.type,
+      participantIds: event.participants.map((participant) => participant.id),
     });
     setFormError(null);
     setIsFormOpen(true);
+  }
+
+  function toggleParticipant(userId: string) {
+    setForm((current) => ({
+      ...current,
+      participantIds: current.participantIds.includes(userId)
+        ? current.participantIds.filter((id) => id !== userId)
+        : [...current.participantIds, userId],
+    }));
   }
 
   async function handleSubmit(formEvent: FormEvent<HTMLFormElement>) {
@@ -171,6 +201,7 @@ export function AgendaPage() {
         startAt: new Date(form.startAt).toISOString(),
         endAt: form.endAt ? new Date(form.endAt).toISOString() : null,
         type: form.type,
+        participantIds: form.participantIds,
       };
       if (editingEventId) {
         await apiClient.patch(`/agenda-events/${editingEventId}`, payload);
@@ -324,6 +355,28 @@ export function AgendaPage() {
               ))}
             </select>
           </label>
+          <div className="agenda-participants-field">
+            <span className="agenda-participants-field-label">{t("form.participantsLabel", { ns: "agenda" })}</span>
+            <p className="agenda-participants-help">{t("form.participantsHelp", { ns: "agenda" })}</p>
+            {participantCandidates.length === 0 ? (
+              <p className="agenda-participants-empty">{t("form.noParticipantOptions", { ns: "agenda" })}</p>
+            ) : (
+              <ul className="assign-workers-list">
+                {participantCandidates.map((candidate) => (
+                  <li key={candidate.id}>
+                    <label className="assign-workers-option">
+                      <input
+                        type="checkbox"
+                        checked={form.participantIds.includes(candidate.id)}
+                        onChange={() => toggleParticipant(candidate.id)}
+                      />
+                      {candidate.name}
+                    </label>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
           {formError && (
             <p className="form-error" role="alert">
               {formError}
@@ -391,6 +444,30 @@ export function AgendaPage() {
                           {t("createdByLabel", { ns: "agenda" })}: {entry.event.createdBy.name}
                         </span>
                         {entry.event.description && <p className="card-description">{entry.event.description}</p>}
+
+                        {entry.event.participants.length > 0 && (
+                          <div className="agenda-participant-list">
+                            {entry.event.participants.map((participant) =>
+                              participant.photoUrl ? (
+                                <img
+                                  key={participant.id}
+                                  src={participant.photoUrl}
+                                  alt={participant.name}
+                                  title={participant.name}
+                                  className="agenda-participant-avatar"
+                                />
+                              ) : (
+                                <span
+                                  key={participant.id}
+                                  title={participant.name}
+                                  className="agenda-participant-avatar agenda-participant-avatar--placeholder"
+                                >
+                                  {participant.name.charAt(0).toUpperCase()}
+                                </span>
+                              ),
+                            )}
+                          </div>
+                        )}
 
                         {canEditEvent(entry.event) && (
                           <div className="card-actions">

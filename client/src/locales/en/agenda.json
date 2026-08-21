@@ -1,6 +1,6 @@
 {
   "title": "Agenda",
-  "sharedNote": "Shared agenda for the management team: every event is visible to Administrator, General Manager and Supervisor, it's not a private personal agenda.",
+  "sharedNote": "Administrator and General Manager see every event, no exceptions. A Supervisor only sees events they created or was added to as a participant.",
   "createButton": "New event",
   "createFormTitle": "New event",
   "editFormTitle": "Edit event",
@@ -27,6 +27,9 @@
     "startAtLabel": "Start date and time",
     "endAtLabel": "End date and time (optional)",
     "typeLabel": "Type",
+    "participantsLabel": "Participants (optional)",
+    "participantsHelp": "If you don't pick anyone, the event is private: only you will see it (Administrator and General Manager always see every event).",
+    "noParticipantOptions": "There are no other administrators, general managers, or supervisors to add.",
     "save": "Save",
     "saving": "Saving..."
   },

@@ -1,6 +1,6 @@
 {
   "title": "Agenda",
-  "sharedNote": "Agenda compartida del equipo de gestión: todos los eventos son visibles para Administrador, Gerente y Supervisor, no es una agenda personal.",
+  "sharedNote": "Administrador y Gerente ven todos los eventos, sin excepción. Un Supervisor solo ve los eventos que creó o en los que fue agregado como participante.",
   "createButton": "Nuevo evento",
   "createFormTitle": "Nuevo evento",
   "editFormTitle": "Editar evento",
@@ -27,6 +27,9 @@
     "startAtLabel": "Fecha y hora de inicio",
     "endAtLabel": "Fecha y hora de fin (opcional)",
     "typeLabel": "Tipo",
+    "participantsLabel": "Participantes (opcional)",
+    "participantsHelp": "Si no eliges a nadie, el evento es privado: solo tú lo verás (Administrador y Gerente siempre ven todos los eventos).",
+    "noParticipantOptions": "No hay otros administradores, gerentes o supervisores para agregar.",
     "save": "Guardar",
     "saving": "Guardando..."
   },

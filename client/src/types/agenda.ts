@@ -12,6 +12,9 @@ export interface AgendaEvent {
   createdBy: { id: string; name: string };
   createdAt: string;
   updatedAt: string;
+  // Vacio = evento privado, solo lo ve el creador (mas Administrador/Gerente,
+  // que ven todo sin excepcion). Ver agenda-events.service.ts.
+  participants: { id: string; name: string; photoUrl: string | null }[];
 }
 
 /** Forma reducida de Activity que devuelve GET /activities/scheduled — solo

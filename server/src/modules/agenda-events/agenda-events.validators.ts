@@ -15,6 +15,8 @@ export const createAgendaEventSchema = z
     // usuario deja "fecha de fin" vacia, no solo omite la clave.
     endAt: z.coerce.date().nullable().optional(),
     type: z.nativeEnum(AgendaEventType),
+    // Vacio o ausente = evento privado (solo lo ve el creador).
+    participantIds: z.array(z.string()).optional(),
   })
   .refine((data) => !data.endAt || data.endAt >= data.startAt, {
     message: "endAt no puede ser anterior a startAt",
@@ -28,6 +30,9 @@ export const updateAgendaEventSchema = z
     startAt: z.coerce.date().optional(),
     endAt: z.coerce.date().nullable().optional(),
     type: z.nativeEnum(AgendaEventType).optional(),
+    // Vacio o ausente = evento privado (reemplaza la lista completa de
+    // participantes, igual que en creacion — no es un "agregar a la lista").
+    participantIds: z.array(z.string()).optional(),
   })
   .refine((data) => !data.endAt || !data.startAt || data.endAt >= data.startAt, {
     message: "endAt no puede ser anterior a startAt",

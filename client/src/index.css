@@ -1609,6 +1609,55 @@ a.card-title:hover {
   border: 1px dashed var(--border);
 }
 
+.agenda-participants-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.agenda-participants-field-label {
+  font-size: 13px;
+  color: var(--text-h);
+  font-weight: 600;
+}
+
+.agenda-participants-help {
+  margin: 0 0 4px;
+  font-size: 12px;
+  color: var(--text);
+}
+
+.agenda-participants-empty {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text);
+}
+
+.agenda-participant-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.agenda-participant-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+
+.agenda-participant-avatar--placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent-bg);
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+}
+
 .button-link {
   display: inline-flex;
   align-items: center;

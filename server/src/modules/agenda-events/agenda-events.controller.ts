@@ -9,7 +9,7 @@ import {
 
 export const list = asyncHandler(async (req: Request, res: Response) => {
   const { from, to } = listAgendaEventsQuerySchema.parse(req.query);
-  const events = await agendaEventsService.listAgendaEvents(from, to);
+  const events = await agendaEventsService.listAgendaEvents(req.user!, from, to);
   res.json({ events });
 });
 

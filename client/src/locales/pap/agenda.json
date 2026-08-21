@@ -1,6 +1,6 @@
 {
   "title": "Agenda",
-  "sharedNote": "Agenda kompartí di e ekipo di gerensia: tur evento ta visibel pa Administradó, Gerente i Supervisor, e no ta un agenda personal.",
+  "sharedNote": "Administradó i Gerente ta mira tur evento, sin eksepshon. Un Supervisor solamente ta mira e eventonan ku e a krea òf kaminda e ta partisipante.",
   "createButton": "Evento nobo",
   "createFormTitle": "Evento nobo",
   "editFormTitle": "Edita evento",
@@ -27,6 +27,9 @@
     "startAtLabel": "Fecha i ora di kuminsamentu",
     "endAtLabel": "Fecha i ora di final (opshonal)",
     "typeLabel": "Tipo",
+    "participantsLabel": "Partisipante (opshonal)",
+    "participantsHelp": "Si bo no skohe ningun hende, e evento ta privá: solamente bo lo mir'é (Administradó i Gerente semper ta mira tur evento).",
+    "noParticipantOptions": "No tin otro administradó, gerente òf supervisor pa agregá.",
     "save": "Warda",
     "saving": "Ta warda..."
   },

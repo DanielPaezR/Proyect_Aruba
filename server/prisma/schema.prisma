@@ -280,11 +280,12 @@ model User {
   scoreEvents              WorkerScoreEvent[]     @relation("WorkerScoreEventForUser")
   createdScoreEvents       WorkerScoreEvent[]     @relation("WorkerScoreEventCreatedBy")
 
-  toolAssignments          ToolAssignment[]     @relation("ToolAssignmentUser")
-  materialRequests         MaterialRequest[]    @relation("MaterialRequestRequestedBy")
-  resolvedMaterialRequests MaterialRequest[]    @relation("MaterialRequestResolvedBy")
-  toolIncidentReports      ToolIncidentReport[] @relation("ToolIncidentReportedBy")
-  agendaEvents             AgendaEvent[]        @relation("AgendaEventCreatedBy")
+  toolAssignments           ToolAssignment[]         @relation("ToolAssignmentUser")
+  materialRequests          MaterialRequest[]        @relation("MaterialRequestRequestedBy")
+  resolvedMaterialRequests  MaterialRequest[]        @relation("MaterialRequestResolvedBy")
+  toolIncidentReports       ToolIncidentReport[]     @relation("ToolIncidentReportedBy")
+  agendaEvents              AgendaEvent[]            @relation("AgendaEventCreatedBy")
+  agendaEventParticipations AgendaEventParticipant[] @relation("AgendaEventParticipantUser")
 
   assignedVehicles         Vehicle[]               @relation("VehicleAssignedTo")
   recordedFuelLogs         FuelLog[]               @relation("FuelLogRecordedBy")
@@ -1054,8 +1055,26 @@ model AgendaEvent {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  participants AgendaEventParticipant[]
+
   @@index([startAt])
   @@map("agenda_events")
+}
+
+// Vacio = evento privado (solo lo ve el creador). Mismo patron que
+// EmergencyAssignment: un usuario no puede quedar agregado dos veces al
+// mismo evento (@@unique).
+model AgendaEventParticipant {
+  id      String      @id @default(cuid())
+  eventId String
+  event   AgendaEvent @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId  String
+  user    User        @relation("AgendaEventParticipantUser", fields: [userId], references: [id], onDelete: Cascade)
+
+  addedAt DateTime @default(now())
+
+  @@unique([eventId, userId])
+  @@map("agenda_event_participants")
 }
 
 // Documentos del trabajador (cedula, certificados, etc). userId es de quien
