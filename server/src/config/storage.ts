@@ -157,11 +157,17 @@ export const invoiceUpload = multer({
 });
 
 /** Sube un PDF a Cloudinary como resource_type "raw" (no es una imagen que
- * Cloudinary deba procesar/transformar, solo un archivo que se sirve tal cual). */
+ * Cloudinary deba procesar/transformar, solo un archivo que se sirve tal
+ * cual). format: "pdf" es obligatorio aca — sin el, Cloudinary no sabe que
+ * tipo de archivo es (el buffer no lleva nombre) y lo sirve como
+ * application/octet-stream con Content-Disposition: attachment, forzando
+ * descarga en vez de poder mostrarlo embebido (ver mismo comentario en
+ * uploadDocumentFile/DOCUMENT_MIME_TO_FORMAT — invoiceUpload ya valida PDF
+ * unicamente, no hace falta un mapa de mimetype a formato). */
 export function uploadInvoiceFile(buffer: Buffer): Promise<UploadedImage> {
   return new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
-      { folder: INVOICES_FOLDER, resource_type: "raw" },
+      { folder: INVOICES_FOLDER, resource_type: "raw", format: "pdf" },
       (error?: UploadApiErrorResponse, result?: UploadApiResponse) => {
         if (error || !result) {
           reject(error ?? new Error("Cloudinary no devolvió resultado al subir la factura"));

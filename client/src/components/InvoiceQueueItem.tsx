@@ -5,6 +5,9 @@ import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { translateStatus } from "../i18n/statusLabel";
 import type { InvoiceWithProject } from "../types/invoice";
+import { inferDocumentMediaType } from "../utils/mediaType";
+import { MediaLightbox } from "./MediaLightbox";
+import type { LightboxMedia } from "./MediaLightbox";
 
 function statusBadgeClassName(status: InvoiceWithProject["status"]): string {
   if (status === "APROBADA") {
@@ -36,6 +39,7 @@ export function InvoiceQueueItem({ invoice, onReviewed }: InvoiceQueueItemProps)
   const [returnComment, setReturnComment] = useState("");
   const [isReturning, setIsReturning] = useState(false);
   const [reviewError, setReviewError] = useState<string | null>(null);
+  const [lightboxMedia, setLightboxMedia] = useState<LightboxMedia | null>(null);
 
   async function handleApprove() {
     setReviewError(null);
@@ -80,9 +84,18 @@ export function InvoiceQueueItem({ invoice, onReviewed }: InvoiceQueueItemProps)
         {t("uploadedBy", { ns: "invoices" })}: {invoice.uploadedBy.name} ·{" "}
         {t("uploadedOn", { ns: "invoices", date: formatDate(invoice.createdAt) })}
       </span>
-      <a href={invoice.fileUrl} target="_blank" rel="noreferrer" className="button-link">
+      <button
+        type="button"
+        onClick={() =>
+          setLightboxMedia({
+            url: invoice.fileUrl,
+            mediaType: inferDocumentMediaType(invoice),
+            alt: t("viewButton", { ns: "invoices" }),
+          })
+        }
+      >
         {t("viewButton", { ns: "invoices" })}
-      </a>
+      </button>
 
       {invoice.status === "PENDIENTE_REVISION" ? (
         <>
@@ -131,6 +144,8 @@ export function InvoiceQueueItem({ invoice, onReviewed }: InvoiceQueueItemProps)
           {invoice.reviewComment ? ` · ${invoice.reviewComment}` : ""}
         </span>
       )}
+
+      <MediaLightbox media={lightboxMedia} onClose={() => setLightboxMedia(null)} />
     </li>
   );
 }

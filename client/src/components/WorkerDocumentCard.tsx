@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { FileText } from "lucide-react";
 import type { WorkerDocument } from "../types/workerDocument";
+import { inferDocumentMediaType } from "../utils/mediaType";
 import { MediaLightbox } from "./MediaLightbox";
 import type { LightboxMedia } from "./MediaLightbox";
 
@@ -12,19 +13,6 @@ interface WorkerDocumentCardProps {
   canDelete: boolean;
   deleteLabel: string;
   onDelete: () => void;
-}
-
-/** PDF vs imagen — usa mimeType si esta disponible (documentos subidos
- * despues de esta migracion); si no, cae a detectar la extension del
- * fileUrl (documentos sembrados antes, sin mimeType guardado). */
-function inferDocumentMediaType(doc: WorkerDocument): "IMAGEN" | "PDF" {
-  if (doc.mimeType === "application/pdf") {
-    return "PDF";
-  }
-  if (doc.mimeType) {
-    return "IMAGEN";
-  }
-  return doc.fileUrl.toLowerCase().endsWith(".pdf") ? "PDF" : "IMAGEN";
 }
 
 function formatFileSize(bytes: number | null): string | null {

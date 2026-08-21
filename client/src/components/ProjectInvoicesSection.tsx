@@ -7,6 +7,9 @@ import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
 import { isTopManagerRole } from "../types/auth";
 import type { Invoice } from "../types/invoice";
+import { inferDocumentMediaType } from "../utils/mediaType";
+import { MediaLightbox } from "./MediaLightbox";
+import type { LightboxMedia } from "./MediaLightbox";
 
 function statusBadgeClassName(status: Invoice["status"]): string {
   if (status === "APROBADA") {
@@ -46,6 +49,8 @@ export function ProjectInvoicesSection({ projectId }: ProjectInvoicesSectionProp
   const [resubmitFile, setResubmitFile] = useState<File | null>(null);
   const [isResubmitting, setIsResubmitting] = useState(false);
   const [resubmitError, setResubmitError] = useState<string | null>(null);
+
+  const [lightboxMedia, setLightboxMedia] = useState<LightboxMedia | null>(null);
 
   async function loadInvoices() {
     setIsLoading(true);
@@ -185,9 +190,18 @@ export function ProjectInvoicesSection({ projectId }: ProjectInvoicesSectionProp
                 <span className="card-meta">
                   {t("uploadedBy", { ns: "invoices" })}: {invoice.uploadedBy.name}
                 </span>
-                <a href={invoice.fileUrl} target="_blank" rel="noreferrer" className="button-link">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setLightboxMedia({
+                      url: invoice.fileUrl,
+                      mediaType: inferDocumentMediaType(invoice),
+                      alt: t("viewButton", { ns: "invoices" }),
+                    })
+                  }
+                >
                   {t("viewButton", { ns: "invoices" })}
-                </a>
+                </button>
 
                 {invoice.status === "DEVUELTA" && (
                   <>
@@ -239,6 +253,8 @@ export function ProjectInvoicesSection({ projectId }: ProjectInvoicesSectionProp
             ))}
           </ul>
         ))}
+
+      <MediaLightbox media={lightboxMedia} onClose={() => setLightboxMedia(null)} />
     </section>
   );
 }
