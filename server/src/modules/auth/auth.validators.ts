@@ -21,16 +21,16 @@ export const createUserSchema = z.object({
 });
 
 // Edicion general de usuario (ADMINISTRADOR/GERENTE-only): datos basicos + perfil laboral.
-// hourlyRate NO esta aca: sigue exclusivamente en PATCH /hourly-rate, que
-// lleva su propio historial auditado (SalaryRaise) — no hay dos caminos
-// distintos para tocar el mismo campo auditado. overtimeHourlyRate si esta
-// aca porque, a diferencia de hourlyRate, no tiene historial dedicado.
+// Ni hourlyRate ni overtimeHourlyRate estan aca: ambos se cambian
+// exclusivamente vía PATCH /hourly-rate (updateHourlyRateSchema), que
+// lleva su propio historial auditado en SalaryRaise (previousRate/newRate
+// y previousOvertimeRate/newOvertimeRate) — no hay dos caminos distintos
+// para tocar el mismo campo auditado.
 export const updateUserSchema = z.object({
   name: z.string().min(2).optional(),
   email: z.string().email().optional(),
   phone: z.string().optional(),
   hireDate: z.coerce.date().nullable().optional(),
-  overtimeHourlyRate: z.number().positive().nullable().optional(),
   specialties: z.array(z.string()).optional(),
   workDaysPerWeek: z.number().int().min(1).max(7).nullable().optional(),
   workScheduleNote: z.string().nullable().optional(),

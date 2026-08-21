@@ -24,7 +24,6 @@ interface EditFormState {
   email: string;
   phone: string;
   hireDate: string;
-  overtimeHourlyRate: string;
   specialties: string;
   workDaysPerWeek: string;
   workScheduleNote: string;
@@ -43,7 +42,6 @@ function profileToFormState(profile: WorkerProfile): EditFormState {
     email: profile.user.email,
     phone: profile.user.phone ?? "",
     hireDate: toDateInputValue(profile.user.hireDate),
-    overtimeHourlyRate: profile.user.overtimeHourlyRate ?? "",
     specialties: profile.user.specialties.join(", "),
     workDaysPerWeek: profile.user.workDaysPerWeek?.toString() ?? "",
     workScheduleNote: profile.user.workScheduleNote ?? "",
@@ -189,7 +187,6 @@ export function WorkerProfilePage() {
         email: editForm.email,
         phone: editForm.phone,
         hireDate: editForm.hireDate ? new Date(editForm.hireDate).toISOString() : null,
-        overtimeHourlyRate: editForm.overtimeHourlyRate ? Number(editForm.overtimeHourlyRate) : null,
         specialties: editForm.specialties
           .split(",")
           .map((value) => value.trim())
@@ -597,16 +594,6 @@ export function WorkerProfilePage() {
                   type="date"
                   value={editForm.hireDate}
                   onChange={(event) => setEditForm({ ...editForm, hireDate: event.target.value })}
-                />
-              </label>
-              <label>
-                {t("profile.overtimeRateLabel", { ns: "users" })}
-                <input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={editForm.overtimeHourlyRate}
-                  onChange={(event) => setEditForm({ ...editForm, overtimeHourlyRate: event.target.value })}
                 />
               </label>
               <label>

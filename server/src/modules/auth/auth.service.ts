@@ -294,7 +294,6 @@ export async function updateUser(userId: string, input: UpdateUserInput) {
       ...(input.email !== undefined ? { email: input.email } : {}),
       ...(input.phone !== undefined ? { phone: input.phone || null } : {}),
       ...(input.hireDate !== undefined ? { hireDate: input.hireDate } : {}),
-      ...(input.overtimeHourlyRate !== undefined ? { overtimeHourlyRate: input.overtimeHourlyRate } : {}),
       ...(input.specialties !== undefined ? { specialties: input.specialties } : {}),
       ...(input.workDaysPerWeek !== undefined ? { workDaysPerWeek: input.workDaysPerWeek } : {}),
       ...(input.workScheduleNote !== undefined ? { workScheduleNote: input.workScheduleNote } : {}),
