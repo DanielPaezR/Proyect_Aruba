@@ -211,7 +211,13 @@ button {
 .drawer-overlay {
   position: fixed;
   inset: 0;
-  z-index: 100;
+  /* Segunda capa de defensa (ver .team-map): el menu es navegacion global,
+     tiene que quedar por encima de CUALQUIER otra cosa en la app — incluido
+     cualquier widget de terceros que se agregue despues y no respete el
+     scope de su propio contenedor. El resto de los z-index del archivo no
+     pasan de 201 (.media-lightbox-close), asi que 1000 lo deja
+     inequivocamente arriba de todo. */
+  z-index: 1000;
   display: flex;
   background: rgba(0, 0, 0, 0.5);
 }
@@ -673,7 +679,16 @@ button {
   margin-bottom: 32px;
 }
 
+/* position: relative + isolation: isolate crean un contexto de apilamiento
+   propio para este contenedor — los z-index internos de Leaflet (paneles de
+   marcadores/popups, hasta ~700 por defecto) quedan atrapados adentro sin
+   importar que tan alto sean, nunca se escapan por encima de elementos
+   fuera de este div (ej. el drawer del menu). Primera de dos capas de
+   defensa contra este bug; la segunda es el z-index de .drawer-overlay
+   mas abajo. */
 .team-map {
+  position: relative;
+  isolation: isolate;
   height: 360px;
   width: 100%;
   border-radius: 8px;
