@@ -30,6 +30,7 @@ import esFinancialHistory from "../locales/es/financialHistory.json";
 import esVehicles from "../locales/es/vehicles.json";
 import esVehicleIncidents from "../locales/es/vehicleIncidents.json";
 import esMyVehicle from "../locales/es/myVehicle.json";
+import esEmergencies from "../locales/es/emergencies.json";
 import enCommon from "../locales/en/common.json";
 import enAuth from "../locales/en/auth.json";
 import enChat from "../locales/en/chat.json";
@@ -58,6 +59,7 @@ import enFinancialHistory from "../locales/en/financialHistory.json";
 import enVehicles from "../locales/en/vehicles.json";
 import enVehicleIncidents from "../locales/en/vehicleIncidents.json";
 import enMyVehicle from "../locales/en/myVehicle.json";
+import enEmergencies from "../locales/en/emergencies.json";
 import papCommon from "../locales/pap/common.json";
 import papAuth from "../locales/pap/auth.json";
 import papChat from "../locales/pap/chat.json";
@@ -86,6 +88,7 @@ import papFinancialHistory from "../locales/pap/financialHistory.json";
 import papVehicles from "../locales/pap/vehicles.json";
 import papVehicleIncidents from "../locales/pap/vehicleIncidents.json";
 import papMyVehicle from "../locales/pap/myVehicle.json";
+import papEmergencies from "../locales/pap/emergencies.json";
 
 export const SUPPORTED_LANGUAGES = ["es", "en", "pap"] as const;
 export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
@@ -127,6 +130,7 @@ void i18n
         vehicles: esVehicles,
         vehicleIncidents: esVehicleIncidents,
         myVehicle: esMyVehicle,
+        emergencies: esEmergencies,
       },
       en: {
         common: enCommon,
@@ -157,6 +161,7 @@ void i18n
         vehicles: enVehicles,
         vehicleIncidents: enVehicleIncidents,
         myVehicle: enMyVehicle,
+        emergencies: enEmergencies,
       },
       pap: {
         common: papCommon,
@@ -187,6 +192,7 @@ void i18n
         vehicles: papVehicles,
         vehicleIncidents: papVehicleIncidents,
         myVehicle: papMyVehicle,
+        emergencies: papEmergencies,
       },
     },
     fallbackLng: "es",
@@ -220,6 +226,7 @@ void i18n
       "vehicles",
       "vehicleIncidents",
       "myVehicle",
+      "emergencies",
     ],
     defaultNS: "common",
     interpolation: { escapeValue: false },

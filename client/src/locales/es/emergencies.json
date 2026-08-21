@@ -1,0 +1,54 @@
+{
+  "title": "Emergencias",
+  "statusFilterLabel": "Estado",
+  "statusFilterAll": "Todas",
+  "empty": "No hay emergencias registradas",
+  "reportedBy": "Reportado por {{name}}",
+  "assignedTo": "Asignado a: {{names}}",
+  "resolvedLabel": "Resuelta",
+  "markInProgressButton": "Marcar en progreso",
+  "resolveButton": "Marcar resuelta",
+  "create": {
+    "button": "Nueva emergencia",
+    "formTitle": "Registrar emergencia",
+    "titleLabel": "Título",
+    "descriptionLabel": "Descripción",
+    "locationMapsUrlLabel": "Ubicación (link de Google Maps)",
+    "locationMapsUrlPlaceholder": "https://maps.app.goo.gl/...",
+    "mapsUrlInvalid": "El link debe empezar con https:// y ser un link de Google Maps (google.com/maps o maps.app.goo.gl)",
+    "priorityLabel": "Prioridad",
+    "projectLabel": "Proyecto relacionado",
+    "projectPlaceholder": "Sin proyecto relacionado",
+    "submit": "Crear",
+    "submitting": "Creando..."
+  },
+  "assign": {
+    "button": "Asignar trabajador",
+    "workerLabel": "Trabajador",
+    "workerPlaceholder": "Selecciona un trabajador",
+    "save": "Asignar",
+    "saving": "Asignando..."
+  },
+  "resolveDialog": {
+    "title": "Marcar como resuelta",
+    "message": "¿Marcar \"{{title}}\" como resuelta?",
+    "noteLabel": "Nota de resolución (opcional)",
+    "submit": "Marcar resuelta"
+  },
+  "priority": {
+    "MEDIA": "Media",
+    "ALTA": "Alta",
+    "URGENTE": "Urgente"
+  },
+  "status": {
+    "REPORTADA": "Reportada",
+    "ASIGNADA": "Asignada",
+    "EN_PROGRESO": "En progreso",
+    "RESUELTA": "Resuelta"
+  },
+  "mine": {
+    "title": "Mis emergencias",
+    "empty": "No tienes emergencias asignadas",
+    "directionsButton": "Cómo llegar"
+  }
+}

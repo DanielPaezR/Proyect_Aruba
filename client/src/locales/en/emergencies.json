@@ -1,0 +1,54 @@
+{
+  "title": "Emergencies",
+  "statusFilterLabel": "Status",
+  "statusFilterAll": "All",
+  "empty": "No emergencies reported",
+  "reportedBy": "Reported by {{name}}",
+  "assignedTo": "Assigned to: {{names}}",
+  "resolvedLabel": "Resolved",
+  "markInProgressButton": "Mark in progress",
+  "resolveButton": "Mark resolved",
+  "create": {
+    "button": "New emergency",
+    "formTitle": "Report emergency",
+    "titleLabel": "Title",
+    "descriptionLabel": "Description",
+    "locationMapsUrlLabel": "Location (Google Maps link)",
+    "locationMapsUrlPlaceholder": "https://maps.app.goo.gl/...",
+    "mapsUrlInvalid": "The link must start with https:// and be a Google Maps link (google.com/maps or maps.app.goo.gl)",
+    "priorityLabel": "Priority",
+    "projectLabel": "Related project",
+    "projectPlaceholder": "No related project",
+    "submit": "Create",
+    "submitting": "Creating..."
+  },
+  "assign": {
+    "button": "Assign worker",
+    "workerLabel": "Worker",
+    "workerPlaceholder": "Select a worker",
+    "save": "Assign",
+    "saving": "Assigning..."
+  },
+  "resolveDialog": {
+    "title": "Mark as resolved",
+    "message": "Mark \"{{title}}\" as resolved?",
+    "noteLabel": "Resolution note (optional)",
+    "submit": "Mark resolved"
+  },
+  "priority": {
+    "MEDIA": "Medium",
+    "ALTA": "High",
+    "URGENTE": "Urgent"
+  },
+  "status": {
+    "REPORTADA": "Reported",
+    "ASIGNADA": "Assigned",
+    "EN_PROGRESO": "In progress",
+    "RESUELTA": "Resolved"
+  },
+  "mine": {
+    "title": "My emergencies",
+    "empty": "You don't have any emergencies assigned",
+    "directionsButton": "Get directions"
+  }
+}

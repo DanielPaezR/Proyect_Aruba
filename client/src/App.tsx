@@ -7,6 +7,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 import { AgendaPage } from "./pages/AgendaPage";
 import { ClientDetailPage } from "./pages/ClientDetailPage";
 import { ClientsListPage } from "./pages/ClientsListPage";
+import { EmergenciesPage } from "./pages/EmergenciesPage";
 import { EvidencesReviewPage } from "./pages/EvidencesReviewPage";
 import { FinancialHistoryPage } from "./pages/FinancialHistoryPage";
 import { InventoryPage } from "./pages/InventoryPage";
@@ -14,6 +15,7 @@ import { InvoicesQueuePage } from "./pages/InvoicesQueuePage";
 import { LoginPage } from "./pages/LoginPage";
 import { MaterialRequestsPage } from "./pages/MaterialRequestsPage";
 import { MyActivitiesPage } from "./pages/MyActivitiesPage";
+import { MyEmergenciesPage } from "./pages/MyEmergenciesPage";
 import { MyHoursPage } from "./pages/MyHoursPage";
 import { MyToolsPage } from "./pages/MyToolsPage";
 import { MyVehiclePage } from "./pages/MyVehiclePage";
@@ -48,6 +50,8 @@ function App() {
                 <Route path="/dashboard" element={<SupervisorDashboardPage />} />
                 <Route path="/my-activities" element={<MyActivitiesPage />} />
                 <Route path="/my-hours" element={<MyHoursPage />} />
+                <Route path="/my-emergencies" element={<MyEmergenciesPage />} />
+                <Route path="/emergencies" element={<EmergenciesPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/projects" element={<ProjectsListPage />} />
                 <Route path="/projects/:projectId" element={<ProjectDetailPage />} />

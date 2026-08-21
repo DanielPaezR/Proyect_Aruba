@@ -87,6 +87,11 @@ export function Layout() {
                   {t("nav.myHours", { ns: "common" })}
                 </NavLink>
               )}
+              {isTimeTrackingRole(user.role) && (
+                <NavLink to="/my-emergencies" className={navLinkClassName}>
+                  {t("nav.myEmergencies", { ns: "common" })}
+                </NavLink>
+              )}
               {user.role === "TRABAJADOR_CAMPO" && (
                 <NavLink to="/my-tools" className={navLinkClassName}>
                   {t("nav.myTools", { ns: "common" })}
@@ -115,6 +120,11 @@ export function Layout() {
               {isManagerRole(user.role) && hasFeature("EVIDENCIAS") && (
                 <NavLink to="/evidences" className={navLinkClassName}>
                   {t("nav.evidences", { ns: "common" })}
+                </NavLink>
+              )}
+              {isManagerRole(user.role) && hasFeature("EMERGENCIAS") && (
+                <NavLink to="/emergencies" className={navLinkClassName}>
+                  {t("nav.emergencies", { ns: "common" })}
                 </NavLink>
               )}
               {isManagerRole(user.role) && hasFeature("USUARIOS") && (

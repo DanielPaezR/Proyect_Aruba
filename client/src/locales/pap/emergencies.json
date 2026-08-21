@@ -1,0 +1,54 @@
+{
+  "title": "Emergensianan",
+  "statusFilterLabel": "Estado",
+  "statusFilterAll": "Tur",
+  "empty": "No tin emergensia registrá",
+  "reportedBy": "Reportá pa {{name}}",
+  "assignedTo": "Asigná na: {{names}}",
+  "resolvedLabel": "Resolvé",
+  "markInProgressButton": "Marka na progreso",
+  "resolveButton": "Marka resolvé",
+  "create": {
+    "button": "Emergensia nobo",
+    "formTitle": "Registra emergensia",
+    "titleLabel": "Título",
+    "descriptionLabel": "Deskripshon",
+    "locationMapsUrlLabel": "Ubikashon (link di Google Maps)",
+    "locationMapsUrlPlaceholder": "https://maps.app.goo.gl/...",
+    "mapsUrlInvalid": "E link mester kuminsa ku https:// i ta un link di Google Maps (google.com/maps òf maps.app.goo.gl)",
+    "priorityLabel": "Prioridat",
+    "projectLabel": "Proyekto relashoná",
+    "projectPlaceholder": "Sin proyekto relashoná",
+    "submit": "Krea",
+    "submitting": "Ta krea..."
+  },
+  "assign": {
+    "button": "Asigna trahadó",
+    "workerLabel": "Trahadó",
+    "workerPlaceholder": "Skohe un trahadó",
+    "save": "Asigna",
+    "saving": "Ta asigná..."
+  },
+  "resolveDialog": {
+    "title": "Marka komo resolvé",
+    "message": "Marka \"{{title}}\" komo resolvé?",
+    "noteLabel": "Nota di resolushon (opshonal)",
+    "submit": "Marka resolvé"
+  },
+  "priority": {
+    "MEDIA": "Mediano",
+    "ALTA": "Haltu",
+    "URGENTE": "Urgente"
+  },
+  "status": {
+    "REPORTADA": "Reportá",
+    "ASIGNADA": "Asigná",
+    "EN_PROGRESO": "Na progreso",
+    "RESUELTA": "Resolvé"
+  },
+  "mine": {
+    "title": "Mi emergensianan",
+    "empty": "Bo no tin emergensia asigná",
+    "directionsButton": "Kon pa yega"
+  }
+}
