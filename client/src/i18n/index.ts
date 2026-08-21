@@ -31,6 +31,7 @@ import esVehicles from "../locales/es/vehicles.json";
 import esVehicleIncidents from "../locales/es/vehicleIncidents.json";
 import esMyVehicle from "../locales/es/myVehicle.json";
 import esEmergencies from "../locales/es/emergencies.json";
+import esReports from "../locales/es/reports.json";
 import enCommon from "../locales/en/common.json";
 import enAuth from "../locales/en/auth.json";
 import enChat from "../locales/en/chat.json";
@@ -60,6 +61,7 @@ import enVehicles from "../locales/en/vehicles.json";
 import enVehicleIncidents from "../locales/en/vehicleIncidents.json";
 import enMyVehicle from "../locales/en/myVehicle.json";
 import enEmergencies from "../locales/en/emergencies.json";
+import enReports from "../locales/en/reports.json";
 import papCommon from "../locales/pap/common.json";
 import papAuth from "../locales/pap/auth.json";
 import papChat from "../locales/pap/chat.json";
@@ -89,6 +91,7 @@ import papVehicles from "../locales/pap/vehicles.json";
 import papVehicleIncidents from "../locales/pap/vehicleIncidents.json";
 import papMyVehicle from "../locales/pap/myVehicle.json";
 import papEmergencies from "../locales/pap/emergencies.json";
+import papReports from "../locales/pap/reports.json";
 
 export const SUPPORTED_LANGUAGES = ["es", "en", "pap"] as const;
 export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
@@ -131,6 +134,7 @@ void i18n
         vehicleIncidents: esVehicleIncidents,
         myVehicle: esMyVehicle,
         emergencies: esEmergencies,
+        reports: esReports,
       },
       en: {
         common: enCommon,
@@ -162,6 +166,7 @@ void i18n
         vehicleIncidents: enVehicleIncidents,
         myVehicle: enMyVehicle,
         emergencies: enEmergencies,
+        reports: enReports,
       },
       pap: {
         common: papCommon,
@@ -193,6 +198,7 @@ void i18n
         vehicleIncidents: papVehicleIncidents,
         myVehicle: papMyVehicle,
         emergencies: papEmergencies,
+        reports: papReports,
       },
     },
     fallbackLng: "es",
@@ -227,6 +233,7 @@ void i18n
       "vehicleIncidents",
       "myVehicle",
       "emergencies",
+      "reports",
     ],
     defaultNS: "common",
     interpolation: { escapeValue: false },

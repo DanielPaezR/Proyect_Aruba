@@ -1,0 +1,39 @@
+{
+  "title": "Performance indicators",
+  "filters": {
+    "fromLabel": "From",
+    "toLabel": "To",
+    "projectLabel": "Project",
+    "allProjects": "All projects",
+    "workerLabel": "Worker",
+    "allWorkers": "All workers"
+  },
+  "summary": {
+    "avgCost": "Average cost per activity",
+    "avgCostHint": "Over {{count}} completed activity",
+    "avgCostHint_other": "Over {{count}} completed activities",
+    "avgDelay": "Average delay per project",
+    "avgDelayHint": "Over {{count}} project",
+    "avgDelayHint_other": "Over {{count}} projects",
+    "avgDelayValue": "{{days}} days",
+    "approvalRate": "Evidence approval rate",
+    "approvalRateHint": "{{approved}} approved, {{rejected}} rejected",
+    "noData": "No data"
+  },
+  "breakdown": {
+    "byProjectTitle": "Evidence approval by project",
+    "byWorkerApprovalTitle": "Evidence approval by worker",
+    "productivityTitle": "Productivity by worker",
+    "empty": "No data for the selected filters",
+    "columns": {
+      "project": "Project",
+      "worker": "Worker",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "rate": "Approval rate",
+      "completedActivities": "Completed activities",
+      "hoursWorked": "Hours worked",
+      "activitiesPerHour": "Activities per hour"
+    }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "title": "Indikadornan di rendimentu",
+  "filters": {
+    "fromLabel": "Desde",
+    "toLabel": "Te",
+    "projectLabel": "Proyekto",
+    "allProjects": "Tur proyekto",
+    "workerLabel": "Trahadó",
+    "allWorkers": "Tur trahadó"
+  },
+  "summary": {
+    "avgCost": "Costo promedio pa aktividat",
+    "avgCostHint": "Riba {{count}} aktividat kompletá",
+    "avgCostHint_other": "Riba {{count}} aktividat kompletá",
+    "avgDelay": "Retraso promedio pa proyekto",
+    "avgDelayHint": "Riba {{count}} proyekto",
+    "avgDelayHint_other": "Riba {{count}} proyekto",
+    "avgDelayValue": "{{days}} dia",
+    "approvalRate": "Aprobashon di evidensia",
+    "approvalRateHint": "{{approved}} aprobá, {{rejected}} rechasá",
+    "noData": "Sin datonan"
+  },
+  "breakdown": {
+    "byProjectTitle": "Aprobashon di evidensia pa proyekto",
+    "byWorkerApprovalTitle": "Aprobashon di evidensia pa trahadó",
+    "productivityTitle": "Produktividat pa trahadó",
+    "empty": "No tin datonan pa e filternan skohí",
+    "columns": {
+      "project": "Proyekto",
+      "worker": "Trahadó",
+      "approved": "Aprobá",
+      "rejected": "Rechasá",
+      "rate": "Tasa di aprobashon",
+      "completedActivities": "Aktividat kompletá",
+      "hoursWorked": "Oranan trahá",
+      "activitiesPerHour": "Aktividat pa ora"
+    }
+  }
+}

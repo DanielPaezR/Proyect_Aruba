@@ -9,6 +9,7 @@
     "INVENTARIO": "Inventory",
     "EVIDENCIAS": "Evidence",
     "FACTURAS": "Invoices",
-    "EMERGENCIAS": "Emergencies"
+    "EMERGENCIAS": "Emergencies",
+    "REPORTES": "Reports"
   }
 }

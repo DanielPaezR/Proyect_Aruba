@@ -187,6 +187,11 @@ enum Feature {
   // puede querer habilitar/deshabilitar por persona sin tocar el acceso a
   // Proyectos.
   EMERGENCIAS
+  // Modulo 4.2 (indicadores de rendimiento consolidados) — solo
+  // ADMINISTRADOR/GERENTE a nivel de rol (ver reports.routes.ts), pero igual
+  // configurable por Feature para que el Gerente pueda ocultarsela a un
+  // Administrador puntual sin tocar su acceso a Proyectos/Evidencias.
+  REPORTES
 }
 
 // Adelanto (a favor del trabajador, se resta de la liquidacion) o descuento

@@ -20,6 +20,7 @@ import { MyHoursPage } from "./pages/MyHoursPage";
 import { MyToolsPage } from "./pages/MyToolsPage";
 import { MyVehiclePage } from "./pages/MyVehiclePage";
 import { PayrollPage } from "./pages/PayrollPage";
+import { PerformanceReportPage } from "./pages/PerformanceReportPage";
 import { PermissionsPage } from "./pages/PermissionsPage";
 import { ProfilePage } from "./pages/ProfilePage";
 import { ProjectChatPage } from "./pages/ProjectChatPage";
@@ -60,6 +61,7 @@ function App() {
                 <Route path="/clients/:clientId" element={<ClientDetailPage />} />
                 <Route path="/evidences" element={<EvidencesReviewPage />} />
                 <Route path="/invoices" element={<InvoicesQueuePage />} />
+                <Route path="/reports/performance" element={<PerformanceReportPage />} />
                 <Route path="/users" element={<UsersManagementPage />} />
                 <Route path="/users/:userId" element={<WorkerProfilePage />} />
                 <Route path="/payroll" element={<PayrollPage />} />

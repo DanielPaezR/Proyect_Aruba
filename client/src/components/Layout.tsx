@@ -174,6 +174,11 @@ export function Layout() {
                   {t("nav.invoices", { ns: "common" })}
                 </NavLink>
               )}
+              {isTopManagerRole(user.role) && hasFeature("REPORTES") && (
+                <NavLink to="/reports/performance" className={navLinkClassName}>
+                  {t("nav.reports", { ns: "common" })}
+                </NavLink>
+              )}
               {isTopManagerRole(user.role) && hasFeature("USUARIOS") && (
                 <NavLink to="/users" className={navLinkClassName}>
                   {t("nav.users", { ns: "common" })}

@@ -11,6 +11,7 @@ const ALL_FEATURES: Feature[] = [
   Feature.EVIDENCIAS,
   Feature.FACTURAS,
   Feature.EMERGENCIAS,
+  Feature.REPORTES,
 ];
 
 /**
@@ -29,6 +30,7 @@ const ROLE_FEATURE_DEFAULTS: Partial<Record<Role, Record<Feature, boolean>>> = {
     EVIDENCIAS: true,
     FACTURAS: true,
     EMERGENCIAS: true,
+    REPORTES: true,
   },
   [Role.SUPERVISOR]: {
     USUARIOS: true,
@@ -38,6 +40,10 @@ const ROLE_FEATURE_DEFAULTS: Partial<Record<Role, Record<Feature, boolean>>> = {
     EVIDENCIAS: true,
     FACTURAS: false,
     EMERGENCIAS: true,
+    // Al igual que FACTURAS: la ruta ya es ADMINISTRADOR/GERENTE-only (ver
+    // reports.routes.ts), este default es solo para que /permissions no
+    // muestre un estado inconsistente si algun dia se relaja el rol.
+    REPORTES: false,
   },
   [Role.MERCADERISTA]: {
     USUARIOS: false,
@@ -47,6 +53,7 @@ const ROLE_FEATURE_DEFAULTS: Partial<Record<Role, Record<Feature, boolean>>> = {
     EVIDENCIAS: false,
     FACTURAS: false,
     EMERGENCIAS: false,
+    REPORTES: false,
   },
 };
 

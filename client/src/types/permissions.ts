@@ -10,8 +10,9 @@ export const FEATURES = [
   "EVIDENCIAS",
   "FACTURAS",
   "EMERGENCIAS",
+  "REPORTES",
 ] as const;
 export type Feature = (typeof FEATURES)[number];
 
-/** Estado efectivo (default por rol + override ya resuelto) de las 7 Feature. */
+/** Estado efectivo (default por rol + override ya resuelto) de las 8 Feature. */
 export type FeaturePermissions = Record<Feature, boolean>;

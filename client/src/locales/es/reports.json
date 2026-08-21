@@ -1,0 +1,39 @@
+{
+  "title": "Indicadores de rendimiento",
+  "filters": {
+    "fromLabel": "Desde",
+    "toLabel": "Hasta",
+    "projectLabel": "Proyecto",
+    "allProjects": "Todos los proyectos",
+    "workerLabel": "Trabajador",
+    "allWorkers": "Todos los trabajadores"
+  },
+  "summary": {
+    "avgCost": "Costo promedio por actividad",
+    "avgCostHint": "Sobre {{count}} actividad completada",
+    "avgCostHint_other": "Sobre {{count}} actividades completadas",
+    "avgDelay": "Demora promedio por proyecto",
+    "avgDelayHint": "Sobre {{count}} proyecto",
+    "avgDelayHint_other": "Sobre {{count}} proyectos",
+    "avgDelayValue": "{{days}} días",
+    "approvalRate": "Aprobación de evidencias",
+    "approvalRateHint": "{{approved}} aprobadas, {{rejected}} rechazadas",
+    "noData": "Sin datos"
+  },
+  "breakdown": {
+    "byProjectTitle": "Aprobación de evidencias por proyecto",
+    "byWorkerApprovalTitle": "Aprobación de evidencias por trabajador",
+    "productivityTitle": "Productividad por trabajador",
+    "empty": "No hay datos para los filtros seleccionados",
+    "columns": {
+      "project": "Proyecto",
+      "worker": "Trabajador",
+      "approved": "Aprobadas",
+      "rejected": "Rechazadas",
+      "rate": "Tasa de aprobación",
+      "completedActivities": "Actividades completadas",
+      "hoursWorked": "Horas trabajadas",
+      "activitiesPerHour": "Actividades por hora"
+    }
+  }
+}

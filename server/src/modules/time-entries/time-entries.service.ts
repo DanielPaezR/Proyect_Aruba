@@ -251,7 +251,7 @@ function isNearAnyEntry(detectedAt: Date, entries: { timestamp: Date }[]): boole
  * en vivo usando la hora actual). Compartido por los dos para no repetir la
  * misma logica de emparejar ENTRADA/ALMUERZO_INICIO/ALMUERZO_FIN/SALIDA.
  */
-function walkClosedSessions(entries: { type: PunchType; timestamp: Date }[]): {
+export function walkClosedSessions(entries: { type: PunchType; timestamp: Date }[]): {
   netMinutes: number;
   lunchMinutes: number;
   openEntradaAt: Date | null;
