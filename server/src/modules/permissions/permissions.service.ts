@@ -10,6 +10,7 @@ const ALL_FEATURES: Feature[] = [
   Feature.INVENTARIO,
   Feature.EVIDENCIAS,
   Feature.FACTURAS,
+  Feature.EMERGENCIAS,
 ];
 
 /**
@@ -27,6 +28,7 @@ const ROLE_FEATURE_DEFAULTS: Partial<Record<Role, Record<Feature, boolean>>> = {
     INVENTARIO: true,
     EVIDENCIAS: true,
     FACTURAS: true,
+    EMERGENCIAS: true,
   },
   [Role.SUPERVISOR]: {
     USUARIOS: true,
@@ -35,6 +37,7 @@ const ROLE_FEATURE_DEFAULTS: Partial<Record<Role, Record<Feature, boolean>>> = {
     INVENTARIO: true,
     EVIDENCIAS: true,
     FACTURAS: false,
+    EMERGENCIAS: true,
   },
   [Role.MERCADERISTA]: {
     USUARIOS: false,
@@ -43,6 +46,7 @@ const ROLE_FEATURE_DEFAULTS: Partial<Record<Role, Record<Feature, boolean>>> = {
     INVENTARIO: true,
     EVIDENCIAS: false,
     FACTURAS: false,
+    EMERGENCIAS: false,
   },
 };
 

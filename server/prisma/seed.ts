@@ -13,6 +13,7 @@ import {
   ProjectWorkType,
   ProjectPriority,
   InventoryItemType,
+  EmergencyPriority,
 } from "@prisma/client";
 import { EVIDENCES_FOLDER, uploadImage } from "../src/config/storage";
 
@@ -86,6 +87,7 @@ const SEED_TOOL_ITEM_ID = "seed-inventory-taladro-demo";
 const SEED_MATERIAL_ITEM_ID = "seed-inventory-cable-demo";
 const SEED_TOOL_ASSIGNMENT_ID = "seed-tool-assignment-demo";
 const SEED_VEHICLE_ID = "seed-vehicle-demo";
+const SEED_EMERGENCY_ID = "seed-emergency-demo";
 
 async function seedUsers(): Promise<Record<string, { id: string }>> {
   const usersByEmail: Record<string, { id: string }> = {};
@@ -278,11 +280,36 @@ async function seedVehicles(usersByEmail: Record<string, { id: string }>) {
   console.log("Vehículo de prueba (asignado al trabajador de prueba) listo.");
 }
 
+// Sin asignar (REPORTADA) a proposito: el flujo de asignar + push es lo que
+// se prueba en vivo (ver verificacion del Modulo 4.1), no algo que el seed
+// deba dejar ya resuelto.
+async function seedDemoEmergency(usersByEmail: Record<string, { id: string }>) {
+  const supervisor = usersByEmail[SUPERVISOR_EMAIL];
+
+  await prisma.emergency.upsert({
+    where: { id: SEED_EMERGENCY_ID },
+    update: {},
+    create: {
+      id: SEED_EMERGENCY_ID,
+      projectId: SEED_PROJECT_ID,
+      title: "Corto circuito en tablero principal",
+      description:
+        "El cliente reporta chispas y olor a quemado al encender el interruptor principal. Sin electricidad en toda la casa desde hace 20 minutos.",
+      locationMapsUrl: "https://maps.app.goo.gl/SeedDemoEmergenciaParadera",
+      priority: EmergencyPriority.URGENTE,
+      reportedById: supervisor.id,
+    },
+  });
+
+  console.log("Emergencia de prueba (sin asignar) lista.");
+}
+
 async function main() {
   const usersByEmail = await seedUsers();
   await seedDemoProject(usersByEmail);
   await seedInventory(usersByEmail);
   await seedVehicles(usersByEmail);
+  await seedDemoEmergency(usersByEmail);
 
   console.log("Cambia estas contraseñas después del primer inicio de sesión.");
 }

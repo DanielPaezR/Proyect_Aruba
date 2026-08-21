@@ -4,7 +4,9 @@ import { ProjectPriority, ProjectPropertyType, ProjectSector, ProjectStatus, Pro
 // Validacion basica de formato, no verifica que el link resuelva a un lugar
 // real: debe ser https y apuntar a Google Maps (dominio completo o el
 // acortador maps.app.goo.gl que usa "Compartir" desde la app de Maps).
-const mapsUrlSchema = z
+// Exportado: emergencies.validators.ts lo reusa para locationMapsUrl, mismo
+// patron que Project.mapsUrl.
+export const mapsUrlSchema = z
   .string()
   .refine(
     (value) =>

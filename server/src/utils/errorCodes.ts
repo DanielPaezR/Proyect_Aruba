@@ -114,6 +114,9 @@ export const ErrorCode = {
 
   // Acceso por seccion (Feature)
   FEATURE_ACCESS_DENIED: "FEATURE_ACCESS_DENIED",
+
+  // Emergencias
+  EMERGENCY_NOT_FOUND: "EMERGENCY_NOT_FOUND",
 } as const;
 
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];

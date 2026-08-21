@@ -2,8 +2,16 @@
  * por seccion, separado de los permisos finos que ya existen dentro de cada
  * una. USUARIOS incluye CRUD de usuarios + mapa de equipo + horas/pago de
  * trabajadores. */
-export const FEATURES = ["USUARIOS", "PROYECTOS", "CLIENTES", "INVENTARIO", "EVIDENCIAS", "FACTURAS"] as const;
+export const FEATURES = [
+  "USUARIOS",
+  "PROYECTOS",
+  "CLIENTES",
+  "INVENTARIO",
+  "EVIDENCIAS",
+  "FACTURAS",
+  "EMERGENCIAS",
+] as const;
 export type Feature = (typeof FEATURES)[number];
 
-/** Estado efectivo (default por rol + override ya resuelto) de las 6 Feature. */
+/** Estado efectivo (default por rol + override ya resuelto) de las 7 Feature. */
 export type FeaturePermissions = Record<Feature, boolean>;

@@ -181,6 +181,12 @@ enum Feature {
   INVENTARIO
   EVIDENCIAS
   FACTURAS
+  // Modulo 4.1 (registro/asignacion de emergencias) — aparte de PROYECTOS a
+  // proposito, aunque una emergencia pueda referenciar un proyecto: es una
+  // seccion con su propio flujo (asignacion + push inmediato) que el Gerente
+  // puede querer habilitar/deshabilitar por persona sin tocar el acceso a
+  // Proyectos.
+  EMERGENCIAS
 }
 
 // Adelanto (a favor del trabajador, se resta de la liquidacion) o descuento
@@ -285,6 +291,9 @@ model User {
   featureAccess        UserFeatureAccess[] @relation("UserFeatureAccessUser")
   grantedFeatureAccess UserFeatureAccess[] @relation("UserFeatureAccessGrantedBy")
 
+  reportedEmergencies  Emergency[]           @relation("EmergencyReportedBy")
+  emergencyAssignments EmergencyAssignment[] @relation("EmergencyAssignmentUser")
+
   @@map("users")
 }
 
@@ -364,6 +373,7 @@ model Project {
   chatMessages     ChatMessage[]
   chatReadStates   ChatReadState[]
   materialRequests MaterialRequest[]
+  emergencies      Emergency[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1095,4 +1105,75 @@ model UserFeatureAccess {
 
   @@unique([userId, feature])
   @@map("user_feature_access")
+}
+
+enum EmergencyPriority {
+  MEDIA
+  ALTA
+  URGENTE
+}
+
+// REPORTADA: recien creada, todavia sin nadie asignado. ASIGNADA: ya tiene
+// al menos un trabajador asignado (ver emergencies.service.ts assignWorker,
+// que hace este salto automaticamente en la primera asignacion). EN_PROGRESO:
+// el manager la marca a mano una vez que el trabajador esta en sitio.
+// RESUELTA: solo via PATCH /:id/resolve (fija resolvedAt junto con el
+// status, nunca por separado).
+enum EmergencyStatus {
+  REPORTADA
+  ASIGNADA
+  EN_PROGRESO
+  RESUELTA
+}
+
+// Modulo 4.1: registro y asignacion de emergencias. A diferencia de Activity
+// (que siempre cuelga de un Project), projectId es opcional — una emergencia
+// puede reportarse en un sitio que todavia no es un proyecto formal en el
+// sistema, o que nunca lo sera. onDelete: SetNull en el proyecto (no
+// Restrict/Cascade): si el proyecto se borra, la emergencia no debe
+// desaparecer ni bloquear el borrado, solo pierde la referencia.
+model Emergency {
+  id        String   @id @default(cuid())
+  projectId String?
+  project   Project? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+
+  title       String
+  description String
+
+  // Mismo patron que Project.mapsUrl: link de Google Maps en texto libre.
+  locationMapsUrl String?
+
+  priority EmergencyPriority @default(ALTA)
+  status   EmergencyStatus   @default(REPORTADA)
+
+  reportedById String
+  reportedBy   User   @relation("EmergencyReportedBy", fields: [reportedById], references: [id])
+
+  createdAt DateTime @default(now())
+
+  // Los dos solo se llenan juntos, via PATCH /:id/resolve — nunca resolvedAt
+  // sin resolutionNote ni al reves (resolutionNote SI puede quedar vacio si
+  // no se explica nada, pero resolvedAt siempre se fija en ese mismo momento).
+  resolvedAt     DateTime?
+  resolutionNote String?
+
+  assignments EmergencyAssignment[]
+
+  @@index([status])
+  @@index([projectId])
+  @@map("emergencies")
+}
+
+// Mismo patron que ActivityAssignment: varios trabajadores por emergencia,
+// un trabajador no puede quedar asignado dos veces a la misma (@@unique).
+model EmergencyAssignment {
+  id          String    @id @default(cuid())
+  emergencyId String
+  emergency   Emergency @relation(fields: [emergencyId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User      @relation("EmergencyAssignmentUser", fields: [userId], references: [id], onDelete: Cascade)
+  assignedAt  DateTime  @default(now())
+
+  @@unique([emergencyId, userId])
+  @@map("emergency_assignments")
 }

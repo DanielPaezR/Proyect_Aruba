@@ -8,6 +8,7 @@
     "CLIENTES": "Clients",
     "INVENTARIO": "Inventory",
     "EVIDENCIAS": "Evidence",
-    "FACTURAS": "Invoices"
+    "FACTURAS": "Invoices",
+    "EMERGENCIAS": "Emergencies"
   }
 }
