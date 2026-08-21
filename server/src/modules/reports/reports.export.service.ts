@@ -15,6 +15,7 @@ import {
   renderReportXlsx,
   type ReportDocument,
 } from "./reportDocument";
+import { renderWorkerReportPdf, type WorkerResumeReportData } from "./workerResumePdf";
 import type { ExportReportQuery } from "./reports.validators";
 
 type AuthUser = { id: string; role: Role };
@@ -160,6 +161,121 @@ async function buildWorkerReport(userId: string): Promise<ReportDocument> {
   };
 }
 
+const PHOTO_FETCH_TIMEOUT_MS = 8000;
+const PHOTO_MAX_BYTES = 10 * 1024 * 1024;
+
+/**
+ * Descarga la foto de perfil a un Buffer — pdfkit no puede tomar una URL
+ * directo. Nunca lanza: cualquier falla (red, tipo no soportado por
+ * pdfkit —solo JPEG/PNG—, respuesta no-2xx, timeout) devuelve null y el
+ * renderer cae al placeholder de iniciales en vez de romper el PDF entero
+ * por una foto inaccesible.
+ */
+async function fetchImageBuffer(url: string): Promise<Buffer | null> {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), PHOTO_FETCH_TIMEOUT_MS);
+    const response = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeout);
+
+    if (!response.ok) {
+      return null;
+    }
+    const contentType = response.headers.get("content-type") ?? "";
+    if (!contentType.includes("jpeg") && !contentType.includes("jpg") && !contentType.includes("png")) {
+      // pdfkit solo soporta JPEG/PNG — una foto subida como WEBP (el
+      // cliente lo acepta, ver profile.ts) no se puede incrustar.
+      return null;
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+    if (arrayBuffer.byteLength === 0 || arrayBuffer.byteLength > PHOTO_MAX_BYTES) {
+      return null;
+    }
+    return Buffer.from(arrayBuffer);
+  } catch {
+    return null;
+  }
+}
+
+async function buildWorkerResumeReport(
+  userId: string,
+): Promise<{ data: WorkerResumeReportData; photoUrl: string | null }> {
+  const worker = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      id: true,
+      name: true,
+      role: true,
+      email: true,
+      phone: true,
+      photoUrl: true,
+      hireDate: true,
+      specialties: true,
+      workDaysPerWeek: true,
+      workScheduleNote: true,
+      hourlyRate: true,
+      overtimeHourlyRate: true,
+    },
+  });
+  if (!worker) {
+    throw ApiError.notFound(ErrorCode.USER_NOT_FOUND, "Usuario no encontrado");
+  }
+
+  const [hoursSummary, payrollRuns, salaryHistory, monthlyScore] = await Promise.all([
+    getSummary({ from: new Date(0), userId }),
+    payrollService.listPayroll({ userId }),
+    authService.getSalaryHistory(userId),
+    authService.getMonthlyScore(userId),
+  ]);
+
+  return {
+    data: {
+      name: worker.name,
+      role: worker.role,
+      email: worker.email,
+      phone: worker.phone,
+      hireDate: worker.hireDate,
+      specialties: worker.specialties,
+      workDaysPerWeek: worker.workDaysPerWeek,
+      workScheduleNote: worker.workScheduleNote,
+      hourlyRate: worker.hourlyRate ? worker.hourlyRate.toNumber() : null,
+      overtimeHourlyRate: worker.overtimeHourlyRate ? worker.overtimeHourlyRate.toNumber() : null,
+      totalHours: roundToOneDecimal((hoursSummary[0]?.totalMinutes ?? 0) / 60),
+      payrollRuns: payrollRuns.map((run) => ({
+        periodStart: run.periodStart,
+        periodEnd: run.periodEnd,
+        normalMinutes: run.normalMinutes,
+        overtimeMinutes: run.overtimeMinutes,
+        netPay: Number(run.netPay),
+        status: run.status,
+        paidAt: run.paidAt,
+      })),
+      salaryHistory: salaryHistory.map((raise) => ({
+        createdAt: raise.createdAt,
+        previousRate: raise.previousRate ? raise.previousRate.toNumber() : null,
+        newRate: raise.newRate.toNumber(),
+        reason: raise.reason,
+        createdByName: raise.createdBy.name,
+      })),
+      monthlyScore: {
+        month: monthlyScore.month,
+        year: monthlyScore.year,
+        currentScore: monthlyScore.currentScore,
+        baseScore: monthlyScore.baseScore,
+        events: monthlyScore.events.map((event) => ({
+          createdAt: event.createdAt,
+          points: event.points,
+          reason: event.reason,
+          createdByName: event.createdBy.name,
+        })),
+      },
+      generatedAt: new Date(),
+    },
+    photoUrl: worker.photoUrl,
+  };
+}
+
 async function buildClientReport(clientId: string): Promise<ReportDocument> {
   const client = await clientsService.getClient(clientId);
   const { payments, totalReceived } = await paymentsService.listForClient(clientId);
@@ -211,7 +327,26 @@ export interface GeneratedReportFile {
   contentType: string;
 }
 
+// PDF de trabajador: "hoja de vida" dedicada (foto + perfil), NO la tabla
+// generica — el Excel de trabajador y los PDF de proyecto/cliente siguen
+// el camino generico de abajo sin cambios.
+async function generateWorkerResumePdf(userId: string): Promise<GeneratedReportFile> {
+  const { data, photoUrl } = await buildWorkerResumeReport(userId);
+  const photoBuffer = photoUrl ? await fetchImageBuffer(photoUrl) : null;
+  const buffer = await renderWorkerReportPdf(data, photoBuffer);
+
+  return {
+    buffer,
+    filename: `${slugify(`hoja-de-vida-${data.name}`)}.pdf`,
+    contentType: "application/pdf",
+  };
+}
+
 export async function generateReportExport(user: AuthUser, query: ExportReportQuery): Promise<GeneratedReportFile> {
+  if (query.type === "worker" && query.format === "pdf") {
+    return generateWorkerResumePdf(query.id);
+  }
+
   let doc: ReportDocument;
   if (query.type === "project") {
     doc = await buildProjectReport(user, query.id);
