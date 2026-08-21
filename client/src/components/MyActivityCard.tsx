@@ -26,6 +26,7 @@ import type { Activity, ActivityStatus } from "../types/activity";
 import type { Evidence } from "../types/evidence";
 import type { ProjectWorkType } from "../types/project";
 import { resolveMapsUrl } from "../utils/mapsUrl";
+import { ConfirmDialog } from "./ConfirmDialog";
 import { MediaFilePreview } from "./MediaFilePreview";
 import { MediaLightbox } from "./MediaLightbox";
 import type { LightboxMedia } from "./MediaLightbox";
@@ -88,7 +89,8 @@ export function MyActivityCard({ activity, onActivityUpdated }: MyActivityCardPr
   const [isSkipping, setIsSkipping] = useState(false);
   const [skipError, setSkipError] = useState<string | null>(null);
 
-  const [removingEvidenceId, setRemovingEvidenceId] = useState<string | null>(null);
+  const [evidenceToRemove, setEvidenceToRemove] = useState<Evidence | null>(null);
+  const [isRemovingEvidence, setIsRemovingEvidence] = useState(false);
   const [removeEvidenceError, setRemoveEvidenceError] = useState<string | null>(null);
 
   const [isUploadFormOpen, setIsUploadFormOpen] = useState(false);
@@ -195,6 +197,16 @@ export function MyActivityCard({ activity, onActivityUpdated }: MyActivityCardPr
       if (isEvidencesOpen) {
         await loadEvidences();
       }
+
+      // El padre (MyActivitiesPage) solo carga activity._count una vez —
+      // sin esto, el contador de "Ver evidencias" quedaba desactualizado
+      // hasta recargar la pagina, lo que podia llevar a subidas dobles por
+      // falta de confirmacion visual. No hace falta un roundtrip extra: es
+      // un conteo simple, se suma 1 en el propio cliente.
+      onActivityUpdated({
+        ...activity,
+        _count: { evidences: (activity._count?.evidences ?? 0) + 1 },
+      });
     } catch (error) {
       setUploadError(translateApiError(t, error));
     } finally {
@@ -202,19 +214,25 @@ export function MyActivityCard({ activity, onActivityUpdated }: MyActivityCardPr
     }
   }
 
-  async function handleRemoveEvidence(evidenceId: string) {
-    if (!window.confirm(t("mine.removeEvidenceConfirm", { ns: "activities" }))) {
+  async function handleRemoveEvidence() {
+    if (!evidenceToRemove) {
       return;
     }
     setRemoveEvidenceError(null);
-    setRemovingEvidenceId(evidenceId);
+    setIsRemovingEvidence(true);
     try {
-      await apiClient.delete(`/evidences/${evidenceId}`);
-      setEvidences((current) => current?.filter((evidence) => evidence.id !== evidenceId) ?? null);
+      await apiClient.delete(`/evidences/${evidenceToRemove.id}`);
+      setEvidences((current) => current?.filter((evidence) => evidence.id !== evidenceToRemove.id) ?? null);
+      // Mismo ajuste que handleUpload, restando en vez de sumar.
+      onActivityUpdated({
+        ...activity,
+        _count: { evidences: Math.max(0, (activity._count?.evidences ?? 0) - 1) },
+      });
+      setEvidenceToRemove(null);
     } catch (error) {
       setRemoveEvidenceError(translateApiError(t, error));
     } finally {
-      setRemovingEvidenceId(null);
+      setIsRemovingEvidence(false);
     }
   }
 
@@ -417,11 +435,6 @@ export function MyActivityCard({ activity, onActivityUpdated }: MyActivityCardPr
               {evidencesError}
             </p>
           )}
-          {removeEvidenceError && (
-            <p className="form-error" role="alert">
-              {removeEvidenceError}
-            </p>
-          )}
           {!isLoadingEvidences &&
             !evidencesError &&
             evidences &&
@@ -444,15 +457,8 @@ export function MyActivityCard({ activity, onActivityUpdated }: MyActivityCardPr
                   />
                   <span className="status-badge">{translateStatus(t, "common", "evidenceStatus", evidence.status)}</span>
                   {evidence.uploadedById === user?.id && evidence.status === "PENDIENTE" && (
-                    <button
-                      type="button"
-                      className="evidence-remove-button"
-                      onClick={() => void handleRemoveEvidence(evidence.id)}
-                      disabled={removingEvidenceId === evidence.id}
-                    >
-                      {removingEvidenceId === evidence.id
-                        ? t("mine.removingEvidence", { ns: "activities" })
-                        : t("mine.removeEvidenceButton", { ns: "activities" })}
+                    <button type="button" className="evidence-remove-button" onClick={() => setEvidenceToRemove(evidence)}>
+                      {t("mine.removeEvidenceButton", { ns: "activities" })}
                     </button>
                   )}
                 </div>
@@ -462,6 +468,21 @@ export function MyActivityCard({ activity, onActivityUpdated }: MyActivityCardPr
       )}
 
       <MediaLightbox media={lightboxMedia} onClose={() => setLightboxMedia(null)} />
+
+      {evidenceToRemove && (
+        <ConfirmDialog
+          title={t("mine.removeEvidenceTitle", { ns: "activities" })}
+          message={t("mine.removeEvidenceConfirm", { ns: "activities" })}
+          confirmLabel={t("mine.removeEvidenceButton", { ns: "activities" })}
+          isConfirming={isRemovingEvidence}
+          error={removeEvidenceError}
+          onConfirm={() => void handleRemoveEvidence()}
+          onCancel={() => {
+            setEvidenceToRemove(null);
+            setRemoveEvidenceError(null);
+          }}
+        />
+      )}
     </li>
   );
 }
