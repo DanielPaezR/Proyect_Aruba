@@ -4,6 +4,7 @@ import { Navigate } from "react-router-dom";
 import { CheckCircle2, Clock, Coins } from "lucide-react";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
+import { FilterBar } from "../components/FilterBar";
 import { PageHeader } from "../components/PageHeader";
 import { useAuth } from "../context/AuthContext";
 import { isTopManagerRole } from "../types/auth";
@@ -95,6 +96,13 @@ export function PerformanceReportPage() {
 
   const noDataLabel = t("summary.noData");
 
+  function handleClearFilters() {
+    setFrom("");
+    setTo("");
+    setProjectId("");
+    setUserId("");
+  }
+
   return (
     <div className="performance-report-page">
       <PageHeader title={t("title")} />
@@ -105,40 +113,38 @@ export function PerformanceReportPage() {
         </p>
       )}
 
-      <section>
-        <div className="card-actions">
-          <label>
-            {t("filters.fromLabel")}
-            <input type="date" value={from} onChange={(event) => setFrom(event.target.value)} />
-          </label>
-          <label>
-            {t("filters.toLabel")}
-            <input type="date" value={to} onChange={(event) => setTo(event.target.value)} />
-          </label>
-          <label>
-            {t("filters.projectLabel")}
-            <select value={projectId} onChange={(event) => setProjectId(event.target.value)}>
-              <option value="">{t("filters.allProjects")}</option>
-              {projects?.map((project) => (
-                <option key={project.id} value={project.id}>
-                  {project.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            {t("filters.workerLabel")}
-            <select value={userId} onChange={(event) => setUserId(event.target.value)}>
-              <option value="">{t("filters.allWorkers")}</option>
-              {workers?.map((worker) => (
-                <option key={worker.id} value={worker.id}>
-                  {worker.name}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-      </section>
+      <FilterBar onClear={handleClearFilters}>
+        <label>
+          {t("filters.fromLabel")}
+          <input type="date" value={from} onChange={(event) => setFrom(event.target.value)} />
+        </label>
+        <label>
+          {t("filters.toLabel")}
+          <input type="date" value={to} onChange={(event) => setTo(event.target.value)} />
+        </label>
+        <label>
+          {t("filters.projectLabel")}
+          <select value={projectId} onChange={(event) => setProjectId(event.target.value)}>
+            <option value="">{t("filters.allProjects")}</option>
+            {projects?.map((project) => (
+              <option key={project.id} value={project.id}>
+                {project.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          {t("filters.workerLabel")}
+          <select value={userId} onChange={(event) => setUserId(event.target.value)}>
+            <option value="">{t("filters.allWorkers")}</option>
+            {workers?.map((worker) => (
+              <option key={worker.id} value={worker.id}>
+                {worker.name}
+              </option>
+            ))}
+          </select>
+        </label>
+      </FilterBar>
 
       {isLoading && <p className="page-loading">{t("loading", { ns: "common" })}</p>}
 
