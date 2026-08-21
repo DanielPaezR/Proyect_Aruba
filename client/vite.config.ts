@@ -15,6 +15,12 @@ export default defineConfig({
       srcDir: 'src',
       filename: 'sw.ts',
       registerType: 'autoUpdate',
+      // Registramos el SW a mano en main.tsx (en vez del script auto-inyectado)
+      // para poder forzar un chequeo de actualizacion cuando la pestaña vuelve
+      // a estar visible — una SPA con la pestaña abierta por horas/dias (uso
+      // tipico de PWA instalada) puede quedar corriendo un bundle JS viejo
+      // hasta 24h si solo se depende del chequeo automatico del navegador.
+      injectRegister: false,
       includeAssets: ['favicon.svg', 'apple-touch-icon.png'],
       manifest: {
         name: 'DECS - Gestión',
