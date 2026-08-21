@@ -8,6 +8,7 @@ import { apiClient } from "../api/client";
 import { AssignWorkersPanel } from "../components/AssignWorkersPanel";
 import { ClientPicker } from "../components/ClientPicker";
 import { ConfirmDialog } from "../components/ConfirmDialog";
+import { ExportReportButtons } from "../components/ExportReportButtons";
 import { MediaFilePreview } from "../components/MediaFilePreview";
 import { MediaLightbox } from "../components/MediaLightbox";
 import type { LightboxMedia } from "../components/MediaLightbox";
@@ -340,6 +341,7 @@ export function ProjectDetailPage() {
                 {t("actions.edit", { ns: "common" })}
               </button>
             )}
+            {canDeleteProject && <ExportReportButtons type="project" id={projectId} />}
             {canDeleteProject && (
               <button type="button" className="danger-button" onClick={() => setIsProjectDeleteOpen(true)}>
                 {t("actions.delete", { ns: "common" })}

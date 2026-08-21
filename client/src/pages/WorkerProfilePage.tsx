@@ -5,6 +5,7 @@ import { Link, Navigate, useParams } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { ConfirmDialog } from "../components/ConfirmDialog";
+import { ExportReportButtons } from "../components/ExportReportButtons";
 import { PageHeader } from "../components/PageHeader";
 import { WorkerDocumentCard } from "../components/WorkerDocumentCard";
 import { useAuth } from "../context/AuthContext";
@@ -522,6 +523,7 @@ export function WorkerProfilePage() {
             <button type="button" onClick={openEdit}>
               {t("actions.edit", { ns: "common" })}
             </button>
+            <ExportReportButtons type="worker" id={userId} />
             <button type="button" onClick={() => setIsResetPasswordOpen(true)}>
               {t("profile.resetPasswordButton", { ns: "users" })}
             </button>

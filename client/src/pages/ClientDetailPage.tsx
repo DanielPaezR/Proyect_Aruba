@@ -5,6 +5,7 @@ import { Link, Navigate, useNavigate, useParams } from "react-router-dom";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
 import { ConfirmDialog } from "../components/ConfirmDialog";
+import { ExportReportButtons } from "../components/ExportReportButtons";
 import { PageHeader } from "../components/PageHeader";
 import { useAuth } from "../context/AuthContext";
 import { translateStatus } from "../i18n/statusLabel";
@@ -157,6 +158,7 @@ export function ClientDetailPage() {
             <button type="button" onClick={openEdit}>
               {t("actions.edit", { ns: "common" })}
             </button>
+            {isTopManagerRole(user.role) && <ExportReportButtons type="client" id={clientId} />}
             {isTopManagerRole(user.role) && (
               <button type="button" className="danger-button" onClick={() => setIsDeleteOpen(true)}>
                 {t("actions.delete", { ns: "common" })}

@@ -10,7 +10,11 @@ import { apiRouter } from "./routes";
 export const app = express();
 
 app.use(helmet({ crossOriginResourcePolicy: { policy: "cross-origin" } }));
-app.use(cors({ origin: env.corsOrigin, credentials: true }));
+// exposedHeaders: sin esto el navegador oculta Content-Disposition en
+// respuestas cross-origin (client:5173 vs server:4000 en dev, o dominios
+// distintos en prod) — el cliente lo necesita para nombrar el archivo
+// descargado en /reports/export (ver reportExport.ts).
+app.use(cors({ origin: env.corsOrigin, credentials: true, exposedHeaders: ["Content-Disposition"] }));
 app.use(express.json());
 app.use(cookieParser());
 if (env.nodeEnv !== "test") {

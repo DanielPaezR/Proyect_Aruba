@@ -35,5 +35,11 @@
       "hoursWorked": "Horas trabajadas",
       "activitiesPerHour": "Actividades por hora"
     }
+  },
+  "export": {
+    "exportPdfButton": "Exportar PDF",
+    "exportingPdf": "Exportando PDF...",
+    "exportExcelButton": "Exportar Excel",
+    "exportingExcel": "Exportando Excel..."
   }
 }

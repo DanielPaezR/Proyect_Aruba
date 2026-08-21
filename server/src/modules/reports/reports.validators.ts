@@ -8,3 +8,11 @@ export const performanceReportQuerySchema = z.object({
 });
 
 export type PerformanceReportQuery = z.infer<typeof performanceReportQuerySchema>;
+
+export const exportReportQuerySchema = z.object({
+  type: z.enum(["project", "worker", "client"]),
+  id: z.string().min(1),
+  format: z.enum(["pdf", "xlsx"]),
+});
+
+export type ExportReportQuery = z.infer<typeof exportReportQuerySchema>;

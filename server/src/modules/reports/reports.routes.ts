@@ -12,3 +12,4 @@ export const reportsRouter = Router();
 reportsRouter.use(authenticate, authorize(Role.ADMINISTRADOR, Role.GERENTE), requireFeature(Feature.REPORTES));
 
 reportsRouter.get("/performance", reportsController.getPerformance);
+reportsRouter.get("/export", reportsController.exportReport);

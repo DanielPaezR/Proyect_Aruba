@@ -35,5 +35,11 @@
       "hoursWorked": "Oranan trahá",
       "activitiesPerHour": "Aktividat pa ora"
     }
+  },
+  "export": {
+    "exportPdfButton": "Eksportá PDF",
+    "exportingPdf": "Ta eksportá PDF...",
+    "exportExcelButton": "Eksportá Excel",
+    "exportingExcel": "Ta eksportá Excel..."
   }
 }
