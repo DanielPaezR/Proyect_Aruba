@@ -10,7 +10,7 @@ export const createInventoryItemSchema = z.object({
   type: z.nativeEnum(InventoryItemType),
   unit: z.string().trim().min(1),
   stockQuantity: z.number().int().min(0).optional(),
-  lowStockThreshold: z.number().int().min(0).optional(),
+  lowStockThreshold: z.number().int().min(0).nullable().optional(),
   notes: z.string().trim().optional(),
 });
 
