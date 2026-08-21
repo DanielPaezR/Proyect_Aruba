@@ -16,6 +16,10 @@
     "close": "Sera",
     "back": "Bèk"
   },
+  "filters": {
+    "title": "Filternan",
+    "clearButton": "Limpia filternan"
+  },
   "language": {
     "label": "Idioma",
     "es": "Spañó",

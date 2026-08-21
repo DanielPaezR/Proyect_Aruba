@@ -4,6 +4,7 @@ import { Navigate } from "react-router-dom";
 import { Scale, TrendingDown, TrendingUp } from "lucide-react";
 import { translateApiError } from "../api/apiError";
 import { apiClient } from "../api/client";
+import { FilterBar } from "../components/FilterBar";
 import { PageHeader } from "../components/PageHeader";
 import { useAuth } from "../context/AuthContext";
 import type { Client } from "../types/client";
@@ -113,6 +114,15 @@ export function FinancialHistoryPage() {
 
   const balance = history?.balance ?? 0;
 
+  function handleClearFilters() {
+    setFrom("");
+    setTo("");
+    setProjectId("");
+    setClientId("");
+    setUserId("");
+    setType("");
+  }
+
   return (
     <div className="financial-history-page">
       <PageHeader title={t("title")} />
@@ -123,59 +133,57 @@ export function FinancialHistoryPage() {
         </p>
       )}
 
-      <section>
-        <div className="card-actions">
-          <label>
-            {t("filters.fromLabel")}
-            <input type="date" value={from} onChange={(event) => setFrom(event.target.value)} />
-          </label>
-          <label>
-            {t("filters.toLabel")}
-            <input type="date" value={to} onChange={(event) => setTo(event.target.value)} />
-          </label>
-          <label>
-            {t("filters.projectLabel")}
-            <select value={projectId} onChange={(event) => setProjectId(event.target.value)}>
-              <option value="">{t("filters.allProjects")}</option>
-              {projects?.map((project) => (
-                <option key={project.id} value={project.id}>
-                  {project.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            {t("filters.clientLabel")}
-            <select value={clientId} onChange={(event) => setClientId(event.target.value)}>
-              <option value="">{t("filters.allClients")}</option>
-              {clients?.map((client) => (
-                <option key={client.id} value={client.id}>
-                  {client.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            {t("filters.workerLabel")}
-            <select value={userId} onChange={(event) => setUserId(event.target.value)}>
-              <option value="">{t("filters.allWorkers")}</option>
-              {workers?.map((worker) => (
-                <option key={worker.id} value={worker.id}>
-                  {worker.name}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label>
-            {t("filters.typeLabel")}
-            <select value={type} onChange={(event) => setType(event.target.value as FinancialMovementType | "")}>
-              <option value="">{t("filters.allTypes")}</option>
-              <option value="INGRESO">{t("filters.typeIncome")}</option>
-              <option value="EGRESO">{t("filters.typeExpense")}</option>
-            </select>
-          </label>
-        </div>
-      </section>
+      <FilterBar onClear={handleClearFilters}>
+        <label>
+          {t("filters.fromLabel")}
+          <input type="date" value={from} onChange={(event) => setFrom(event.target.value)} />
+        </label>
+        <label>
+          {t("filters.toLabel")}
+          <input type="date" value={to} onChange={(event) => setTo(event.target.value)} />
+        </label>
+        <label>
+          {t("filters.projectLabel")}
+          <select value={projectId} onChange={(event) => setProjectId(event.target.value)}>
+            <option value="">{t("filters.allProjects")}</option>
+            {projects?.map((project) => (
+              <option key={project.id} value={project.id}>
+                {project.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          {t("filters.clientLabel")}
+          <select value={clientId} onChange={(event) => setClientId(event.target.value)}>
+            <option value="">{t("filters.allClients")}</option>
+            {clients?.map((client) => (
+              <option key={client.id} value={client.id}>
+                {client.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          {t("filters.workerLabel")}
+          <select value={userId} onChange={(event) => setUserId(event.target.value)}>
+            <option value="">{t("filters.allWorkers")}</option>
+            {workers?.map((worker) => (
+              <option key={worker.id} value={worker.id}>
+                {worker.name}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label>
+          {t("filters.typeLabel")}
+          <select value={type} onChange={(event) => setType(event.target.value as FinancialMovementType | "")}>
+            <option value="">{t("filters.allTypes")}</option>
+            <option value="INGRESO">{t("filters.typeIncome")}</option>
+            <option value="EGRESO">{t("filters.typeExpense")}</option>
+          </select>
+        </label>
+      </FilterBar>
 
       {history && (
         <div className="stat-grid">

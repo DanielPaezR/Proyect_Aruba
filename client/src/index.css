@@ -1052,6 +1052,76 @@ button {
   min-height: 44px;
 }
 
+/* Panel de filtros reutilizable (FilterBar.tsx) — distinto de .card-actions
+   (pensada para botones de accion, no un panel de filtros) y de
+   .list-filters de arriba (buscador + un solo dropdown en una fila). Para
+   pantallas con varios campos de filtro a la vez (ej. FinancialHistoryPage).
+   Mismo label/input apilado que .inline-form, solo que en grid en vez de
+   columna — asi los campos quedan alineados prolijos en vez de amontonados. */
+.filter-bar {
+  padding: 16px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg-subtle);
+}
+
+.filter-bar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.filter-bar__title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.filter-bar__clear {
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 36px;
+  white-space: nowrap;
+}
+
+.filter-bar__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px 16px;
+}
+
+.filter-bar__grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 14px;
+  color: var(--text-h);
+}
+
+.filter-bar__grid input,
+.filter-bar__grid select {
+  font-family: inherit;
+  font-size: 16px;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-h);
+  min-height: 44px;
+}
+
 .page-header button,
 .page-title-bar__actions button {
   padding: 10px 16px;

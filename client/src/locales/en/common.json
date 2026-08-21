@@ -16,6 +16,10 @@
     "close": "Close",
     "back": "Back"
   },
+  "filters": {
+    "title": "Filters",
+    "clearButton": "Clear filters"
+  },
   "language": {
     "label": "Language",
     "es": "Spanish",

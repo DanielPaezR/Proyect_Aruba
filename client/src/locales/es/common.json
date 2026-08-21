@@ -16,6 +16,10 @@
     "close": "Cerrar",
     "back": "Atrás"
   },
+  "filters": {
+    "title": "Filtros",
+    "clearButton": "Limpiar filtros"
+  },
   "language": {
     "label": "Idioma",
     "es": "Español",
