@@ -38,6 +38,55 @@ type AuthUser = { id: string; role: Role };
 // que compara contra este conjunto.
 const ADMIN_ROLES: Role[] = [Role.ADMINISTRADOR, Role.GERENTE];
 
+// Rango de jerarquia real (distinto de "que roles pueden entrar a la ruta",
+// eso ya lo filtra authorize()). GERENTE por encima de ADMINISTRADOR por
+// diseno; los tres roles de abajo no tienen orden entre si, solo importan
+// como "menos que ADMINISTRADOR" para este chequeo.
+const ROLE_RANK: Record<Role, number> = {
+  [Role.TRABAJADOR_CAMPO]: 0,
+  [Role.MERCADERISTA]: 0,
+  [Role.SUPERVISOR]: 0,
+  [Role.ADMINISTRADOR]: 1,
+  [Role.GERENTE]: 2,
+};
+
+/**
+ * "Porton" de jerarquia real: authorize(ADMINISTRADOR, GERENTE) a nivel de
+ * ruta solo valida "tengo uno de estos dos roles", nunca la jerarquia
+ * relativa contra el usuario que se esta gestionando — sin esto, cualquier
+ * ADMINISTRADOR podia editar/desactivar/restablecerle la contraseña/
+ * cambiarle el sueldo a un GERENTE, que por diseno esta por encima.
+ *
+ * GERENTE es la unica excepcion a "estrictamente mayor": puede gestionar a
+ * otro GERENTE (son pares en la cima, a proposito — nunca debe quedar un
+ * Gerente sin nadie mas que pueda gestionar su cuenta). Un ADMINISTRADOR
+ * nunca puede gestionar a otro ADMINISTRADOR ni a un GERENTE.
+ *
+ * Aplicar SOLO en rutas que ya estan detras de authorize(ADMINISTRADOR,
+ * GERENTE) — nunca en rutas donde SUPERVISOR/MERCADERISTA (rank 0) tambien
+ * son actores legitimos (ej. updateUserPhoto, documentos de trabajador):
+ * ahi un Supervisor gestionando a un Trabajador de Campo son ambos rank 0,
+ * y esta funcion los bloquearia por error — eso no es el hueco que esto
+ * cierra, es una funcionalidad existente e intencional.
+ */
+export async function ensureCanManageTarget(actor: AuthUser, targetUserId: string): Promise<void> {
+  if (actor.role === Role.GERENTE) {
+    return;
+  }
+
+  const target = await prisma.user.findUnique({ where: { id: targetUserId }, select: { role: true } });
+  if (!target) {
+    throw ApiError.notFound(ErrorCode.USER_NOT_FOUND, "Usuario no encontrado");
+  }
+
+  if (ROLE_RANK[actor.role] <= ROLE_RANK[target.role]) {
+    throw ApiError.forbidden(
+      ErrorCode.CANNOT_MANAGE_HIGHER_ROLE,
+      "No puedes gestionar la cuenta de un usuario con un rol igual o superior al tuyo",
+    );
+  }
+}
+
 // Puntaje con el que arranca cada trabajador al inicio del mes; los eventos
 // (siempre negativos por ahora, ver createScoreEventSchema) se suman sobre
 // esta base para calcular el puntaje del mes — nunca se decrementa un
@@ -274,7 +323,9 @@ export async function getWorkerProfile(userId: string, requesterRole: Role) {
  * perfil laboral (ver updateUserSchema). hourlyRate queda fuera, ver
  * comentario ahi.
  */
-export async function updateUser(userId: string, input: UpdateUserInput) {
+export async function updateUser(actor: AuthUser, userId: string, input: UpdateUserInput) {
+  await ensureCanManageTarget(actor, userId);
+
   const existing = await prisma.user.findUnique({ where: { id: userId } });
   if (!existing) {
     throw ApiError.notFound(ErrorCode.USER_NOT_FOUND, "Usuario no encontrado");
@@ -308,13 +359,14 @@ export async function updateUser(userId: string, input: UpdateUserInput) {
  * SalaryRaise...) sigue intacto, y login() ya bloquea a los usuarios
  * inactivos con un mensaje propio (ver ErrorCode.USER_ACCOUNT_DEACTIVATED).
  */
-export async function deactivateUser(userId: string, requesterId: string) {
-  if (userId === requesterId) {
+export async function deactivateUser(actor: AuthUser, userId: string) {
+  if (userId === actor.id) {
     // Si el unico Administrador/Gerente se desactiva a si mismo, nadie mas
     // puede reactivarlo (reactivar tambien es ADMINISTRADOR/GERENTE-only) —
     // un candado sin llave.
     throw ApiError.badRequest(ErrorCode.CANNOT_DEACTIVATE_SELF, "No puedes desactivar tu propia cuenta");
   }
+  await ensureCanManageTarget(actor, userId);
 
   const existing = await prisma.user.findUnique({ where: { id: userId }, select: { id: true, isActive: true } });
   if (!existing) {
@@ -328,7 +380,9 @@ export async function deactivateUser(userId: string, requesterId: string) {
 }
 
 /** Reactivar (ADMINISTRADOR/GERENTE-only): por si Don Daniel se equivoca, o alguien vuelve a trabajar. */
-export async function reactivateUser(userId: string) {
+export async function reactivateUser(actor: AuthUser, userId: string) {
+  await ensureCanManageTarget(actor, userId);
+
   const existing = await prisma.user.findUnique({ where: { id: userId }, select: { id: true, isActive: true } });
   if (!existing) {
     throw ApiError.notFound(ErrorCode.USER_NOT_FOUND, "Usuario no encontrado");
@@ -461,7 +515,9 @@ export async function changeOwnPassword(userId: string, input: ChangePasswordInp
 /** ADMINISTRADOR/GERENTE-only: restablece la contraseña de cualquier usuario
  * sin pedir la actual (para cuando se le olvido la suya). Mismo hash/costo
  * que createUser y changeOwnPassword. */
-export async function resetUserPassword(userId: string, input: ResetUserPasswordInput): Promise<void> {
+export async function resetUserPassword(actor: AuthUser, userId: string, input: ResetUserPasswordInput): Promise<void> {
+  await ensureCanManageTarget(actor, userId);
+
   const existing = await prisma.user.findUnique({ where: { id: userId }, select: { id: true } });
   if (!existing) {
     throw ApiError.notFound(ErrorCode.USER_NOT_FOUND, "Usuario no encontrado");
@@ -479,7 +535,9 @@ export async function resetUserPassword(userId: string, input: ResetUserPassword
  * donde se toca hourlyRate/overtimeHourlyRate — newOvertimeRate es opcional,
  * un aumento puede tocar solo la tarifa normal.
  */
-export async function updateHourlyRate(userId: string, createdById: string, input: UpdateHourlyRateInput) {
+export async function updateHourlyRate(actor: AuthUser, userId: string, input: UpdateHourlyRateInput) {
+  await ensureCanManageTarget(actor, userId);
+
   const existing = await prisma.user.findUnique({ where: { id: userId } });
   if (!existing) {
     throw ApiError.notFound(ErrorCode.USER_NOT_FOUND, "Usuario no encontrado");
@@ -502,7 +560,7 @@ export async function updateHourlyRate(userId: string, createdById: string, inpu
         previousOvertimeRate: input.newOvertimeRate !== undefined ? existing.overtimeHourlyRate : undefined,
         newOvertimeRate: input.newOvertimeRate,
         reason: input.reason,
-        createdById,
+        createdById: actor.id,
       },
     }),
   ]);
@@ -510,7 +568,9 @@ export async function updateHourlyRate(userId: string, createdById: string, inpu
   return updatedUser;
 }
 
-export async function getSalaryHistory(userId: string) {
+export async function getSalaryHistory(actor: AuthUser, userId: string) {
+  await ensureCanManageTarget(actor, userId);
+
   const exists = await prisma.user.findUnique({ where: { id: userId }, select: { id: true } });
   if (!exists) {
     throw ApiError.notFound(ErrorCode.USER_NOT_FOUND, "Usuario no encontrado");
@@ -533,7 +593,9 @@ const salaryAdjustmentInclude = {
  * updateHourlyRate, esto es puro registro, el calculo de liquidacion lo
  * suma/resta aparte.
  */
-export async function createSalaryAdjustment(userId: string, createdById: string, input: CreateSalaryAdjustmentInput) {
+export async function createSalaryAdjustment(actor: AuthUser, userId: string, input: CreateSalaryAdjustmentInput) {
+  await ensureCanManageTarget(actor, userId);
+
   const exists = await prisma.user.findUnique({ where: { id: userId }, select: { id: true } });
   if (!exists) {
     throw ApiError.notFound(ErrorCode.USER_NOT_FOUND, "Usuario no encontrado");
@@ -546,13 +608,15 @@ export async function createSalaryAdjustment(userId: string, createdById: string
       amount: input.amount,
       reason: input.reason,
       effectiveDate: input.effectiveDate,
-      createdById,
+      createdById: actor.id,
     },
     include: salaryAdjustmentInclude,
   });
 }
 
-export async function getSalaryAdjustments(userId: string, query: GetSalaryAdjustmentsQuery) {
+export async function getSalaryAdjustments(actor: AuthUser, userId: string, query: GetSalaryAdjustmentsQuery) {
+  await ensureCanManageTarget(actor, userId);
+
   const exists = await prisma.user.findUnique({ where: { id: userId }, select: { id: true } });
   if (!exists) {
     throw ApiError.notFound(ErrorCode.USER_NOT_FOUND, "Usuario no encontrado");
@@ -577,7 +641,9 @@ export async function getSalaryAdjustments(userId: string, query: GetSalaryAdjus
 
 /** Borrado real (no hay edicion): mismo criterio que Payment, solo para
  * corregir un registro mal ingresado — no hay auditoria de "quien lo borro". */
-export async function deleteSalaryAdjustment(targetUserId: string, adjustmentId: string) {
+export async function deleteSalaryAdjustment(actor: AuthUser, targetUserId: string, adjustmentId: string) {
+  await ensureCanManageTarget(actor, targetUserId);
+
   const adjustment = await prisma.salaryAdjustment.findUnique({
     where: { id: adjustmentId },
     select: { id: true, userId: true },
@@ -589,14 +655,16 @@ export async function deleteSalaryAdjustment(targetUserId: string, adjustmentId:
   await prisma.salaryAdjustment.delete({ where: { id: adjustmentId } });
 }
 
-export async function createScoreEvent(userId: string, createdById: string, input: CreateScoreEventInput) {
+export async function createScoreEvent(actor: AuthUser, userId: string, input: CreateScoreEventInput) {
+  await ensureCanManageTarget(actor, userId);
+
   const exists = await prisma.user.findUnique({ where: { id: userId }, select: { id: true } });
   if (!exists) {
     throw ApiError.notFound(ErrorCode.USER_NOT_FOUND, "Usuario no encontrado");
   }
 
   return prisma.workerScoreEvent.create({
-    data: { userId, points: input.points, reason: input.reason, createdById },
+    data: { userId, points: input.points, reason: input.reason, createdById: actor.id },
     include: { createdBy: { select: { id: true, name: true } } },
   });
 }
@@ -607,7 +675,9 @@ export async function createScoreEvent(userId: string, createdById: string, inpu
  * origen cada vez, mismo patron de agregacion por periodo que getSummary()
  * en time-entries.service.ts.
  */
-export async function getMonthlyScore(userId: string, month?: number, year?: number) {
+export async function getMonthlyScore(actor: AuthUser, userId: string, month?: number, year?: number) {
+  await ensureCanManageTarget(actor, userId);
+
   const exists = await prisma.user.findUnique({ where: { id: userId }, select: { id: true } });
   if (!exists) {
     throw ApiError.notFound(ErrorCode.USER_NOT_FOUND, "Usuario no encontrado");

@@ -143,6 +143,7 @@
       "USER_ALREADY_INACTIVE": "This user is already inactive",
       "USER_ALREADY_ACTIVE": "This user is already active",
       "CANNOT_DEACTIVATE_SELF": "You can't deactivate your own account",
+      "CANNOT_MANAGE_HIGHER_ROLE": "You can't manage the account of a user with an equal or higher role than yours",
       "WORKER_DOCUMENT_NOT_FOUND": "Document not found",
       "WORKER_DOCUMENT_DELETE_FORBIDDEN": "You can't delete this document",
       "SALARY_ADJUSTMENT_NOT_FOUND": "Record not found",

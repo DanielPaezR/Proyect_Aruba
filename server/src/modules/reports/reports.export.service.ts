@@ -89,7 +89,12 @@ async function buildProjectReport(user: AuthUser, projectId: string): Promise<Re
   };
 }
 
-async function buildWorkerReport(userId: string): Promise<ReportDocument> {
+async function buildWorkerReport(user: AuthUser, userId: string): Promise<ReportDocument> {
+  // Mismo porton de jerarquia que auth.service.ts: exportar el reporte de
+  // un trabajador expone hourlyRate/overtimeHourlyRate/historial de
+  // aumentos/puntaje — un ADMINISTRADOR no debe poder verlo de un GERENTE.
+  await authService.ensureCanManageTarget(user, userId);
+
   const worker = await prisma.user.findUnique({
     where: { id: userId },
     select: { id: true, name: true, role: true, email: true, hourlyRate: true, overtimeHourlyRate: true },
@@ -101,8 +106,8 @@ async function buildWorkerReport(userId: string): Promise<ReportDocument> {
   const [hoursSummary, payrollRuns, salaryHistory, monthlyScore] = await Promise.all([
     getSummary({ from: new Date(0), userId }),
     payrollService.listPayroll({ userId }),
-    authService.getSalaryHistory(userId),
-    authService.getMonthlyScore(userId),
+    authService.getSalaryHistory(user, userId),
+    authService.getMonthlyScore(user, userId),
   ]);
   const totalHours = roundToOneDecimal((hoursSummary[0]?.totalMinutes ?? 0) / 60);
 
@@ -199,8 +204,11 @@ async function fetchImageBuffer(url: string): Promise<Buffer | null> {
 }
 
 async function buildWorkerResumeReport(
+  user: AuthUser,
   userId: string,
 ): Promise<{ data: WorkerResumeReportData; photoUrl: string | null }> {
+  await authService.ensureCanManageTarget(user, userId);
+
   const worker = await prisma.user.findUnique({
     where: { id: userId },
     select: {
@@ -225,8 +233,8 @@ async function buildWorkerResumeReport(
   const [hoursSummary, payrollRuns, salaryHistory, monthlyScore] = await Promise.all([
     getSummary({ from: new Date(0), userId }),
     payrollService.listPayroll({ userId }),
-    authService.getSalaryHistory(userId),
-    authService.getMonthlyScore(userId),
+    authService.getSalaryHistory(user, userId),
+    authService.getMonthlyScore(user, userId),
   ]);
 
   return {
@@ -330,8 +338,8 @@ export interface GeneratedReportFile {
 // PDF de trabajador: "hoja de vida" dedicada (foto + perfil), NO la tabla
 // generica — el Excel de trabajador y los PDF de proyecto/cliente siguen
 // el camino generico de abajo sin cambios.
-async function generateWorkerResumePdf(userId: string): Promise<GeneratedReportFile> {
-  const { data, photoUrl } = await buildWorkerResumeReport(userId);
+async function generateWorkerResumePdf(user: AuthUser, userId: string): Promise<GeneratedReportFile> {
+  const { data, photoUrl } = await buildWorkerResumeReport(user, userId);
   const photoBuffer = photoUrl ? await fetchImageBuffer(photoUrl) : null;
   const buffer = await renderWorkerReportPdf(data, photoBuffer);
 
@@ -344,14 +352,14 @@ async function generateWorkerResumePdf(userId: string): Promise<GeneratedReportF
 
 export async function generateReportExport(user: AuthUser, query: ExportReportQuery): Promise<GeneratedReportFile> {
   if (query.type === "worker" && query.format === "pdf") {
-    return generateWorkerResumePdf(query.id);
+    return generateWorkerResumePdf(user, query.id);
   }
 
   let doc: ReportDocument;
   if (query.type === "project") {
     doc = await buildProjectReport(user, query.id);
   } else if (query.type === "worker") {
-    doc = await buildWorkerReport(query.id);
+    doc = await buildWorkerReport(user, query.id);
   } else {
     doc = await buildClientReport(query.id);
   }

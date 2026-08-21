@@ -143,6 +143,7 @@
       "USER_ALREADY_INACTIVE": "E usuario aki ya ta inaktivo",
       "USER_ALREADY_ACTIVE": "E usuario aki ya ta aktivo",
       "CANNOT_DEACTIVATE_SELF": "Bo no por desaktivá bo mes kuenta",
+      "CANNOT_MANAGE_HIGHER_ROLE": "Bo no por gestioná e kuenta di un usuario ku un rol igual òf mas haltu ku esun di bo",
       "WORKER_DOCUMENT_NOT_FOUND": "Dokumento no ta wordu hañá",
       "WORKER_DOCUMENT_DELETE_FORBIDDEN": "Bo no por elimina e dokumento aki",
       "SALARY_ADJUSTMENT_NOT_FOUND": "No a haña e registro",

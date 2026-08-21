@@ -89,17 +89,17 @@ export const getWorkerProfile = asyncHandler(async (req: Request, res: Response)
 
 export const updateUser = asyncHandler(async (req: Request, res: Response) => {
   const input = updateUserSchema.parse(req.body);
-  const user = await authService.updateUser(req.params.userId, input);
+  const user = await authService.updateUser(req.user!, req.params.userId, input);
   res.json({ user });
 });
 
 export const deactivateUser = asyncHandler(async (req: Request, res: Response) => {
-  const user = await authService.deactivateUser(req.params.userId, req.user!.id);
+  const user = await authService.deactivateUser(req.user!, req.params.userId);
   res.json({ user });
 });
 
 export const reactivateUser = asyncHandler(async (req: Request, res: Response) => {
-  const user = await authService.reactivateUser(req.params.userId);
+  const user = await authService.reactivateUser(req.user!, req.params.userId);
   res.json({ user });
 });
 
@@ -156,46 +156,46 @@ export const changePassword = asyncHandler(async (req: Request, res: Response) =
 
 export const resetUserPassword = asyncHandler(async (req: Request, res: Response) => {
   const input = resetUserPasswordSchema.parse(req.body);
-  await authService.resetUserPassword(req.params.userId, input);
+  await authService.resetUserPassword(req.user!, req.params.userId, input);
   res.status(204).send();
 });
 
 export const updateHourlyRate = asyncHandler(async (req: Request, res: Response) => {
   const input = updateHourlyRateSchema.parse(req.body);
-  const user = await authService.updateHourlyRate(req.params.userId, req.user!.id, input);
+  const user = await authService.updateHourlyRate(req.user!, req.params.userId, input);
   res.json({ user });
 });
 
 export const salaryHistory = asyncHandler(async (req: Request, res: Response) => {
-  const history = await authService.getSalaryHistory(req.params.userId);
+  const history = await authService.getSalaryHistory(req.user!, req.params.userId);
   res.json({ history });
 });
 
 export const createSalaryAdjustment = asyncHandler(async (req: Request, res: Response) => {
   const input = createSalaryAdjustmentSchema.parse(req.body);
-  const adjustment = await authService.createSalaryAdjustment(req.params.userId, req.user!.id, input);
+  const adjustment = await authService.createSalaryAdjustment(req.user!, req.params.userId, input);
   res.status(201).json({ adjustment });
 });
 
 export const listSalaryAdjustments = asyncHandler(async (req: Request, res: Response) => {
   const query = getSalaryAdjustmentsQuerySchema.parse(req.query);
-  const adjustments = await authService.getSalaryAdjustments(req.params.userId, query);
+  const adjustments = await authService.getSalaryAdjustments(req.user!, req.params.userId, query);
   res.json({ adjustments });
 });
 
 export const deleteSalaryAdjustment = asyncHandler(async (req: Request, res: Response) => {
-  await authService.deleteSalaryAdjustment(req.params.userId, req.params.adjustmentId);
+  await authService.deleteSalaryAdjustment(req.user!, req.params.userId, req.params.adjustmentId);
   res.status(204).send();
 });
 
 export const createScoreEvent = asyncHandler(async (req: Request, res: Response) => {
   const input = createScoreEventSchema.parse(req.body);
-  const event = await authService.createScoreEvent(req.params.userId, req.user!.id, input);
+  const event = await authService.createScoreEvent(req.user!, req.params.userId, input);
   res.status(201).json({ event });
 });
 
 export const monthlyScore = asyncHandler(async (req: Request, res: Response) => {
   const { month, year } = getMonthlyScoreQuerySchema.parse(req.query);
-  const score = await authService.getMonthlyScore(req.params.userId, month, year);
+  const score = await authService.getMonthlyScore(req.user!, req.params.userId, month, year);
   res.json(score);
 });
