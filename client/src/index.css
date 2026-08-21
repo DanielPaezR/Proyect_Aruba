@@ -306,23 +306,39 @@ button {
   text-decoration: underline;
 }
 
-/* Selector de idioma + Cerrar sesion agrupados en la misma fila, al final
-   del menu — antes el selector vivia suelto en el topbar. */
+/* Selector de idioma + tema + Cerrar sesion, apilados al final del menu —
+   antes iban en una sola fila (flex row) y se veian apretados; en columna,
+   cada control a ancho completo, mismo gap que .drawer-footer arriba para
+   quedar visualmente consistente con el resto del menu. */
 .drawer-footer-actions {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  align-items: stretch;
   gap: 8px;
+}
+
+.drawer-footer-actions .language-switcher,
+.drawer-footer-actions .theme-switcher {
+  width: 100%;
 }
 
 .drawer-footer-actions .language-switcher select,
 .drawer-footer-actions .theme-switcher select {
+  width: 100%;
   background: var(--navy-700);
   color: #ffffff;
   border-color: rgba(255, 255, 255, 0.3);
 }
 
+/* Separador antes de Cerrar sesion: espacio extra (se suma al gap de
+   arriba) + una linea sutil a la mitad de ese espacio, para que quede
+   claramente distinguido de idioma/tema como la accion "final" del menu —
+   el propio boton ya tiene su tratamiento distinto (bordeado, transparente
+   en vez de un <select>), esto solo lo separa visualmente del resto. */
 .drawer-logout-button {
-  flex: 1;
+  position: relative;
+  width: 100%;
+  margin-top: 20px;
   padding: 10px 16px;
   border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -330,6 +346,16 @@ button {
   color: #ffffff;
   min-height: 44px;
   font-weight: 600;
+}
+
+.drawer-logout-button::before {
+  content: "";
+  position: absolute;
+  top: -14px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.15);
 }
 
 .drawer-logout-button:hover {
